@@ -5,19 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Central Admin</title>
 </head>
-<link rel="stylesheet" href="Central_AD.css">
+<link rel="stylesheet" href="<?= base_url('css/Central_AD.css') ?>">
+
 <body>
 
 <div class="sidebar">
     <h2>ADMIN</h2>
-    <a href="Central_AD.html" class="active">DASHBOARD</a>
-    <a href="inventory_AD.html">INVENTORY</a>
+<a href="<?= base_url('dashboard') ?>" class="active">DASHBOARD</a>
+<a href="<?= base_url('inventory') ?>">INVENTORY</a>
     <a href="#">SUPPLIERS</a>
     <a href="#">ORDERS</a>
     <a href="#">FRANCHISING</a>
     <a href="#">REPORTS</a>
     <a href="#">SETTINGS</a>
-    <a href="Login.html" class="logout">Logout</a>
+<a href="<?= base_url('logout') ?>" class="logout">Logout</a>
 </div>
 
 <div class="main">

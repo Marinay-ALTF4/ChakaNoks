@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reset Password</title>
-<link rel="stylesheet" href="Reset_password.css">
+<link rel="stylesheet" href="<?= base_url('css/Reset_password.css') ?>">
+
 </head>
 <body>
 

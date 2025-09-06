@@ -12,7 +12,8 @@
 <div class="sidebar">
     <h2>ADMIN</h2>
 <a href="<?= base_url('dashboard') ?>" class="active">DASHBOARD</a>
-<a href="<?= base_url('inventory') ?>">INVENTORY</a>
+<a href="<?= base_url('admin/inventory') ?>">INVENTORY</a>
+
     <a href="#">SUPPLIERS</a>
     <a href="#">ORDERS</a>
     <a href="#">FRANCHISING</a>
@@ -24,7 +25,7 @@
 <div class="main">
    <div class="header">
     <span>Central Admin Dashboard</span>
-    <a href="other_braches.html">View Other Branches</a>
+    <a href="other_braches.php">View Other Branches</a>
 </div>
 
     <div class="top-cards">

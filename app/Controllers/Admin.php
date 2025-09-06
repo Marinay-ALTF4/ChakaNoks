@@ -10,7 +10,8 @@ class Admin extends Controller
     public function login()
     {
         helper(['form', 'url']);
-        return view('Login');
+        // Load the login form from app/Views/auth/login.php
+        return view('auth/login');
     }
 
     public function loginAuth()
@@ -21,7 +22,8 @@ class Admin extends Controller
         $username = trim($this->request->getPost('username'));
         $password = trim($this->request->getPost('password'));
 
-        $builder = $db->table('admins');
+        // Look for the user in the users table
+        $builder = $db->table('users');
         $user = $builder->where('username', $username)
                         ->orWhere('email', $username)
                         ->get()
@@ -29,24 +31,47 @@ class Admin extends Controller
 
         if ($user) {
             if (password_verify($password, $user->password)) {
+                // Save user session
                 session()->set([
                     'logged_in' => true,
-                    'admin_id'  => $user->id,
-                    'username'  => $user->username
+                    'user_id'   => $user->id,
+                    'username'  => $user->username,
+                    'role'      => $user->role // "admin" or "inventory"
                 ]);
-                return redirect()->to('/Central_AD'); // ✅ redirects to dashboard
+
+                // Redirect based on role
+                if ($user->role === 'admin') {
+                    return redirect()->to('/Central_AD');
+                } elseif ($user->role === 'inventory') {
+                    return redirect()->to('/inventory');
+                }
             }
+
             return redirect()->back()->with('error', '❌ Invalid password!');
         }
+
         return redirect()->back()->with('error', '❌ User not found!');
     }
 
-    public function dashboard()
+public function dashboard()
+{
+    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+        return redirect()->to('/');
+    }
+
+    return view('managers/Central_AD'); // loads app/Views/managers/Central_AD.php
+}
+
+
+    // ✅ New: Admin inventory dashboard
+    public function inventory()
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
             return redirect()->to('/');
         }
-        return view('Central_AD'); // ✅ must be in app/Views/
+
+        // Load from app/Views/managers/inventory_AD.php
+        return view('managers/inventory_AD');
     }
 
     public function logout()
@@ -58,11 +83,13 @@ class Admin extends Controller
     public function forgotPassword()
     {
         helper(['form', 'url']);
-        return view('forgot_password');
+        // Load from app/Views/auth/forgot_password.php
+        return view('auth/forgot_password');
     }
 
     public function forgotPasswordSubmit()
     {
+        // You can add email sending logic here later
         return redirect()->back()->with('success', 'If this email exists, a reset link was sent.');
     }
 }

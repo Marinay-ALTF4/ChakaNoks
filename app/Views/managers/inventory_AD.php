@@ -9,14 +9,14 @@
 
 <div class="sidebar">
     <h2>ADMIN</h2>
-    <a href="Central_AD.php">DASHBOARD</a>
-    <a href="inventory_AD.php" class="active">INVENTORY</a>
+    <a href="<?= base_url('Central_AD') ?>">DASHBOARD</a>
+    <a href="<?= base_url('admin/inventory') ?>" class="active">INVENTORY</a>
     <a href="#">SUPPLIERS</a>
     <a href="#">ORDERS</a>
     <a href="#">FRANCHISING</a>
     <a href="#">REPORTS</a>
     <a href="#">SETTINGS</a>
-    <a href="Login.html" class="logout">Logout</a>
+    <a href="<?= base_url('logout') ?>" class="logout">Logout</a>
 </div>
 
 <div class="main">

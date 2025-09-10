@@ -18,7 +18,7 @@
     <a href="#">FRANCHISING</a>
     <a href="#">REPORTS</a>
     <a href="#">SETTINGS</a>
-    <a href="" class="logout">Logout</a>
+    <a href="<?= base_url('logout') ?>" class="logout">Logout</a>
 </div>
 
 <div class="main">

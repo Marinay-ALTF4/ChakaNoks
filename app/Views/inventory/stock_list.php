@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Stock List</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
   <div class="sidebar">
@@ -35,6 +36,7 @@
               <th>Quantity</th>
               <th>Last Update</th>
               <th>Branch</th>
+              <th>Barcode</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -45,6 +47,12 @@
               <td>50</td>
               <td>2025-09-07 14:32</td>
               <td>Branch A</td>
+              <td>
+                <div class="barcode-container">
+                  <svg class="barcode" jsbarcode-value="1-Whole Chicken"></svg>
+                  <span>Whole Chicken</span>
+                </div>
+              </td>
               <td><a href="<?= site_url('inventory/edit-stock/1') ?>" class="btn">Edit</a></td>
             </tr>
             <tr>
@@ -53,6 +61,12 @@
               <td>30</td>
               <td>2025-09-08 09:10</td>
               <td>Branch B</td>
+              <td>
+                <div class="barcode-container">
+                  <svg class="barcode" jsbarcode-value="2-Cooking Oink"></svg>
+                  <span>Cooking Oink</span>
+                </div>
+              </td>
               <td><a href="<?= site_url('inventory/edit-stock/2') ?>" class="btn">Edit</a></td>
             </tr>
           </tbody>
@@ -60,6 +74,20 @@
       </div>
     </div>
   </div>
+
+  <script>
+    window.addEventListener("load", () => {
+      document.querySelectorAll(".barcode").forEach(svg => {
+        JsBarcode(svg, svg.getAttribute("jsbarcode-value"), {
+          format: "CODE128",
+          lineColor: "#000000ff",
+          width: 1,
+          height: 30,
+          displayValue: false
+        });
+      });
+    });
+  </script>
 
   <style>
     body {
@@ -178,6 +206,7 @@
       padding: 12px;
       border-bottom: 1px solid #444;
       text-align: left;
+      vertical-align: middle;
     }
 
     th {
@@ -188,8 +217,6 @@
     td {
       color: #ddd;
     }
-
-    
 
     .btn {
       display: inline-block;
@@ -205,6 +232,23 @@
     .btn:hover {
       background-color: #666;
       transform: translateY(-2px);
+    }
+
+    .barcode-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .barcode {
+      width: 130px;
+      height: 50px;
+    }
+
+    .barcode-container span {
+      font-size: 12px;
+      color: #fff;
     }
   </style>
 </body>

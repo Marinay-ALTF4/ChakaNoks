@@ -10,7 +10,7 @@ class Admin extends Controller
     public function login()
     {
         helper(['form', 'url']);
-        // Load the login form from app/Views/auth/login.php
+        // Load the login form
         return view('auth/login');
     }
 
@@ -36,14 +36,16 @@ class Admin extends Controller
                     'logged_in' => true,
                     'user_id'   => $user->id,
                     'username'  => $user->username,
-                    'role'      => $user->role // "admin" or "inventory"
+                    'role'      => $user->role // admin, inventory, branch_manager
                 ]);
 
-                // Redirect based on role
+                // ✅ Redirect based on role
                 if ($user->role === 'admin') {
                     return redirect()->to('/Central_AD');
                 } elseif ($user->role === 'inventory') {
                     return redirect()->to('/inventory');
+                } elseif ($user->role === 'branch_manager') {
+                    return redirect()->to('/branch/dashboard');
                 }
             }
 
@@ -53,48 +55,51 @@ class Admin extends Controller
         return redirect()->back()->with('error', '❌ User not found!');
     }
 
-public function dashboard()
-{
-    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
-        return redirect()->to('/');
+    // ✅ Admin-only dashboards
+    public function dashboard()
+    {
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+            return redirect()->to('/');
+        }
+
+        return view('managers/Central_AD', ['section' => 'dashboard']);
     }
 
-    // Default dashboard content
-    return view('managers/Central_AD', ['section' => 'dashboard']);
-}
+    public function otherBranches()
+    {
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+            return redirect()->to('/');
+        }
 
-public function otherBranches()
-{
-    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
-        return redirect()->to('/');
+        return view('managers/Central_AD', ['section' => 'otherBranches']);
     }
 
-    // Load same dashboard but with 'otherBranches' section
-    return view('managers/Central_AD', ['section' => 'otherBranches']);
-}
-public function request_stock()
-{
-    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
-        return redirect()->to('/');
+    public function request_stock()
+    {
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+            return redirect()->to('/');
+        }
+
+        return view('managers/request_stock');
     }
 
-    // Load request stock view (make sure the file exists under app/Views/managers/)
-    return view('managers/request_stock');
-}
-
-
-
-
-
-    // ✅ New: Admin inventory dashboard
     public function inventory()
     {
         if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
             return redirect()->to('/');
         }
 
-        // Load from app/Views/managers/inventory_AD.php
         return view('managers/inventory_AD');
+    }
+
+    // ✅ Branch Manager dashboard
+    public function branchDashboard()
+    {
+        if (!session()->get('logged_in') || session()->get('role') !== 'branch_manager') {
+            return redirect()->to('/');
+        }
+
+        return view('branch_managers/dashboard'); // app/Views/branch_managers/dashboard.php
     }
 
     public function logout()
@@ -106,13 +111,11 @@ public function request_stock()
     public function forgotPassword()
     {
         helper(['form', 'url']);
-        // Load from app/Views/auth/forgot_password.php
         return view('auth/forgot_password');
     }
 
     public function forgotPasswordSubmit()
     {
-        // You can add email sending logic here later
         return redirect()->back()->with('success', 'If this email exists, a reset link was sent.');
     }
 }

@@ -10,17 +10,24 @@ class UserSeeder extends Seeder
     {
         $data = [
             [
-                'username' => 'superadmin',
-                'email'    => 'admin@example.com',
-                'password' => password_hash('admin123', PASSWORD_DEFAULT),
-                'role'     => 'admin',
+                'username'   => 'superadmin',
+                'email'      => 'admin@example.com',
+                'password'   => password_hash('admin123', PASSWORD_DEFAULT),
+                'role'       => 'admin',
                 'created_at' => date('Y-m-d H:i:s'),
             ],
             [
-                'username' => 'inv_staff',
-                'email'    => 'staff@example.com',
-                'password' => password_hash('staff123', PASSWORD_DEFAULT),
-                'role'     => 'inventory',
+                'username'   => 'inv_staff',
+                'email'      => 'staff@example.com',
+                'password'   => password_hash('staff123', PASSWORD_DEFAULT),
+                'role'       => 'inventory',
+                'created_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'username'   => 'branch_manager',
+                'email'      => 'branch@company.com',
+                'password'   => password_hash('branch123', PASSWORD_DEFAULT),
+                'role'       => 'branch_manager',
                 'created_at' => date('Y-m-d H:i:s'),
             ],
         ];

@@ -15,6 +15,8 @@ $routes->post('loginAuth', 'Admin::loginAuth'); // login POST
 $routes->get('Central_AD', 'Admin::dashboard', ['filter' => 'auth']);
 $routes->get('Central_AD/other-branches', 'Admin::otherBranches', ['filter' => 'auth']);
 $routes->get('Central_AD/request_stock', 'Admin::request_stock');
+// 🔹 Branch Manager dashboard
+$routes->get('branch/dashboard', 'Admin::branchDashboard', ['filter' => 'auth']);
 
 
 

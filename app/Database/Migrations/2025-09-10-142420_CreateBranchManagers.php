@@ -4,56 +4,56 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateUsersTable extends Migration
+class CreateBranchManagers extends Migration
 {
     public function up()
     {
         $this->forge->addField([
-            'id' => [
+            'id'          => [
                 'type'           => 'INT',
                 'constraint'     => 11,
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
-            'username' => [
+            'username'    => [
                 'type'       => 'VARCHAR',
-                'constraint' => '100',
+                'constraint' => 100,
                 'unique'     => true,
             ],
-            'email' => [
+            'email'       => [
                 'type'       => 'VARCHAR',
-                'constraint' => '150',
+                'constraint' => 150,
                 'unique'     => true,
             ],
-            'password' => [
+            'password'    => [
                 'type'       => 'VARCHAR',
-                'constraint' => '255',
+                'constraint' => 255,
             ],
-            'role' => [
-                'type'       => 'ENUM("admin","inventory","branch_manager")',
-                'default'    => 'inventory',
-            ],
-            'branch_name' => [ // optional, only for branch managers
+            'role'        => [
                 'type'       => 'VARCHAR',
-                'constraint' => '150',
-                'null'       => true,
+                'constraint' => 50,
+                'default'    => 'branch_manager',
             ],
-            'created_at' => [
+            'branch_name' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 150,
+            ],
+            'created_at'  => [
                 'type' => 'DATETIME',
                 'null' => true,
             ],
-            'updated_at' => [
+            'updated_at'  => [
                 'type' => 'DATETIME',
                 'null' => true,
             ],
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->createTable('users');
+        $this->forge->createTable('branch_managers');
     }
 
     public function down()
     {
-        $this->forge->dropTable('users');
+        $this->forge->dropTable('branch_managers');
     }
 }

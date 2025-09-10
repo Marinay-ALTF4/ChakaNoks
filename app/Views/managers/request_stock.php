@@ -11,14 +11,14 @@
 
 <div class="sidebar">
     <h2>ADMIN</h2>
-    <a href="Central_AD.html">DASHBOARD</a>
-    <a href="inventory_AD.html">INVENTORY</a>
+        <a href="<?= base_url('Central_AD') ?>">DASHBOARD</a>
+    <a href="">INVENTORY</a>
     <a href="#">SUPPLIERS</a>
     <a href="#">ORDERS</a>
     <a href="#">FRANCHISING</a>
     <a href="#">REPORTS</a>
     <a href="#">SETTINGS</a>
-    <a href="Login.html" class="logout">Logout</a>
+    <a href="" class="logout">Logout</a>
 </div>
 
 <div class="main">

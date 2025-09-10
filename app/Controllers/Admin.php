@@ -59,8 +59,31 @@ public function dashboard()
         return redirect()->to('/');
     }
 
-    return view('managers/Central_AD'); // loads app/Views/managers/Central_AD.php
+    // Default dashboard content
+    return view('managers/Central_AD', ['section' => 'dashboard']);
 }
+
+public function otherBranches()
+{
+    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+        return redirect()->to('/');
+    }
+
+    // Load same dashboard but with 'otherBranches' section
+    return view('managers/Central_AD', ['section' => 'otherBranches']);
+}
+public function request_stock()
+{
+    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+        return redirect()->to('/');
+    }
+
+    // Load request stock view (make sure the file exists under app/Views/managers/)
+    return view('managers/request_stock');
+}
+
+
+
 
 
     // ✅ New: Admin inventory dashboard

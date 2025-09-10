@@ -12,8 +12,8 @@
 
 <div class="sidebar">
     <h2>ADMIN</h2>
-    <a href="Central_AD.html">DASHBOARD</a>
-    <a href="inventory_AD.html">INVENTORY</a>
+    <a href="<?= site_url('Central_AD') ?>">Dashboard</a>
+    <a href="<?= site_url('Central_AD/inventory_AD') ?>">INVENTORY</a>
     <a href="#">SUPPLIERS</a>
     <a href="#">ORDERS</a>
     <a href="#">FRANCHISING</a>

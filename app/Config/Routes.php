@@ -13,6 +13,14 @@ $routes->post('loginAuth', 'Admin::loginAuth'); // login POST
 
 // Admin dashboard
 $routes->get('Central_AD', 'Admin::dashboard', ['filter' => 'auth']);
+$routes->get('Central_AD/other-branches', 'Admin::otherBranches', ['filter' => 'auth']);
+$routes->get('Central_AD/request_stock', 'Admin::request_stock');
+
+
+
+
+
+
 
 // 🔹 Admin Inventory Management
 $routes->group('admin/inventory', ['filter' => 'auth'], function($routes) {

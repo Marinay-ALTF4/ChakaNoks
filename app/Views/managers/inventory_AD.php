@@ -22,7 +22,8 @@
 <div class="main">
     <div class="header">
         <span>Inventory Management</span>
-        <a href="request_stock.html">+ Request Stock Item</a>
+       <a href="<?= site_url('Central_AD/request_stock') ?>">+ Request Stock Item</a>
+
     </div>
 
     <div class="table-container">

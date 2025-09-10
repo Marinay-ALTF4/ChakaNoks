@@ -24,18 +24,26 @@
 
 <div class="main">
    <div class="header">
-    <span>Central Admin Dashboard</span>
-    <a href="other_braches.php">View Other Branches</a>
+      <span>Central Admin Dashboard</span>
+      <a href="<?= site_url('Central_AD/other-branches') ?>">View Other Branches</a>
+   </div>
+
+   <?php if (isset($section) && $section === 'otherBranches'): ?>
+       <!-- Load Other Branches view -->
+       <?= view('managers/other_branches') ?>
+   <?php else: ?>
+       <!-- Default Dashboard -->
+       <div class="top-cards">
+           <div class="card">Branch Overview</div>
+           <div class="card">Branch Performance</div>
+           <div class="card">User & Role Management</div>
+       </div>
+
+       <div class="report">Reports / Charts Placeholder</div>
+   <?php endif; ?>
 </div>
 
-    <div class="top-cards">
-        <div class="card">Branch Overview</div>
-        <div class="card">Branch Performance</div>
-        <div class="card">User & Role Management</div>
-    </div>
 
-    <div class="report">Reports / Charts Placeholder</div>
-</div>
 
 
 </body>

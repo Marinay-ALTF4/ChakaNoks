@@ -8,7 +8,8 @@
   <div class="sidebar">
     <div>
       <h2>Inventory</h2>
-      <div class="nav">      
+      <div class="nav">  
+        <a href="<?= site_url('inventory') ?>">🏠 Dashboard</a>    
         <a href="<?= site_url('inventory/add-stock') ?>">➕ Add Stock</a>
         <a href="<?= site_url('inventory/edit-stock') ?>">✏️ Edit Stock</a>
         <a href="<?= site_url('inventory/stock-list') ?>">📋 Stock List</a>
@@ -24,15 +25,35 @@
       <span>Welcome, <?= session()->get('username') ?>!</span>
     </div>
     <div class="content">
-      <div class="card">
+      <div class="action-row">
+        <div class="card action-card">
+          <h3>Update Stock Levels</h3>
+          <p>Adjust stock quantities when items are sold or used.</p>
+          <a href="<?= site_url('inventory/update-stock') ?>" class="btn">Update</a>
+        </div>
+
+        <div class="card action-card">
+          <h3>Receive Deliveries</h3>
+          <p>Add new items when deliveries are received.</p>
+          <a href="<?= site_url('inventory/receive-delivery') ?>" class="btn">See Deliveries</a>
+        </div>
+
+        <div class="card action-card">
+          <h3>Report Damaged/Expired Goods</h3>
+          <p>Mark damaged or expired items and remove them from stock.</p>
+          <a href="<?= site_url('inventory/report-damage') ?>" class="btn">Report</a>
+        </div>
+      </div>
+
+      <div class="card small-card">
         <h3>Stock Overview</h3>
         <p>Quick summary of your stock levels and recent changes.</p>
       </div>
-      <div class="card">
+      <div class="card small-card">
         <h3>Alerts</h3>
         <p>Low stock or expiring items will appear here.</p>
       </div>
-      <div class="card">
+      <div class="card small-card">
         <h3>Recent Activity</h3>
         <p>Latest actions taken in the inventory system.</p>
       </div>
@@ -136,7 +157,7 @@
 
     .card {
       background-color: #2a2a2a;
-      padding: 20px;
+      padding: 15px;
       border-radius: 10px;
       margin-bottom: 20px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.4);
@@ -151,6 +172,49 @@
     .card p {
       color: #ccc;
     }
+
+    .action-card {
+      border-left: 5px solid #4caf50;
+      flex: 1;
+      margin: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .action-card .btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 15px;
+      background-color: #4caf50;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.3s;
+      text-align: center;
+    }
+
+    .action-card .btn:hover {
+      background-color: #45a049;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .small-card {
+      font-size: 14px;
+      opacity: 0.8;
+      padding: 15px;
+    }
+
+    .small-card h3 {
+      font-size: 16px;
+    }
   </style>
 </body>
 </html>
+
+

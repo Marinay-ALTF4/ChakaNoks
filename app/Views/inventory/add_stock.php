@@ -8,8 +8,9 @@
   <div class="sidebar">
     <div>
       <h2>Inventory</h2>
-      <div class="nav">      
-        <a href="<?= site_url('inventory/add-stock') ?>">➕ Add Stock</a>
+      <div class="nav">  
+        <a href="<?= site_url('inventory/dashboard') ?>">🏠 Dashboard</a>    
+        <a href="<?= site_url('inventory/add-stock') ?>" class="active">➕ Add Stock</a>
         <a href="<?= site_url('inventory/edit-stock') ?>">✏️ Edit Stock</a>
         <a href="<?= site_url('inventory/stock-list') ?>">📋 Stock List</a>
         <a href="<?= site_url('inventory/alerts') ?>">⚠️ Alerts</a>
@@ -25,18 +26,26 @@
     </div>
 
     <div class="content">
-      <div class="card">
+      <div class="form-card">
+        <h2>  New Stock Entry</h2>
+        <p>Fill in the details below to add stock to the inventory.</p>
         <form method="post" action="">
-          <label>Item Name</label>
-          <input type="text" name="item_name" required>
+          <div class="form-group">
+            <label>Item Name</label>
+            <input type="text" name="item_name" required>
+          </div>
 
-          <label>Quantity</label>
-          <input type="number" name="quantity" required>
+          <div class="form-group">
+            <label>Quantity</label>
+            <input type="number" name="quantity" required>
+          </div>
 
-          <label>Expiry Date</label>
-          <input type="date" name="expiry_date" required>
+          <div class="form-group">
+            <label>Expiry Date</label>
+            <input type="date" name="expiry_date" required>
+          </div>
 
-          <button type="submit">Add</button>
+          <button type="submit"> Add Stock</button>
         </form>
       </div>
     </div>
@@ -86,7 +95,7 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.4);
     }
 
-    .nav a:hover {
+    .nav a:hover, .nav a.active {
       background-color: #444;
       color: #fff;
       transform: translateY(-3px);
@@ -111,6 +120,7 @@
       transform: translateY(-3px);
     }
 
+
     .main {
       flex: 1;
       display: flex;
@@ -133,54 +143,72 @@
 
     .content {
       flex: 1;
-      padding: 30px;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
       overflow-y: auto;
     }
 
-    .card {
+    .form-card {
       background-color: #2a2a2a;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-      max-width: 1000px;
+      padding: 30px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
     }
 
-    form {
+    .form-card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .form-card p {
+      margin-bottom: 20px;
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
     }
 
     label {
       font-weight: bold;
+      margin-bottom: 6px;
       color: #fff;
     }
 
     input {
-      padding: 10px;
+      padding: 12px;
       border: none;
       border-radius: 6px;
       background-color: #1e1e1e;
       color: #fff;
+      font-size: 14px;
     }
 
     button {
-      padding: 8px 32px;
+      padding: 12px 32px;
       border: none;
       border-radius: 6px;
-      background-color: #444;
+      background-color: #28a745;
       color: #fff;
       font-weight: bold;
       cursor: pointer;
       transition: 0.3s ease;
-      align-self: flex-start;
     }
 
     button:hover {
-      background-color: #666;
+      background-color: #218838;
       transform: translateY(-2px);
     }
   </style>
 </body>
 </html>
+
+

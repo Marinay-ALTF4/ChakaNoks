@@ -8,11 +8,12 @@
   <div class="sidebar">
     <div>
       <h2>Inventory</h2>
-      <div class="nav">      
+      <div class="nav">  
+        <a href="<?= site_url('inventory/dashboard') ?>">🏠 Dashboard</a>    
         <a href="<?= site_url('inventory/add-stock') ?>">➕ Add Stock</a>
         <a href="<?= site_url('inventory/edit-stock') ?>">✏️ Edit Stock</a>
         <a href="<?= site_url('inventory/stock-list') ?>">📋 Stock List</a>
-        <a href="<?= site_url('inventory/alerts') ?>">⚠️ Alerts</a>
+        <a href="<?= site_url('inventory/alerts') ?>" class="active">⚠️ Alerts</a>
       </div>
     </div>
     <a href="<?= base_url('logout') ?>" class="logout">Logout</a>
@@ -25,7 +26,8 @@
     </div>
     <div class="content">
       <div class="card">
-        <p>Low stock and perishable goods nearing expiry will show up here.</p>
+        <h2>Items Requiring Attention</h2>
+        <p>Low stock and perishable goods nearing expiry are listed below.</p>
         
         <table>
           <thead>
@@ -105,7 +107,8 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.4);
     }
 
-    .nav a:hover {
+    .nav a:hover,
+    .nav a.active {
       background-color: #444;
       color: #fff;
       transform: translateY(-3px);
@@ -130,6 +133,7 @@
       transform: translateY(-3px);
     }
 
+    
     .main {
       flex: 1;
       display: flex;
@@ -147,35 +151,52 @@
 
     .header h1 {
       margin: 0;
-      font-size: 20px;
+      font-size: 22px;
     }
 
     .content {
       flex: 1;
-      padding: 20px;
+      padding: 25px;
       overflow-y: auto;
     }
 
+    
     .card {
       background-color: #2a2a2a;
-      padding: 20px;
-      border-radius: 10px;
+      padding: 25px;
+      border-radius: 12px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.5);
     }
 
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .card p {
+      color: #aaa;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+  
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
+      margin-top: 10px;
     }
 
     thead {
       background-color: #111;
+      position: sticky;
+      top: 0;
+      z-index: 2;
     }
 
     th, td {
-      padding: 12px;
+      padding: 14px;
       border-bottom: 1px solid #444;
       text-align: left;
     }
@@ -189,11 +210,16 @@
       color: #ddd;
     }
 
+    tbody tr:hover {
+      background-color: #333;
+    }
+
     .status {
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 6px 12px;
+      border-radius: 20px;
       font-size: 13px;
       font-weight: bold;
+      display: inline-block;
     }
 
     .status.low {
@@ -208,3 +234,5 @@
   </style>
 </body>
 </html>
+
+

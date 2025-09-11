@@ -9,7 +9,7 @@
   <div>
     <h2>Inventory</h2>
     <div class="nav">  
-      <a href="<?= site_url('inventory/dashboard') ?>">🏠 Dashboard</a>    
+      <a href="<?= site_url('inventory') ?>">🏠 Dashboard</a>        
       <a href="<?= site_url('inventory/add-stock') ?>">➕ Add Stock</a>
       <a href="<?= site_url('inventory/edit-stock') ?>">✏️ Edit Stock</a>
       <a href="<?= site_url('inventory/stock-list') ?>">📋 Stock List</a>

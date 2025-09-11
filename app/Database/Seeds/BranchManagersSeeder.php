@@ -17,6 +17,7 @@ class BranchManagersSeeder extends Seeder
                 'branch_name' => 'Main Branch',
                 'created_at'  => date('Y-m-d H:i:s'),
             ]
+            
         ];
 
         $this->db->table('branch_managers')->insertBatch($data);

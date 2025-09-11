@@ -276,6 +276,8 @@ window.addEventListener("load", loadStockFromLocal);
     box-sizing: border-box;
     background-color: #c9c9c9;
     border-radius: 0 20px 20px 0;
+    border: 1px solid black;
+
 }
 
 .sidebar h2 {
@@ -296,6 +298,8 @@ window.addEventListener("load", loadStockFromLocal);
     background-color: #494949;
     border-radius: 20px;
     transition: 0.3s;
+    border: 2px solid black;
+
 }
 
 .sidebar a:hover {
@@ -324,6 +328,8 @@ window.addEventListener("load", loadStockFromLocal);
     color: #000;
     background-color: #b6b6b6;
     border-radius: 20px;
+    border: 1px solid black;
+
 }
 
 .header a {
@@ -334,6 +340,8 @@ window.addEventListener("load", loadStockFromLocal);
     border-radius: 20px;
     text-decoration: none;
     transition: 0.3s;
+    border: 1px solid black;
+
 }
 
 .header a:hover {
@@ -346,6 +354,8 @@ window.addEventListener("load", loadStockFromLocal);
     background-color: #fff;
     border-radius: 20px;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid black;
+
 }
 
 .table-container h3 {

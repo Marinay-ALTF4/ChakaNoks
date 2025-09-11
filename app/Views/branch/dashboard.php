@@ -10,27 +10,30 @@
 
 <div class="sidebar">
     <h2>BRANCH MANAGER</h2>
-    <a href="<?= site_url('branch/dashboard') ?>">Dashboard</a>
-    <a href="#">Monitor Inventory</a>
-    <a href="#">Create Purchase Request</a>
-    <a href="#">Approve Transfers</a>
-    <a href="<?= site_url('logout') ?>" class="logout">Logout</a>
+    <a href="<?= site_url('branch/dashboard') ?>">🏠 Dashboard</a>
+    <a href="<?= site_url('branch/monitor-inventory') ?>">📦 Monitor Inventory</a>
+    <a href="<?= site_url('branch/purchase-request') ?>">🛒 Create Purchase Request</a>
+    <a href="<?= site_url('branch/approve-transfers') ?>">🔄 Approve Transfers</a>
+    <a href="<?= site_url('logout') ?>" class="logout">🚪 Logout</a>
 </div>
 
 <div class="main">
-    <h1>Welcome, Branch Manager</h1>
+    <h1>Welcome, <?= esc(session()->get('username')) ?>!</h1>
     <div class="cards">
         <div class="card">
             <h3>📦 Monitor Inventory</h3>
             <p>Check stock levels and track shortages.</p>
+            <a href="<?= site_url('branch/monitor-inventory') ?>">View Inventory</a>
         </div>
         <div class="card">
             <h3>🛒 Purchase Requests</h3>
             <p>Create and submit purchase requests to Admin.</p>
+            <a href="<?= site_url('branch/purchase-request') ?>">Create Request</a>
         </div>
         <div class="card">
             <h3>🔄 Intra-Branch Transfers</h3>
             <p>Approve transfer requests between branches.</p>
+            <a href="<?= site_url('branch/approve-transfers') ?>">View Transfers</a>
         </div>
     </div>
 </div>
@@ -53,6 +56,7 @@ body {
   color:white; text-decoration:none;
   margin:10px; border-radius:8px;
   background:#444;
+  transition: all 0.2s ease;
 }
 .sidebar a:hover { background:#111; }
 .sidebar a.logout { background:#e74c3c; position:absolute; bottom:20px; width:80%; left:10%; }
@@ -65,6 +69,16 @@ body {
 .card {
   flex:1; background:white; padding:20px;
   border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+.card a {
+  display:inline-block;
+  margin-top:10px;
+  color:#007bff;
+  text-decoration:none;
+  font-weight:bold;
+}
+.card a:hover {
+  text-decoration:underline;
 }
 </style>
 

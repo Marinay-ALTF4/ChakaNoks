@@ -4,7 +4,7 @@ namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
 
-class BranchManagerSeeder extends Seeder
+class BranchManagersSeeder extends Seeder
 {
     public function run()
     {

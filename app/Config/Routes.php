@@ -16,6 +16,12 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     $routes->get('Central_AD', 'Admin::dashboard');                     // Main admin dashboard
     $routes->get('Central_AD/other-branches', 'Admin::otherBranches');  // View branches
     $routes->get('Central_AD/request_stock', 'Admin::request_stock');   // Request stock page
+    $routes->get('suppliers', 'Admin::suppliers');
+$routes->get('orders', 'Admin::orders');
+$routes->get('franchising', 'Admin::franchising');
+$routes->get('reports', 'Admin::reports');
+$routes->get('Central_AD/settings', 'Admin::settings');
+
 });
 
 // 🔹 Branch Manager Dashboard & Features

@@ -91,6 +91,46 @@ class Admin extends Controller
 
         return view('managers/inventory_AD');
     }
+    public function suppliers()
+{
+    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+        return redirect()->to('/');
+    }
+    return view('managers/suppliers');
+}
+
+public function orders()
+{
+    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+        return redirect()->to('/');
+    }
+    return view('managers/orders');
+}
+
+public function franchising()
+{
+    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+        return redirect()->to('/');
+    }
+    return view('managers/franchising');
+}
+
+public function reports()
+{
+    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+        return redirect()->to('/');
+    }
+    return view('managers/reports');
+}
+
+public function settings()
+{
+    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+        return redirect()->to('/');
+    }
+    return view('managers/settings');
+}
+
 
     // ✅ Branch Manager dashboard
     public function branchDashboard()

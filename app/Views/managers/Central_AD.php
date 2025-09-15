@@ -12,12 +12,12 @@
     <h2>Welcome, <?= session()->get('username') ?></h2>
     <a href="<?= base_url('dashboard') ?>" class="active">DASHBOARD</a>
     <a href="<?= base_url('admin/inventory') ?>">INVENTORY</a>
-    <a href="#">SUPPLIERS</a>
-    <a href="#">ORDERS</a>
-    <a href="#">FRANCHISING</a>
-    <a href="#">REPORTS</a>
-    <a href="#">SETTINGS</a>
-    <a href="<?= base_url('logout') ?>" class="logout">Logout</a>
+<a href="<?= site_url('Central_AD/suppliers') ?>">SUPPLIERS</a>
+<a href="<?= site_url('Central_AD/orders') ?>">ORDERS</a>
+<a href="<?= site_url('Central_AD/franchising') ?>">FRANCHISING</a>
+<a href="<?= site_url('Central_AD/reports') ?>">REPORTS</a>
+<a href="<?= site_url('Central_AD/settings') ?>">SETTINGS</a>
+<a href="<?= base_url('logout') ?>" class="logout">Logout</a>
 </div>
 
 <div class="main">

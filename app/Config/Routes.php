@@ -13,16 +13,18 @@ $routes->post('loginAuth', 'Admin::loginAuth');    // Login POST
 
 // 🔹 Admin Dashboard & Features
 $routes->group('', ['filter' => 'auth'], function($routes) {
-    $routes->get('Central_AD', 'Admin::dashboard');                     // Main admin dashboard
-    $routes->get('Central_AD/other-branches', 'Admin::otherBranches');  // View branches
-    $routes->get('Central_AD/request_stock', 'Admin::request_stock');   // Request stock page
-    $routes->get('suppliers', 'Admin::suppliers');
-$routes->get('orders', 'Admin::orders');
-$routes->get('franchising', 'Admin::franchising');
-$routes->get('reports', 'Admin::reports');
-$routes->get('Central_AD/settings', 'Admin::settings');
+    $routes->get('Central_AD', 'Admin::dashboard');                     
+    $routes->get('Central_AD/other-branches', 'Admin::otherBranches');  
+    $routes->get('Central_AD/request_stock', 'Admin::request_stock');   
 
+    // 🔹 Fix: add Central_AD prefix
+    $routes->get('Central_AD/suppliers', 'Admin::suppliers');
+    $routes->get('Central_AD/orders', 'Admin::orders');
+    $routes->get('Central_AD/franchising', 'Admin::franchising');
+    $routes->get('Central_AD/reports', 'Admin::reports');
+    $routes->get('Central_AD/settings', 'Admin::settings');
 });
+
 
 // 🔹 Branch Manager Dashboard & Features
 $routes->group('branch', ['filter' => 'auth'], function($routes) {

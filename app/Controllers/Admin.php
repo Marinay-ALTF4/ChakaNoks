@@ -91,46 +91,32 @@ class Admin extends Controller
 
         return view('managers/inventory_AD');
     }
-    public function suppliers()
+   
+public function suppliers()
 {
-    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
-        return redirect()->to('/');
-    }
-    return view('managers/suppliers');
+    return view('managers/suppliers'); // looks for app/Views/managers/suppliers.php
 }
 
-public function orders()
-{
-    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
-        return redirect()->to('/');
-    }
-    return view('managers/orders');
-}
 
-public function franchising()
-{
-    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
-        return redirect()->to('/');
+    public function orders()
+    {
+        return view('managers/orders');
     }
-    return view('managers/franchising');
-}
 
-public function reports()
-{
-    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
-        return redirect()->to('/');
+    public function franchising()
+    {
+        return view('managers/franchising');
     }
-    return view('managers/reports');
-}
 
-public function settings()
-{
-    if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
-        return redirect()->to('/');
+    public function reports()
+    {
+        return view('managers/reports');
     }
-    return view('managers/settings');
-}
 
+    public function settings()
+    {
+        return view('managers/settings');
+    }
 
     // ✅ Branch Manager dashboard
     public function branchDashboard()

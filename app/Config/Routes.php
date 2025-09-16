@@ -15,14 +15,16 @@ $routes->post('loginAuth', 'Admin::loginAuth');    // Login POST
 $routes->group('', ['filter' => 'auth'], function($routes) {
     $routes->get('Central_AD', 'Admin::dashboard');                     
     $routes->get('Central_AD/other-branches', 'Admin::otherBranches');  
-    $routes->get('Central_AD/request_stock', 'Admin::request_stock');   
+    $routes->get('Central_AD/request_stock', 'Admin::request_stock');
+    
 
-    // 🔹 Fix: add Central_AD prefix
-    $routes->get('Central_AD/suppliers', 'Admin::suppliers');
-    $routes->get('Central_AD/orders', 'Admin::orders');
-    $routes->get('Central_AD/franchising', 'Admin::franchising');
-    $routes->get('Central_AD/reports', 'Admin::reports');
-    $routes->get('Central_AD/settings', 'Admin::settings');
+  $routes->get('Central_AD/dashboard', 'Central_AD::dashboard');
+    $routes->get('Central_AD/inventory', 'Central_AD::inventory');
+    $routes->get('Central_AD/suppliers', 'Central_AD::suppliers');
+    $routes->get('Central_AD/orders', 'Central_AD::orders');
+    $routes->get('Central_AD/franchising', 'Central_AD::franchising');
+    $routes->get('Central_AD/reports', 'Central_AD::reports');
+    $routes->get('Central_AD/settings', 'Central_AD::settings');
 });
 
 

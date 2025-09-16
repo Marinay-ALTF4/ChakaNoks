@@ -1,38 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Franchising Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-        body {
-            background: #f8fbff;
-        }
-        .page-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
-        .status-badge {
-            border-radius: 8px;
-            padding: 4px 8px;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-        .active { background-color: #d4edda; color: #155724; }
-        .inactive { background-color: #f8d7da; color: #721c24; }
-    </style>
-</head>
-<body>
+<?= $this->extend('layout') ?>
 
+<?= $this->section('title') ?>Franchising<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
 <div class="container mt-4">
     <h3>Franchising Management</h3>
 
-    <div class="page-card">
+    <!-- Franchise Directory Card -->
+    <div class="page-card bg-white p-4 rounded shadow-sm mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mb-0">Franchise Directory</h5>
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addFranchiseModal">
@@ -94,7 +69,7 @@
     </div>
 
     <!-- Notes Section -->
-    <div class="page-card">
+    <div class="page-card bg-white p-4 rounded shadow-sm">
         <h5>Notes</h5>
         <p>Regularly check on inactive franchises and provide support to help them resume operations.</p>
     </div>
@@ -140,6 +115,13 @@
     </div>
 </div>
 
+<style>
+    .page-card { border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .status-badge { border-radius: 8px; padding: 4px 8px; font-size: 0.9rem; font-weight: bold; }
+    .status-badge.active { background-color: #d4edda; color: #155724; }
+    .status-badge.inactive { background-color: #f8d7da; color: #721c24; }
+</style>
+
 <script>
     const searchInput = document.getElementById('searchInput');
     const statusFilter = document.getElementById('statusFilter');
@@ -160,7 +142,6 @@
     searchInput.addEventListener('keyup', filterFranchises);
     statusFilter.addEventListener('change', filterFranchises);
 
-    // Handle adding new franchise (just updates table dynamically)
     document.getElementById('addFranchiseForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -185,13 +166,8 @@
         `;
 
         tableBody.appendChild(newRow);
-
-        // Reset form and close modal
         this.reset();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addFranchiseModal'));
-        modal.hide();
+        bootstrap.Modal.getInstance(document.getElementById('addFranchiseModal')).hide();
     });
 </script>
-
-</body>
-</html>
+<?= $this->endSection() ?>

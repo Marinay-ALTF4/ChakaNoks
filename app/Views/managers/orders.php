@@ -1,33 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: #f8fbff;
-        }
-        .page-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
-        .status-badge {
-            border-radius: 8px;
-            padding: 4px 8px;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-        .pending { background-color: #fff3cd; color: #856404; }
-        .completed { background-color: #d4edda; color: #155724; }
-        .cancelled { background-color: #f8d7da; color: #721c24; }
-    </style>
-</head>
-<body>
+<?= $this->extend('layout') ?>
+
+<?= $this->section('title') ?>Orders<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
 
 <div class="container mt-4">
     <h3>Order Management</h3>
@@ -134,5 +109,4 @@
     statusFilter.addEventListener('change', filterOrders);
 </script>
 
-</body>
-</html>
+<?= $this->endSection() ?>

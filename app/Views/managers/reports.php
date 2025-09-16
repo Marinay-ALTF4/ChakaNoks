@@ -1,49 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chart.js for graphs -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            background: #f8fbff;
-        }
-        .page-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
-        .stat-card {
-            text-align: center;
-            padding: 20px;
-            border-radius: 12px;
-            background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: 0.3s;
-        }
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
-        }
-        .stat-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #555;
-        }
-        .stat-value {
-            font-size: 1.6rem;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-    </style>
-</head>
-<body>
+<?= $this->extend('layout') ?>
+
+<?= $this->section('title') ?>Reports Dashboard<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
 
 <div class="container mt-4">
     <h3>Reports Dashboard</h3>
@@ -147,6 +106,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // Sales Trend Line Chart
     const salesCtx = document.getElementById('salesChart');
@@ -196,5 +156,39 @@
     });
 </script>
 
-</body>
-</html>
+<style>
+    body {
+        background: #f8fbff;
+    }
+    .page-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+    .stat-card {
+        text-align: center;
+        padding: 20px;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: 0.3s;
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    }
+    .stat-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #555;
+    }
+    .stat-value {
+        font-size: 1.6rem;
+        font-weight: bold;
+        margin-top: 5px;
+    }
+</style>
+
+<?= $this->endSection() ?>

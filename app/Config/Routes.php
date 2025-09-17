@@ -49,14 +49,30 @@ $routes->group('admin/inventory', ['filter' => 'auth'], function($routes) {
     $routes->get('branches', 'AdminInventory::branchStocks'); // Inventory per branch
 });
 
-// 🔹 Inventory Staff Routes
-$routes->group('inventory', ['filter' => 'auth'], function($routes) {
-    $routes->get('/', 'Inventory::dashboard');
-    $routes->get('add-stock', 'Inventory::addStock');
-    $routes->get('edit-stock', 'Inventory::editStock');
-    $routes->get('stock-list', 'Inventory::stockList');
-    $routes->get('alerts', 'Inventory::alerts');
-});
+// 📦 Inventory routes
+$routes->get('inventory', 'Inventory::dashboard');
+
+// Stock management
+$routes->get('inventory/stock-list', 'Inventory::stockList');
+$routes->get('inventory/add-stock', 'Inventory::addStock');
+$routes->post('inventory/add-stock', 'Inventory::addStock');
+$routes->get('inventory/edit-stock', 'Inventory::editStock');
+$routes->post('inventory/edit-stock', 'Inventory::editStock');
+
+// ✅ Update stock (matches updateStock method)
+$routes->get('inventory/update_stock', 'Inventory::updateStock');
+$routes->post('inventory/update_stock', 'Inventory::updateStock');
+$routes->get('inventory/receive-delivery', 'Inventory::receive_delivery');
+$routes->post('inventory/receive-delivery', 'Inventory::receive_delivery');
+
+
+$routes->get('inventory/report-damage', 'Inventory::report_damage');
+$routes->post('inventory/report-damage', 'Inventory::report_damage');
+
+
+// Alerts
+$routes->get('inventory/alerts', 'Inventory::alerts');
+
 
 // 🔹 Auth & Misc
 $routes->get('logout', 'Admin::logout');

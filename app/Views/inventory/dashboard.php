@@ -5,19 +5,20 @@
   <title>Inventory Dashboard</title>
 </head>
 <body>
-  <div class="sidebar">
-    <div>
-      <h2>Inventory</h2>
-      <div class="nav">  
-        <a href="<?= site_url('inventory') ?>">🏠 Dashboard</a>    
-        <a href="<?= site_url('inventory/add-stock') ?>">➕ Add Stock</a>
-        <a href="<?= site_url('inventory/edit-stock') ?>">✏️ Edit Stock</a>
-        <a href="<?= site_url('inventory/stock-list') ?>">📋 Stock List</a>
-        <a href="<?= site_url('inventory/alerts') ?>">⚠️ Alerts</a>
-      </div>
+<div class="sidebar">
+  <div>
+    <h2>Inventory</h2>
+    <div class="nav">  
+      <a href="<?= site_url('inventory') ?>">🏠 Dashboard</a>    
+      <a href="<?= site_url('inventory/add-stock') ?>">➕ Add Stock</a>
+      <a href="<?= site_url('inventory/edit-stock') ?>">✏️ Edit Stock</a>
+      <a href="<?= site_url('inventory/stock-list') ?>">📋 Stock List</a>
+      <a href="<?= site_url('inventory/alerts') ?>">⚠️ Alerts</a>
     </div>
-    <a href="<?= base_url('logout') ?>" class="logout">Logout</a>
   </div>
+  <a href="<?= base_url('logout') ?>" class="logout">Logout</a>
+</div>
+
 
   <div class="main">
     <div class="header">
@@ -25,43 +26,64 @@
       <span>Welcome, <?= session()->get('username') ?>!</span>
     </div>
     <div class="content">
-      <div class="action-row">
-        <div class="card action-card">
-          <h3>Update Stock Levels</h3>
-          <p>Adjust stock quantities when items are sold or used.</p>
-          <a href="<?= site_url('inventory/update-stock') ?>" class="btn">Update</a>
-        </div>
+      <!-- Action Buttons -->
+<div class="action-row">
+  <div class="card action-card">
+    <h3>Update Stock Levels</h3>
+    <p>Adjust stock quantities when items are sold or used.</p>
+    <a href="<?= site_url('inventory/update_stock') ?>" class="btn">Update</a>
+  </div>
 
-        <div class="card action-card">
-          <h3>Receive Deliveries</h3>
-          <p>Add new items when deliveries are received.</p>
-          <a href="<?= site_url('inventory/receive-delivery') ?>" class="btn">See Deliveries</a>
-        </div>
+  <div class="card action-card">
+    <h3>Receive Deliveries</h3>
+    <p>Add new items when deliveries are received.</p>
+    <a href="<?= site_url('inventory/receive-delivery') ?>" class="btn">See Deliveries</a>
+  </div>
 
-        <div class="card action-card">
-          <h3>Report Damaged/Expired Goods</h3>
-          <p>Mark damaged or expired items and remove them from stock.</p>
-          <a href="<?= site_url('inventory/report-damage') ?>" class="btn">Report</a>
-        </div>
-      </div>
+  <div class="card action-card">
+    <h3>Report Damaged/Expired Goods</h3>
+    <p>Mark damaged or expired items and remove them from stock.</p>
+    <a href="<?= site_url('inventory/report-damage') ?>" class="btn">Report</a>
+  </div>
+</div>
 
+
+      <!-- Stock Overview -->
       <div class="card small-card">
         <h3>Stock Overview</h3>
-        <p>Quick summary of your stock levels and recent changes.</p>
+        <p>Total Items in Stock: <strong><?= $stockCount ?? 0 ?></strong></p>
+        <p>Low Stock Items: <strong><?= $lowStock ?? 0 ?></strong></p>
       </div>
+
+      <!-- Alerts -->
       <div class="card small-card">
         <h3>Alerts</h3>
-        <p>Low stock or expiring items will appear here.</p>
+        <?php if (!empty($lowStock) && $lowStock > 0): ?>
+          <p>⚠️ There are <strong><?= $lowStock ?></strong> low-stock or damaged items.</p>
+          <a href="<?= site_url('inventory/alerts') ?>" class="btn">View Alerts</a>
+        <?php else: ?>
+          <p>No alerts. All stock levels are good.</p>
+        <?php endif; ?>
       </div>
+
+      <!-- Recent Activity -->
       <div class="card small-card">
         <h3>Recent Activity</h3>
-        <p>Latest actions taken in the inventory system.</p>
+        <?php if (!empty($recentItems)): ?>
+          <ul>
+            <?php foreach ($recentItems as $item): ?>
+              <li><?= esc($item['item_name']) ?> (<?= $item['quantity'] ?> units) - <?= $item['updated_at'] ?></li>
+            <?php endforeach; ?>
+          </ul>
+        <?php else: ?>
+          <p>No recent updates yet.</p>
+        <?php endif; ?>
       </div>
     </div>
   </div>
 
   <style>
-    body {
+     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: #1e1e1e;
@@ -216,5 +238,3 @@
   </style>
 </body>
 </html>
-
-

@@ -78,3 +78,12 @@ $routes->get('inventory/alerts', 'Inventory::alerts');
 $routes->get('logout', 'Admin::logout');
 $routes->get('forgot-password', 'Admin::forgotPassword');
 $routes->post('forgot-password', 'Admin::forgotPasswordSubmit');
+
+// sa create ni sa suppliers 
+$routes->get('/suppliers', 'Suppliers::index');
+$routes->get('/suppliers/create', 'Suppliers::create');
+$routes->post('/suppliers/store', 'Suppliers::store');
+$routes->get('/suppliers/edit/(:num)', 'Suppliers::edit/$1');
+$routes->post('/suppliers/update/(:num)', 'Suppliers::update/$1');
+$routes->get('/suppliers/delete/(:num)', 'Suppliers::delete/$1');
+

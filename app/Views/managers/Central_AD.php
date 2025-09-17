@@ -83,7 +83,7 @@ new Chart(ctx, {
     background: white;
     border-radius: 15px;
     padding: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     margin-bottom: 20px;
 }
 </style>

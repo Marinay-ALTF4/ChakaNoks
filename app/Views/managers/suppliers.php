@@ -4,8 +4,12 @@
 
 <h2 class="mb-3">Suppliers</h2>
 
+<?php if (session()->getFlashdata('success')): ?>
+<p class="text-success"><?= session()->getFlashdata('success') ?></p>
+<?php endif; ?>
+
 <div class="mb-2 d-flex justify-content-end">
-    <a href="<?= base_url('suppliers/create') ?>" class="btn btn-success btn-sm">+ Add Supplier</a>
+    <a href="<?= base_url('Central_AD/createsupplier') ?>" class="btn btn-success btn-sm">+ Add Supplier</a>
 </div>
 
 <div class="table-container bg-white p-3 rounded shadow-sm table-responsive">
@@ -38,8 +42,8 @@
                         </span>
                     </td>
                     <td>
-                        <a href="<?= base_url('suppliers/edit/'.$supplier['id']) ?>" class="btn btn-sm btn-primary">Edit</a>
-                        <a href="<?= base_url('suppliers/delete/'.$supplier['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                        <a href="<?= base_url('Central_AD/editsupplier/'.$supplier['id']) ?>" class="btn btn-sm btn-primary">Edit</a>
+                        <a href="<?= base_url('Central_AD/deleteSupplier/'.$supplier['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -58,4 +62,3 @@
 </style>
 
 <?= $this->endSection() ?>
-                

@@ -1,12 +1,15 @@
 <?= $this->extend('layout') ?>
 <?= $this->section('title') ?>Add Supplier<?= $this->endSection() ?>
 <?= $this->section('content') ?>
-<div class="container mt-4">
-    <h2 class="mb-4">Add Supplier</h2>
 
-    <form action="<?= base_url('suppliers/store') ?>" method="post">
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Add Supplier</h2>
+    </div>
+
+    <form action="<?= base_url('Central_AD/storeSupplier') ?>" method="post">
         <div class="mb-3">
-            <label class="form-label">Supplier</label>
+            <label class="form-label">Supplier Name</label>
             <input type="text" name="supplier_name" class="form-control" required>
         </div>
         <div class="mb-3">
@@ -34,7 +37,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Add Supplier</button>
-        <a href="<?= base_url('suppliers') ?>" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
+
 <?= $this->endSection() ?>

@@ -42,7 +42,7 @@
 body {
   margin:0;
   font-family: Arial, sans-serif;
-  background:#f4f6f8;
+  background:#F2BE5C;
 }
 .sidebar {
   position:fixed;

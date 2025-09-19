@@ -13,6 +13,10 @@
 
       <label>Quantity</label>
       <input type="number" name="quantity" placeholder="Enter quantity" required>
+      
+      <label>Type of Goods</label>
+      <input type="text" name="goods" placeholder="Enter Goods" required>
+
 
       <div class="button-group">
         <button type="submit" class="submit-btn">Submit Request</button>

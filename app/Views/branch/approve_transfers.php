@@ -40,10 +40,14 @@
     <?php endforeach; ?>
   </tbody>
 </table>
-
-<div class="back-container">
-  <a class="back-btn" href="<?= site_url('branch/dashboard') ?>">⬅ Back</a>
-</div>
+      <div class="sidebar">
+          <h2>BRANCH MANAGER</h2>
+          <a href="<?= site_url('branch/dashboard') ?>">🏠 Dashboard</a>
+          <a href="<?= site_url('branch/monitor-inventory') ?>">📦 Monitor Inventory</a>
+          <a href="<?= site_url('branch/purchase-request') ?>">🛒 Create Purchase Request</a>
+          <a href="<?= site_url('branch/approve-transfers') ?>">🔄 Approve Transfers</a>
+          <a href="<?= site_url('logout') ?>" class="logout">🚪 Logout</a>
+      </div>
 
 <style>
 body {
@@ -131,26 +135,56 @@ h2 {
   background: #218838;
 }
 
-.back-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 15px;
+.sidebar {
+  position:fixed;
+  left:0;
+  top:0;
+  width:220px;
+  height:100%;
+  background:#333;
+  color:#fff;
+  padding:20px;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
 }
-
-.back-btn {
-  padding: 8px 40px;
-  background: #6c757d;
-  color: #fff;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
+.sidebar h2 {
+  text-align:center;
+  margin:0 0 18px 0;
+  font-size:14px;
+  letter-spacing:0.6px;
+  color: white;
+}
+.sidebar a {
+  display:block;
+  width:100%;
+  box-sizing:border-box;
+  padding:10px 14px;
+  margin:6px 0;
+  color:#fff;
+  text-decoration:none;
+  background:#444;
+  border-radius:8px;
+  transition: transform .12s ease, background .12s ease;
+  text-align:left;
   border: 1px solid black;
-  transition: background 0.2s ease;
 }
-
-.back-btn:hover {
-  background: #5a6268;
+.sidebar a:hover {
+  background:#222;
+  transform: translateY(-2px);
+  text-decoration:none;
+}
+.sidebar a.logout {
+  background:#e74c3c;
+  font-weight:600;
+  padding:12px 14px;
+  margin:12px 0 0 0;
+  margin-top:auto;
+  text-align:center;
+}
+.sidebar a.logout:hover {
+  background:#c0392b;
+  transform: translateY(-3px);
 }
 
 @media (max-width: 768px) {

@@ -13,10 +13,9 @@
 
       <label>Quantity</label>
       <input type="number" name="quantity" placeholder="Enter quantity" required>
-
+      
       <label>Type of Goods</label>
-      <input type="text" name="goods" placeholder="Type of Goods" required>
-
+      <input type="text" name="goods" placeholder="Enter Goods" required>
 
       <div class="button-group">
         <button type="submit" class="submit-btn">Submit Request</button>
@@ -38,7 +37,14 @@
 <div class="back-container">
   <a href="<?= site_url('branch/dashboard') ?>" class="back-btn">⬅ Back</a>
 </div>
-
+        <div class="sidebar">
+            <h2>BRANCH MANAGER</h2>
+            <a href="<?= site_url('branch/dashboard') ?>">🏠 Dashboard</a>
+            <a href="<?= site_url('branch/monitor-inventory') ?>">📦 Monitor Inventory</a>
+            <a href="<?= site_url('branch/purchase-request') ?>">🛒 Create Purchase Request</a>
+            <a href="<?= site_url('branch/approve-transfers') ?>">🔄 Approve Transfers</a>
+            <a href="<?= site_url('logout') ?>" class="logout">🚪 Logout</a>
+        </div>
 <style>
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
@@ -183,6 +189,58 @@ input:focus {
 .info-box ul {
   margin: 0 0 10px 18px;
   padding: 0;
+}
+
+.sidebar {
+  position:fixed;
+  left:0;
+  top:0;
+  width:220px;
+  height:100%;
+  background:#333;
+  color:#fff;
+  padding:20px;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+}
+.sidebar h2 {
+  text-align:center;
+  margin:0 0 18px 0;
+  font-size:14px;
+  letter-spacing:0.6px;
+  color: white;
+}
+.sidebar a {
+  display:block;
+  width:100%;
+  box-sizing:border-box;
+  padding:10px 14px;
+  margin:6px 0;
+  color:#fff;
+  text-decoration:none;
+  background:#444;
+  border-radius:8px;
+  transition: transform .12s ease, background .12s ease;
+  text-align:left;
+  border: 1px solid black;
+}
+.sidebar a:hover {
+  background:#222;
+  transform: translateY(-2px);
+  text-decoration:none;
+}
+.sidebar a.logout {
+  background:#e74c3c;
+  font-weight:600;
+  padding:12px 14px;
+  margin:12px 0 0 0;
+  margin-top:auto;
+  text-align:center;
+}
+.sidebar a.logout:hover {
+  background:#c0392b;
+  transform: translateY(-3px);
 }
 
 @media (max-width: 768px) {

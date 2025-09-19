@@ -34,7 +34,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #ececec;
+    background:linear-gradient(to bottom, #BF6B04, #A63F03);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -42,7 +42,7 @@ body {
 }
 
 .login-container {
-    background: rgb(223, 223, 223);
+    background:linear-gradient(to bottom, #f2a61aff, #d6a03aff);
     padding: 40px;
     border-radius: 20px;
     width: 350px;
@@ -78,12 +78,12 @@ body {
     border-radius: 20px;
     font-weight: bold;
     cursor: pointer;
-    background-color: #3498db;
+    background-color: #715f05ff;
     color: white;
 }
 
 .btn:hover {
-    background-color: #2980b9;
+    background-color: #8b7637ff;
 }
 
 .back-link {
@@ -91,6 +91,7 @@ body {
     margin-top: 20px;
     color: #2c3e50;
     text-decoration: none;
+    font-weight: bold;
 }
 
 .back-link:hover {

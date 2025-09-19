@@ -30,6 +30,7 @@
 </body>
 </html>
 
+<style>
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -111,3 +112,4 @@ body {
 .btn-primary:hover {
     background-color: #2980b9;
 }
+</style>

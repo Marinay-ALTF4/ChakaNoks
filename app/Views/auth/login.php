@@ -40,17 +40,19 @@
     </body>
     </html>
 
-    <style> body {
+    <style> 
+    
+    body {
         margin: 0;
         font-family: Arial, sans-serif;
-        background-color: #ececec;
+        background:linear-gradient(to bottom, #BF6B04, #A63F03);
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
     }
     .login-container {
-        background: rgb(223, 223, 223);
+        background:linear-gradient(to bottom, #f2a61aff, #d6a03aff);
         padding: 40px;
         border-radius: 20px;
         box-shadow: 0 3px 8px rgba(0,0,0,0.1);
@@ -71,6 +73,7 @@
         margin-bottom: 6px;
         color: #34495e;
         font-size: 14px;
+        font-weight: bold;
     }
     .form-group input {
         width: 90%;
@@ -90,18 +93,18 @@
         transition: 0.3s;
     }
     .btn-primary {
-        background-color: #3498db;
+        background-color: #715f05ff;
         color: white;
     }
     .btn-primary:hover {
-        background-color: #2980b9;
+        background-color: #8b7637ff;
     }
     .forgot {
         margin-top: 15px;
         font-size: 14px;
     }
     .forgot a {
-        color: #3498db;
+        color: #000000ff;
         text-decoration: none;
     }
     .forgot a:hover {

@@ -7,13 +7,16 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // 🔹 Authentication & Admin routes
-$routes->get('/', 'Auth::login');                 // Homepage → login form
-$routes->get('/login', 'Auth::login');             // /login → login form
-$routes->post('/loginAuth', 'Auth::loginAuth');   // Login POST
+$routes->get('/', 'Admin::login');                 // Homepage → login form
+$routes->get('/login', 'Admin::login');            // /login → login form
+$routes->post('/loginAuth', 'Admin::loginAuth');   // Login POST
 
 
 // 🔹 Admin Dashboard & Features
 $routes->group('', ['filter' => 'auth'], function($routes) {
+    // Unified role-aware dashboard
+    $routes->get('dashboard', 'Dashboard::index');
+
     $routes->get('Central_AD', 'Admin::dashboard');                     
     $routes->get('Central_AD/other-branches', 'Admin::otherBranches');  
     $routes->get('Central_AD/request_stock', 'Admin::request_stock');

@@ -39,14 +39,8 @@ class Admin extends Controller
                     'role'      => $user->role // admin, inventory, branch_manager
                 ]);
 
-                // ✅ Redirect based on role
-                if ($user->role === 'admin') {
-                    return redirect()->to('/Central_AD');
-                } elseif ($user->role === 'inventory') {
-                    return redirect()->to('/inventory');
-                } elseif ($user->role === 'branch_manager') {
-                    return redirect()->to('/branch/dashboard');
-                }
+                // ✅ Unified redirect
+                return redirect()->to('/dashboard');
             }
 
             return redirect()->back()->with('error', '❌ Invalid password!');

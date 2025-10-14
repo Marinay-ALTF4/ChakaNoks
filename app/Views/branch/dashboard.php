@@ -1,4 +1,6 @@
-<?= $this->include('template/header') ?>  
+<?= $this->extend('Layout') ?>
+
+<?= $this->section('content') ?>
     <h1>Welcome, <?= esc(session()->get('username')) ?>!</h1>
     <div class="cards">
         <div class="card">
@@ -17,5 +19,4 @@
             <a href="<?= site_url('branch/approve-transfers') ?>">View Transfers</a>
         </div>
     </div>
-</div>
-<?= $this->include('template/footer') ?>
+<?= $this->endSection() ?>

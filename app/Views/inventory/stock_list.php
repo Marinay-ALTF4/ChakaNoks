@@ -1,34 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Stock List</title>
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-</head>
-<body>
-<div class="sidebar">
-  <div>
-    <h2>Inventory</h2>
-    <div class="nav">  
-      <a href="<?= site_url('inventory') ?>">🏠 Dashboard</a>       
-      <a href="<?= site_url('inventory/add-stock') ?>">➕ Add Stock</a>
-      <a href="<?= site_url('inventory/stock-list') ?>" class="active">📋 Stock List</a>
-      <a href="<?= site_url('inventory/alerts') ?>">⚠️ Alerts</a>
-    </div>
-  </div>
-  <a href="<?= base_url('logout') ?>" class="logout">Logout</a>
+<?= $this->extend('Layout') ?>
+
+<?= $this->section('content') ?>
+
+<div class="page-header mb-3">
+  <h1 class="h4">Stock List</h1>
+  <span>Welcome, <?= esc(session()->get('username')) ?>!</span>
 </div>
 
-<div class="main">
-  <div class="header">
-    <h1>Stock List</h1>
-    <span>Welcome, <?= session()->get('username') ?>!</span>
-  </div>
-  <div class="content">
-    <div class="card">
-      <p>Here you will see the list of all inventory items (branch-based).</p>
-      
-      <table>
+<div class="content">
+  <div class="card">
+    <p>Here you will see the list of all inventory items (branch-based).</p>
+
+    <div class="table-responsive">
+      <table class="table table-striped">
         <thead>
           <tr>
             <th>Item ID</th>
@@ -91,151 +75,15 @@
     });
   });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #1e1e1e;
-    color: #f5f5f5;
-    display: flex;
-    height: 100vh;
-  }
-  .sidebar {
-    width: 240px;
-    background-color: #111;
-    padding: 20px 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .sidebar h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #fff;
-    font-size: 22px;
-  }
-  .nav {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .nav a {
-    display: block;
-    background-color: #2a2a2a;
-    padding: 15px;
-    border-radius: 8px;
-    color: #ccc;
-    text-decoration: none;
-    font-size: 15px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-  }
-  .nav a:hover, .nav a.active {
-    background-color: #444;
-    color: #fff;
-    transform: translateY(-3px);
-  }
-  .logout {
-    display: block;
-    text-align: center;
-    background-color: #2a2a2a;
-    padding: 12px;
-    margin-top: 20px;
-    color: #f44336;
-    font-weight: bold;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-  }
-  .logout:hover {
-    background-color: #444;
-    transform: translateY(-3px);
-  }
-  .main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  .header {
-    background-color: #111;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #333;
-  }
-  .header h1 {
-    margin: 0;
-    font-size: 20px;
-  }
-  .content {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-  }
-  .card {
-    background-color: #2a2a2a;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-  }
-  thead {
-    background-color: #111;
-  }
-  th, td {
-    padding: 12px;
-    border-bottom: 1px solid #444;
-    text-align: center; 
-    vertical-align: middle;
-  }
-  th {
-    color: #fff;
-    font-weight: bold;
-  }
-  td {
-    color: #ddd;
-  }
-  td:first-child, td:nth-child(2) {
-    text-align: left; 
-  }
-  .btn {
-    display: inline-block;
-    padding: 6px 12px;
-    background-color: #444;
-    border-radius: 6px;
-    text-decoration: none;
-    color: #fff;
-    transition: 0.3s ease;
-    font-size: 14px;
-  }
-  .btn:hover {
-    background-color: #666;
-    transform: translateY(-2px);
-  }
-  .barcode-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-  .barcode {
-    width: 130px;
-    height: 50px;
-  }
-  .barcode-container span {
-    font-size: 12px;
-    color: #fff;
-  }
+  /* Page-specific styles only */
+  .content { padding: 16px; }
+  .barcode { width: 130px; height: 50px; }
+  .barcode-container { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .btn { display: inline-block; padding: 6px 12px; background: #0d6efd; color: #fff; border-radius: 6px; text-decoration: none; }
+  .btn:hover { background: #0b5ed7; }
 </style>
-</body>
-</html>
 
-
+<?= $this->endSection() ?>

@@ -1,3 +1,7 @@
+<?= $this->extend('Layout') ?>
+
+<?= $this->section('content') ?>
+
 <h2>🛒 Create Purchase Request</h2>
 
 <?php if (session()->getFlashdata('success')): ?>
@@ -32,31 +36,13 @@
     </ul>
     <p><strong>Tip:</strong> Check the inventory before making a request to avoid duplicates.</p>
   </div>
-</div>
+ </div>
 
-<div class="back-container">
+ <div class="back-container">
   <a href="<?= site_url('branch/dashboard') ?>" class="back-btn">⬅ Back</a>
-</div>
-        <div class="sidebar">
-            <h2>BRANCH MANAGER</h2>
-            <a href="<?= site_url('branch/dashboard') ?>">🏠 Dashboard</a>
-            <a href="<?= site_url('branch/monitor-inventory') ?>">📦 Monitor Inventory</a>
-            <a href="<?= site_url('branch/purchase-request') ?>">🛒 Create Purchase Request</a>
-            <a href="<?= site_url('branch/approve-transfers') ?>">🔄 Approve Transfers</a>
-            <a href="<?= site_url('logout') ?>" class="logout">🚪 Logout</a>
-        </div>
+ </div>
 <style>
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  background:#f4f6f8;
-  color:#333;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  padding: 20px;
-}
+/* Page-specific styles only. Do not override global layout. */
 
 h2 {
   margin-bottom: 20px;
@@ -191,57 +177,7 @@ input:focus {
   padding: 0;
 }
 
-.sidebar {
-  position:fixed;
-  left:0;
-  top:0;
-  width:220px;
-  height:100%;
-  background:#333;
-  color:#fff;
-  padding:20px;
-  box-sizing:border-box;
-  display:flex;
-  flex-direction:column;
-}
-.sidebar h2 {
-  text-align:center;
-  margin:0 0 18px 0;
-  font-size:14px;
-  letter-spacing:0.6px;
-  color: white;
-}
-.sidebar a {
-  display:block;
-  width:100%;
-  box-sizing:border-box;
-  padding:10px 14px;
-  margin:6px 0;
-  color:#fff;
-  text-decoration:none;
-  background:#444;
-  border-radius:8px;
-  transition: transform .12s ease, background .12s ease;
-  text-align:left;
-  border: 1px solid black;
-}
-.sidebar a:hover {
-  background:#222;
-  transform: translateY(-2px);
-  text-decoration:none;
-}
-.sidebar a.logout {
-  background:#e74c3c;
-  font-weight:600;
-  padding:12px 14px;
-  margin:12px 0 0 0;
-  margin-top:auto;
-  text-align:center;
-}
-.sidebar a.logout:hover {
-  background:#c0392b;
-  transform: translateY(-3px);
-}
+/* Removed duplicate sidebar styles to use the shared layout */
 
 @media (max-width: 768px) {
   .layout {
@@ -254,4 +190,6 @@ input:focus {
     width: 100%;
   }
 }
+
+<?= $this->endSection() ?>
 </style>

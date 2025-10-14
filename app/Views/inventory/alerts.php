@@ -11,7 +11,6 @@
       <div class="nav">  
         <a href="<?= site_url('inventory') ?>">🏠 Dashboard</a>        
         <a href="<?= site_url('inventory/add-stock') ?>">➕ Add Stock</a>
-        <a href="<?= site_url('inventory/edit-stock') ?>">✏️ Edit Stock</a>
         <a href="<?= site_url('inventory/stock-list') ?>">📋 Stock List</a>
         <a href="<?= site_url('inventory/alerts') ?>" class="active">⚠️ Alerts</a>
       </div>

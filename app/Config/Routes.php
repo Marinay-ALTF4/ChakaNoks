@@ -7,9 +7,10 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // 🔹 Authentication & Admin routes
-$routes->get('/', 'Admin::login');                 // Homepage → login form
-$routes->get('login', 'Admin::login');             // /login → login form
-$routes->post('loginAuth', 'Admin::loginAuth');    // Login POST
+$routes->get('/', 'Auth::login');                 // Homepage → login form
+$routes->get('/login', 'Auth::login');             // /login → login form
+$routes->post('/loginAuth', 'Auth::loginAuth');   // Login POST
+
 
 // 🔹 Admin Dashboard & Features
 $routes->group('', ['filter' => 'auth'], function($routes) {
@@ -26,7 +27,6 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     $routes->get('Central_AD/reports', 'Central_AD::reports');
     $routes->get('Central_AD/settings', 'Central_AD::settings');
 });
-
 
 // 🔹 Branch Manager Dashboard & Features
 $routes->group('branch', ['filter' => 'auth'], function($routes) {

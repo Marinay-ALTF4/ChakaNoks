@@ -3,7 +3,7 @@
 <?= $this->section('title') ?>Central Admin Dashboard<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-
+<body>
 <div class="container mt-4">
     <h3>Central Admin Dashboard</h3>
 
@@ -25,7 +25,7 @@
             </a>
         </div>
     </div>
-
+</body>
     <!-- Chart Section -->
     <div class="page-card">
         <h5>📊 Branch Sales</h5>
@@ -61,6 +61,10 @@ new Chart(ctx, {
 </script>
 
 <style>
+
+body{
+    background-color: blue;
+}
 .dashboard-card {
     display: block;
     background-color: #d6d6d6;

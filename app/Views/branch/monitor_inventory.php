@@ -44,7 +44,7 @@ h2 {
   font-size: 22px;
   font-weight: bold;
   color:#222;
-  margin-left: 13%;
+  margin-left: 15%;
 }
 
 .inventory-container {
@@ -53,7 +53,7 @@ h2 {
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   border: 1px solid black;
-  margin-left: 13%;
+  margin-left: 15%;
 }
 
 .inventory-table {

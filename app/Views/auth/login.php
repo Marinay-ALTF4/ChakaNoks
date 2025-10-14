@@ -9,7 +9,7 @@
 
     <div class="login-container active">
     
-    <img src="<?= base_url('image\537943935_790163170374967_5997074592581386061_n.jpg') ?>" alt="Logo" class="logo">
+    <img src="<?= base_url('public/image/537943935_790163170374967_5997074592581386061_n.jpg') ?>" alt="Logo" class="logo">
 
     <h2>Central Admin Login</h2>
 
@@ -42,38 +42,96 @@
 
     <style> 
     
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background:linear-gradient(to bottom, #BF6B04, #A63F03);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-    .login-container {
-        background:linear-gradient(to bottom, #f2a61aff, #d6a03aff);
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-        width: 350px;
-        text-align: center;
-        border: 2px solid #00000052;
-    }
-    .login-container h2 {
-        color: #2c3e50;
-        margin-bottom: 20px;
-    }
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to top, #e7ca93ff, #eeb769ff); 
+}
+
+
+.login-container {
+    background-color: #e9ddc7ff;
+    padding: 40px;
+    width: 350px;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+.login-container h2 {
+    margin-bottom: 20px;
+    color: #000000ff;
+    font-size: 22px;
+    text-align: center;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.login-container input:focus {
+    border-color: #060605ff;
+    outline:auto;
+    box-shadow: 0 0 5px rgba(255, 152, 0, 0.6);
+}
+
+
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    background:linear-gradient(to bottom,  #ff9800,  #c68c36ff);
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 8px;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-container button:hover {
+    background: #e68900;
+}
+
+
+.login-container a {
+    display: block;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #ff9800;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.login-container a:hover {
+    text-decoration: underline;
+}  
     .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 2px;
         text-align: left;
     }
     .form-group label {
         display: block;
-        margin-bottom: 6px;
-        color: #34495e;
+        color: #000000ff;
         font-size: 14px;
         font-weight: bold;
+        margin-top: 5px;
     }
     .form-group input {
         width: 90%;
@@ -102,6 +160,8 @@
     .forgot {
         margin-top: 15px;
         font-size: 14px;
+        text-align: center;
+        font-weight: bold;
     }
     .forgot a {
         color: #000000ff;
@@ -114,6 +174,7 @@
     width: 150px;          
     margin-bottom: 15px;   
     border-radius: 50px;
+    margin-left: 20%;
 }
 
     </style>

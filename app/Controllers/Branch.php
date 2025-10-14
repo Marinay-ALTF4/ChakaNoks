@@ -18,6 +18,7 @@ class Branch extends Controller
                         ->get()
                         ->getResultArray();
 
+
         return view('branch/dashboard', ['inventory' => $inventory]);
     }
 

@@ -2,79 +2,76 @@
 
 <?= $this->section('content') ?>
 
+<h2>🍗 Approve Transfers</h2>
+
 <div class="tips-box">
-  <h3>ℹ️ Tips</h3>
+  <h3>📘 Tips</h3>
   <ul>
-    <li>Review the transfer details carefully before approving.</li>
-    <li>Only approve transfers with <strong>pending</strong> status.</li>
-    <li>Check the source branch quantity to ensure availability.</li>
-    <li>Once approved, the transfer cannot be undone.</li>
+    <li>Review transfer details carefully before approving.</li>
+    <li>Only approve transfers with <strong>Pending</strong> status.</li>
+    <li>Ensure the source branch has enough stock.</li>
+    <li>Approved transfers cannot be undone.</li>
   </ul>
 </div>
-
-<h2>Approve Transfers</h2>
-
-<?php if (session()->getFlashdata('success')): ?>
-<p class="success-msg"><?= session()->getFlashdata('success') ?></p>
-<?php endif; ?>
-
+<!-- Hawaa lang ang mga hardcoded nga sample kung mag himog nag code nga running -->
 <table class="transfers-table">
   <thead>
     <tr>
       <th>Item</th>
-      <th>Qty</th>
-      <th>From</th>
+      <th>Quantity</th>
+      <th>From Branch</th>
       <th>Status</th>
       <th>Action</th>
     </tr>
   </thead>
   <tbody>
-    <?php foreach ($transfers as $t): ?>
     <tr>
-      <td><?= esc($t['item_name']) ?></td>
-      <td><?= esc($t['quantity']) ?></td>
-      <td><?= esc($t['from_branch']) ?></td>
-      <td><?= esc($t['status']) ?></td>
-      <td>
-        <?php if ($t['status'] == 'pending'): ?>
-        <a class="approve-btn" href="<?= site_url('branch/approve-transfer/'.$t['id']) ?>">Approve</a>
-        <?php endif; ?>
-      </td>
+      <td>Fresh Chicken Breast</td>
+      <td>25 kg</td>
+      <td>Manila Main Branch</td>
+      <td><span class="status pending">Pending</span></td>
+      <td><a class="approve-btn" href="#">Approve</a></td>
     </tr>
-    <?php endforeach; ?>
+    <tr>
+      <td>Frozen Chicken Wings</td>
+      <td>40 kg</td>
+      <td>Cebu Branch</td>
+      <td><span class="status approved">Approved</span></td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Chicken Drumsticks</td>
+      <td>30 kg</td>
+      <td>Davao Branch</td>
+      <td><span class="status pending">Pending</span></td>
+      <td><a class="approve-btn" href="#">Approve</a></td>
+    </tr>
   </tbody>
 </table>
 
 <style>
-/* Page-specific styles only. Do not override global layout. */
-
+/* Title */
 h2 {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 22px;
+  margin: 25px 0 20px;
+  font-size: 24px;
+  font-weight: bold;
   color: #222;
 }
 
-.success-msg {
-  color: #28a745;
-  background: #e9f9ee;
-  border: 1px solid #c3e6cb;
-  padding: 10px 12px;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
+/* Tips box */
 .tips-box {
-  width: 50%;
-  max-width: 380px;
-  background: #f9f9f9;
-  padding: 15px 20px;
+  width: 70%;
+  max-width: 700px;
+  background: #fff;
+  padding: 20px 25px;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  line-height: 1.5;
+  border-radius: 10px;
+  margin: 0 auto 30px;
+  font-size: 15px;
+  line-height: 1.6;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  text-align: left;
 }
 
 .tips-box h3 {
@@ -85,37 +82,69 @@ h2 {
 
 .tips-box ul {
   margin: 0;
-  padding-left: 18px;
+  padding-left: 20px;
 }
 
+/* Table */
 .transfers-table {
-  width: 100%;
-  max-width: 900px;
+  width: 90%;
+  max-width: 950px;
   border-collapse: collapse;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin: 0 auto 25px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.transfers-table th,
+.transfers-table th, 
 .transfers-table td {
-  border: 1px solid #ccc;
-  padding: 10px 12px;
+  border: 1px solid #ddd;
+  padding: 12px;
   text-align: center;
 }
 
 .transfers-table th {
-  background: #007bff;
+  background: #0456ad;
   color: #fff;
-  border: 1px solid black;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 13px;
 }
 
+.transfers-table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+/* Status badges */
+.status {
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.status.pending {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.status.approved {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* Approve button */
 .approve-btn {
-  padding: 5px 12px;
+  padding: 6px 14px;
   background: #28a745;
   color: #fff;
   border-radius: 6px;
   text-decoration: none;
   font-weight: bold;
+  border: 1px solid #1e7e34;
   transition: background 0.2s ease;
 }
 
@@ -123,18 +152,16 @@ h2 {
   background: #218838;
 }
 
-/* Removed duplicate sidebar styles to use the shared layout */
-
+/* Responsive */
 @media (max-width: 768px) {
+  .tips-box {
+    width: 90%;
+  }
   .transfers-table {
     width: 100%;
-    font-size: 14px;
-  }
-
-  .back-btn {
-    padding: 8px 30px;
+    font-size: 13px;
   }
 }
+</style>
 
 <?= $this->endSection() ?>
-</style>

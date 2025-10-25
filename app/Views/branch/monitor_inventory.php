@@ -2,93 +2,130 @@
 
 <?= $this->section('content') ?>
 
-<h2>📦 Monitor Inventory</h2>
+<?php
+// 🐔 Hardcoded chicken inventory sample (hawaa lang ang hardcoded nga sample kung mag butang nag running code)
+$inventory = [
+    ['item_name' => 'Whole Chicken', 'quantity' => 25, 'barcode' => '012345678905', 'expiry_date' => '2025-12-15'],
+    ['item_name' => 'Chicken Wings', 'quantity' => 40, 'barcode' => '036000291452', 'expiry_date' => '2025-11-30'],
+    ['item_name' => 'Chicken Breast Fillet', 'quantity' => 20, 'barcode' => '5000159484695', 'expiry_date' => '2026-01-10'],
+    ['item_name' => 'Frozen Chicken Nuggets', 'quantity' => 50, 'barcode' => '071831008987', 'expiry_date' => '2025-08-05'],
+];
+?>
 
-<div class="inventory-container">
-  <table class="inventory-table">
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th>Qty</th>
-        <th>Barcode</th>
-        <th>Expiry</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach ($inventory as $item): ?>
-      <tr>
-        <td><?= esc($item['item_name']) ?></td>
-        <td><?= esc($item['quantity']) ?></td>
-        <td><?= esc($item['barcode']) ?></td>
-        <td><?= esc($item['expiry_date']) ?></td>
-      </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
-<a href="<?= site_url('branch/dashboard') ?>" class="back-btn">⬅ Back</a>
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+  <h2 class="fw-bold mb-0">
+    <i class="bi bi-egg-fried"></i> Chicken Inventory Monitor
+  </h2>
+  
+</div>
+
+<div class="card shadow-sm border-0 mx-auto inventory-card">
+  <div class="card-body">
+    <?php if (!empty($inventory)): ?>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+          <thead class="table-primary">
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Barcode</th>
+              <th>Expiry Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($inventory as $item): ?>
+              <?php 
+                $isExpired = strtotime($item['expiry_date']) < time();
+                $expiringSoon = strtotime($item['expiry_date']) < strtotime('+15 days') && !$isExpired;
+              ?>
+              <tr>
+                <td class="fw-semibold"><?= esc($item['item_name']) ?></td>
+                <td><span class="badge bg-info text-dark px-3 py-2"><?= esc($item['quantity']) ?></span></td>
+                <td>
+                  <!-- ✅ Generate real barcode using bwip-js API -->
+                  <img 
+                    src="https://bwipjs-api.metafloor.com/?bcid=ean13&text=<?= esc($item['barcode']) ?>&scale=2&height=10" 
+                    alt="Barcode" 
+                    class="barcode-img mb-1"
+                  >
+                  <div class="small text-muted"><?= esc($item['barcode']) ?></div>
+                </td>
+                <td><?= esc($item['expiry_date']) ?></td>
+                <td>
+                  <?php if ($isExpired): ?>
+                    <span class="badge bg-danger">Expired</span>
+                  <?php elseif ($expiringSoon): ?>
+                    <span class="badge bg-warning text-dark">Expiring Soon</span>
+                  <?php else: ?>
+                    <span class="badge bg-success">Fresh</span>
+                  <?php endif; ?>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    <?php else: ?>
+      <p class="text-muted text-center mb-0">No inventory items found.</p>
+    <?php endif; ?>
+  </div>
+</div>
 
 <style>
-/* Page-specific styles only. Do not override global layout. */
-
-h2 {
-  margin-bottom: 20px;
-  font-size: 22px;
-  font-weight: bold;
-  color:#222;
-  margin-left: 15%;
+.page-header {
+  border-bottom: 2px solid #dee2e6;
+  padding-bottom: 10px;
 }
 
-.inventory-container {
-  background: #fff;
-  padding: 20px;
+.inventory-card {
+  max-width: 90%;
+  background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  border: 1px solid black;
-  margin-left: 15%;
+  margin-left: 5%;
 }
 
-.inventory-table {
-  width: 100%;
-  border-collapse: collapse; 
-  font-size: 14px;
+.table {
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.inventory-table th, 
-.inventory-table td {
-  padding: 12px 15px;
-  text-align: left;
-  border: 1px solid #ddd; 
-}
-
-.inventory-table th {
-  background: #0456adff;
-  color: white;
+.table th {
   text-transform: uppercase;
-  letter-spacing: 0.5px;
   font-size: 13px;
-  border: 1px solid black;
+  letter-spacing: 0.5px;
 }
 
-.inventory-table tr:hover {
-  background: #f9f9f9;
+.table td {
+  font-size: 14px;
+  vertical-align: middle;
 }
 
-/* Removed duplicate sidebar styles to use the shared layout */
-.back-btn {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 10px 14px;
-  background: #6c757d;
-  color: #fff;
+.table tbody tr:hover {
+  background-color: #f6f9ff;
+  transition: background 0.3s ease;
+}
+
+.badge {
+  font-size: 12px;
   border-radius: 6px;
-  text-decoration: none;
-  transition: background 0.2s ease;
-  font-weight: bold;
-  border: 1px solid black;
 }
 
-.back-btn:hover {
-  background: #5a6268;
+.barcode-img {
+  width: 130px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
 }
 </style>
 

@@ -17,6 +17,7 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     // Unified role-aware dashboard
     $routes->get('dashboard', 'Dashboard::index');
 
+
     $routes->get('Central_AD', 'Admin::dashboard');                     
     $routes->get('Central_AD/other-branches', 'Admin::otherBranches');  
     $routes->get('Central_AD/request_stock', 'Admin::request_stock');

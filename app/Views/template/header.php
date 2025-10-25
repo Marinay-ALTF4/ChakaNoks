@@ -73,8 +73,8 @@ $role = session()->get('role');
             <a href="<?= site_url('branch/approve-transfers') ?>" class="btn btn-dark w-100">Approve Transfers</a>
         <?php elseif ($role === 'inventory'): ?>
             <a href="<?= site_url('dashboard') ?>" class="btn btn-dark w-100 <?= (uri_string() == 'dashboard') ? 'active' : '' ?>">Dashboard</a>
-            <a href="<?= site_url('inventory/add-stock') ?>" class="btn btn-dark w-100">Add Stock</a>
-            <a href="<?= site_url('inventory/edit-stock') ?>" class="btn btn-dark w-100">Edit Stock</a>
+            <!-- <a href="<?= site_url('inventory/add-stock') ?>" class="btn btn-dark w-100">Add Stock</a> -->
+            <!-- <a href="<?= site_url('inventory/edit-stock') ?>" class="btn btn-dark w-100">Edit Stock</a> -->
             <a href="<?= site_url('inventory/stock-list') ?>" class="btn btn-dark w-100">Stock List</a>
             <a href="<?= site_url('inventory/alerts') ?>" class="btn btn-dark w-100">Alerts</a>
         <?php endif; ?>

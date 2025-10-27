@@ -4,10 +4,6 @@
 
 <h2 class="mb-3">Suppliers</h2>
 
-<?php if (session()->getFlashdata('success')): ?>
-<p class="text-success"><?= session()->getFlashdata('success') ?></p>
-<?php endif; ?>
-
 <div class="mb-2 d-flex justify-content-end">
     <a href="<?= base_url('Central_AD/createsupplier') ?>" class="btn btn-success btn-sm">+ Add Supplier</a>
 </div>

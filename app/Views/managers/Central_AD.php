@@ -9,19 +9,24 @@
 
     <!-- Top Cards -->
     <div class="row g-3 mb-3">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <a href="<?= site_url('Central_AD/branch-overview') ?>" class="dashboard-card">
                 Branch Overview
             </a>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <a href="<?= site_url('Central_AD/branch-performance') ?>" class="dashboard-card">
                 Branch Performance
             </a>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <a href="<?= site_url('Central_AD/user-roles') ?>" class="dashboard-card">
                 User & Role Management
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="<?= site_url('Central_AD/suppliers') ?>" class="dashboard-card">
+                Suppliers Management
             </a>
         </div>
     </div>

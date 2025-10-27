@@ -71,12 +71,41 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+                <?php if (!empty($inventory) && is_array($inventory)): ?>
+                    <?php foreach ($inventory as $item): ?>
+                    <tr>
+                        <td><?= esc($item['item_name']) ?></td>
+                        <td><?= esc($item['type'] ?? 'N/A') ?></td>
+                        <td><?= esc($item['quantity']) ?> kg</td>
+                        <td><?= esc($item['updated_at']) ?></td>
+                        <td>
+                            <?php if (!empty($item['barcode'])): ?>
+                                <div class="barcode-container">
+                                    <svg id="barcode-<?= $item['id'] ?>" class="barcode-svg"></svg>
+                                    <small class="barcode-text"><?= esc($item['barcode']) ?></small>
+                                </div>
+                            <?php else: ?>
+                                <span class="text-muted">No barcode</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <a href="<?= base_url('Central_AD/editItem/'.$item['id']) ?>" class="btn btn-sm btn-primary">Edit</a>
+                            <a href="<?= base_url('Central_AD/deleteItem/'.$item['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="6" class="text-center">No items found</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
         </table>
 
         <div class="d-flex justify-content-between mt-3">
             <button class="btn btn-success" onclick="printReport()">Print Report</button>
-            <button class="btn btn-dark" onclick="openForm()">+ Add/Edit Item</button>
+            <a href="<?= base_url('Central_AD/addItem') ?>" class="btn btn-dark">+ Add Item</a>
         </div>
     </div>
 </div>
@@ -98,8 +127,59 @@
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script>
-/* ✅ Keep all your previous JavaScript code here for add/update/delete items,
-   localStorage saving, barcode generation, search filtering, printing */
+// Generate barcodes for all items
+document.addEventListener('DOMContentLoaded', function() {
+    <?php if (!empty($inventory) && is_array($inventory)): ?>
+        <?php foreach ($inventory as $item): ?>
+            <?php if (!empty($item['barcode'])): ?>
+                JsBarcode("#barcode-<?= $item['id'] ?>", "<?= esc($item['barcode']) ?>", {
+                    format: "CODE128",
+                    width: 2,
+                    height: 50,
+                    displayValue: false,
+                    margin: 0,
+                    background: "#ffffff",
+                    lineColor: "#000000"
+                });
+            <?php endif; ?>
+        <?php endforeach; ?>
+    <?php endif; ?>
+});
+
+// Search functionality
+document.getElementById('searchBox').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const tableRows = document.querySelectorAll('#stockTable tbody tr');
+    
+    tableRows.forEach(row => {
+        const itemName = row.cells[0].textContent.toLowerCase();
+        const itemType = row.cells[1].textContent.toLowerCase();
+        
+        if (itemName.includes(searchTerm) || itemType.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+
+// Print report function
+function printReport() {
+    window.print();
+}
+
+// Auto-generate barcode function
+function generateBarcode(data, elementId) {
+    JsBarcode(elementId, data, {
+        format: "CODE128",
+        width: 2,
+        height: 50,
+        displayValue: false,
+        margin: 0,
+        background: "#ffffff",
+        lineColor: "#000000"
+    });
+}
 </script>
 
 <style>
@@ -132,6 +212,28 @@
     width: 130px !important;
     height: 50px !important;
     margin: 5px auto;
+}
+
+.barcode-container {
+    text-align: center;
+    padding: 5px;
+}
+
+.barcode-svg {
+    width: 120px;
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    background: white;
+}
+
+.barcode-text {
+    display: block;
+    font-family: monospace;
+    font-size: 10px;
+    color: #666;
+    margin-top: 2px;
 }
 </style>
 

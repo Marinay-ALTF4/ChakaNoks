@@ -4,14 +4,17 @@ namespace App\Controllers;
 
 use CodeIgniter\Controller;
 use App\Models\SupplierModel;
+use App\Models\InventoryModel;
 
 class Central_AD extends Controller
 {
     protected $supplierModel;
+    protected $inventoryModel;
 
     public function __construct()
     {
         $this->supplierModel = new SupplierModel();
+        $this->inventoryModel = new InventoryModel();
     }
 
     // Dashboard
@@ -23,7 +26,8 @@ class Central_AD extends Controller
     // Inventory
     public function inventory()
     {
-        return view('managers/inventory_AD');
+        $data['inventory'] = $this->inventoryModel->findAll();
+        return view('managers/inventory_AD', $data);
     }
 
     // List Suppliers
@@ -147,6 +151,104 @@ class Central_AD extends Controller
             $this->supplierModel->delete($id);
         }
         return redirect()->to('/Central_AD/suppliers')->with('success', 'Supplier deleted successfully.');
+    }
+
+    //  INVENTORY MANAGEMENT METHODS 
+    // Add Item view
+    public function addItem()
+    {
+        return view('managers/add_item');
+    }
+
+    // Store Item
+    public function storeItem()
+    {
+        // Validation rules
+        $rules = [
+            'item_name' => 'required|min_length[2]|max_length[255]',
+            'type'       => 'required|min_length[2]|max_length[100]',
+            'quantity'   => 'required|integer|greater_than[0]',
+            'barcode'    => 'permit_empty|max_length[100]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Generate barcode if not provided
+        $barcode = $this->request->getPost('barcode');
+        if (empty($barcode)) {
+            $barcode = 'BC' . time() . rand(100, 999);
+        }
+
+        // Get form data
+        $data = [
+            'item_name' => $this->request->getPost('item_name'),
+            'type'       => $this->request->getPost('type'),
+            'quantity'   => $this->request->getPost('quantity'),
+            'barcode'    => $barcode,
+            'status'     => 'available'
+        ];
+
+        // Insert new item
+        if ($this->inventoryModel->insert($data)) {
+            return redirect()->to(base_url('Central_AD/inventory'))->with('success', 'Item added successfully.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Failed to add item. Please try again.');
+        }
+    }
+
+    // Edit Item view
+    public function editItem($id = null)
+    {
+        $data['item'] = $this->inventoryModel->find($id);
+
+        if (!$data['item']) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('Item not found');
+        }
+
+        return view('managers/edit_item', $data);
+    }
+
+    // Update Item
+    public function updateItem($id)
+    {
+        // Validation rules
+        $rules = [
+            'item_name' => 'required|min_length[2]|max_length[255]',
+            'type'       => 'required|min_length[2]|max_length[100]',
+            'quantity'   => 'required|integer|greater_than[0]',
+            'barcode'    => 'permit_empty|max_length[100]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Get form data
+        $data = [
+            'item_name' => $this->request->getPost('item_name'),
+            'type'       => $this->request->getPost('type'),
+            'quantity'   => $this->request->getPost('quantity'),
+            'barcode'    => $this->request->getPost('barcode'),
+            'status'     => $this->request->getPost('status')
+        ];
+
+        // Update the item
+        if ($this->inventoryModel->update($id, $data)) {
+            return redirect()->to(base_url('Central_AD/inventory'))->with('success', 'Item updated successfully.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Failed to update item. Please try again.');
+        }
+    }
+
+    // Delete Item
+    public function deleteItem($id = null)
+    {
+        if ($id !== null) {
+            $this->inventoryModel->delete($id);
+        }
+        return redirect()->to('/Central_AD/inventory')->with('success', 'Item deleted successfully.');
     }
 
     // Other pages

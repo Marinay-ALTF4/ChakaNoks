@@ -91,4 +91,11 @@ $routes->get('/Central_AD/editsupplier/(:num)', 'Central_AD::editSupplier/$1');
 $routes->post('/Central_AD/updateSupplier/(:num)', 'Central_AD::updateSupplier/$1');
 $routes->get('/Central_AD/deleteSupplier/(:num)', 'Central_AD::deleteSupplier/$1');
 
+// Central Admin Inventory Management
+$routes->get('/Central_AD/addItem', 'Central_AD::addItem');
+$routes->post('/Central_AD/storeItem', 'Central_AD::storeItem');
+$routes->get('/Central_AD/editItem/(:num)', 'Central_AD::editItem/$1');
+$routes->post('/Central_AD/updateItem/(:num)', 'Central_AD::updateItem/$1');
+$routes->get('/Central_AD/deleteItem/(:num)', 'Central_AD::deleteItem/$1');
+
 

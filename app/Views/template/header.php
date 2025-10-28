@@ -60,23 +60,23 @@ $role = session()->get('role');
 
         <?php if ($role === 'admin'): ?>
             <a href="<?= base_url('dashboard') ?>" class="btn btn-dark w-100 <?= (uri_string() == 'dashboard') ? 'active' : '' ?>">Dashboard</a>
-            <a href="<?= base_url('Central_AD/inventory') ?>" class="btn btn-dark w-100">Inventory</a>
-            <a href="<?= base_url('Central_AD/suppliers') ?>" class="btn btn-dark w-100">Suppliers</a>
-            <a href="<?= base_url('Central_AD/orders') ?>" class="btn btn-dark w-100">Orders</a>
-            <a href="<?= base_url('Central_AD/franchising') ?>" class="btn btn-dark w-100">Franchising</a>
-            <a href="<?= base_url('Central_AD/reports') ?>" class="btn btn-dark w-100">Reports</a>
-            <a href="<?= base_url('Central_AD/settings') ?>" class="btn btn-dark w-100">Settings</a>
+            <a href="<?= base_url('Central_AD/inventory') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/inventory') !== false) ? 'active' : '' ?>">Inventory</a>
+            <a href="<?= base_url('Central_AD/suppliers') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/supplier') !== false) ? 'active' : '' ?>">Suppliers</a>
+            <a href="<?= base_url('Central_AD/orders') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/orders') !== false) ? 'active' : '' ?>">Orders</a>
+            <a href="<?= base_url('Central_AD/franchising') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/franchising') !== false) ? 'active' : '' ?>">Franchising</a>
+            <a href="<?= base_url('Central_AD/reports') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/reports') !== false) ? 'active' : '' ?>">Reports</a>
+            <a href="<?= base_url('Central_AD/settings') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/settings') !== false) ? 'active' : '' ?>">Settings</a>
         <?php elseif ($role === 'branch_manager'): ?>
             <a href="<?= site_url('dashboard') ?>" class="btn btn-dark w-100 <?= (uri_string() == 'dashboard') ? 'active' : '' ?>">Dashboard</a>
-            <a href="<?= site_url('branch/monitor-inventory') ?>" class="btn btn-dark w-100">Monitor Inventory</a>
-            <a href="<?= site_url('branch/purchase-request') ?>" class="btn btn-dark w-100">Create Purchase Request</a>
-            <a href="<?= site_url('branch/approve-transfers') ?>" class="btn btn-dark w-100">Approve Transfers</a>
+            <a href="<?= site_url('branch/monitor-inventory') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'branch/monitor-inventory') !== false) ? 'active' : '' ?>">Monitor Inventory</a>
+            <a href="<?= site_url('branch/purchase-request') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'branch/purchase-request') !== false) ? 'active' : '' ?>">Create Purchase Request</a>
+            <a href="<?= site_url('branch/approve-transfers') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'branch/approve-transfers') !== false) ? 'active' : '' ?>">Approve Transfers</a>
         <?php elseif ($role === 'inventory'): ?>
             <a href="<?= site_url('dashboard') ?>" class="btn btn-dark w-100 <?= (uri_string() == 'dashboard') ? 'active' : '' ?>">Dashboard</a>
             <!-- <a href="<?= site_url('inventory/add-stock') ?>" class="btn btn-dark w-100">Add Stock</a> -->
             <!-- <a href="<?= site_url('inventory/edit-stock') ?>" class="btn btn-dark w-100">Edit Stock</a> -->
-            <a href="<?= site_url('inventory/stock-list') ?>" class="btn btn-dark w-100">Stock List</a>
-            <a href="<?= site_url('inventory/alerts') ?>" class="btn btn-dark w-100">Alerts</a>
+            <a href="<?= site_url('inventory/stock-list') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'inventory/stock-list') !== false) ? 'active' : '' ?>">Stock List</a>
+            <a href="<?= site_url('inventory/alerts') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'inventory/alerts') !== false) ? 'active' : '' ?>">Alerts</a>
         <?php endif; ?>
 
         <a href="<?= base_url('logout') ?>" class="btn btn-danger w-100">Logout</a>

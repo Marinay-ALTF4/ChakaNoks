@@ -98,4 +98,11 @@ $routes->get('/Central_AD/editItem/(:num)', 'Central_AD::editItem/$1');
 $routes->post('/Central_AD/updateItem/(:num)', 'Central_AD::updateItem/$1');
 $routes->get('/Central_AD/deleteItem/(:num)', 'Central_AD::deleteItem/$1');
 
+// Central Admin Franchising Management
+$routes->get('/Central_AD/addFranchise', 'Central_AD::addFranchise');
+$routes->post('/Central_AD/storeFranchise', 'Central_AD::storeFranchise');
+$routes->get('/Central_AD/editFranchise/(:num)', 'Central_AD::editFranchise/$1');
+$routes->post('/Central_AD/updateFranchise/(:num)', 'Central_AD::updateFranchise/$1');
+$routes->get('/Central_AD/deleteFranchise/(:num)', 'Central_AD::deleteFranchise/$1');
+
 

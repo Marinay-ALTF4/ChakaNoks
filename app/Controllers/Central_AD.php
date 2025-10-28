@@ -5,16 +5,19 @@ namespace App\Controllers;
 use CodeIgniter\Controller;
 use App\Models\SupplierModel;
 use App\Models\InventoryModel;
+use App\Models\FranchiseModel;
 
 class Central_AD extends Controller
 {
     protected $supplierModel;
     protected $inventoryModel;
+    protected $franchiseModel;
 
     public function __construct()
     {
         $this->supplierModel = new SupplierModel();
         $this->inventoryModel = new InventoryModel();
+        $this->franchiseModel = new FranchiseModel();
     }
 
     // Dashboard
@@ -253,7 +256,111 @@ class Central_AD extends Controller
 
     // Other pages
     public function orders() { return view('managers/orders'); }
-    public function franchising() { return view('managers/franchising'); }
+    
+    // FRANCHISING MANAGEMENT METHODS
+    public function franchising()
+    {
+        $data['franchises'] = $this->franchiseModel->orderBy('created_at', 'DESC')->findAll();
+        return view('managers/franchising', $data);
+    }
+
+    // Add Franchise view
+    public function addFranchise()
+    {
+        return view('managers/createfranchise');
+    }
+
+    // Store Franchise
+    public function storeFranchise()
+    {
+        $franchiseModel = new \App\Models\FranchiseModel();
+
+        // Validation rules
+        $rules = [
+            'franchise_name' => 'required|min_length[2]|max_length[100]',
+            'owner'          => 'required|min_length[2]|max_length[100]',
+            'location'       => 'required|min_length[2]|max_length[100]',
+            'contact'        => 'required|min_length[5]|max_length[100]',
+            'status'         => 'required|in_list[active,inactive]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Get form data
+        $data = [
+            'franchise_name' => $this->request->getPost('franchise_name'),
+            'owner'          => $this->request->getPost('owner'),
+            'location'       => $this->request->getPost('location'),
+            'contact'        => $this->request->getPost('contact'),
+            'status'         => $this->request->getPost('status')
+        ];
+
+        // Insert new franchise
+        if ($franchiseModel->insert($data)) {
+            return redirect()->to(base_url('Central_AD/franchising'))->with('success', 'Franchise added successfully.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Failed to add franchise. Please try again.');
+        }
+    }
+
+    // Edit Franchise view
+    public function editFranchise($id = null)
+    {
+        $data['franchise'] = $this->franchiseModel->find($id);
+
+        if (!$data['franchise']) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('Franchise not found');
+        }
+
+        return view('managers/editfranchise', $data);
+    }
+
+    // Update Franchise
+    public function updateFranchise($id)
+    {
+        $franchiseModel = new \App\Models\FranchiseModel();
+
+        // Validation rules
+        $rules = [
+            'franchise_name' => 'required|min_length[2]|max_length[100]',
+            'owner'          => 'required|min_length[2]|max_length[100]',
+            'location'       => 'required|min_length[2]|max_length[100]',
+            'contact'        => 'required|min_length[5]|max_length[100]',
+            'status'         => 'required|in_list[active,inactive]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Get form data
+        $data = [
+            'franchise_name' => $this->request->getPost('franchise_name'),
+            'owner'          => $this->request->getPost('owner'),
+            'location'       => $this->request->getPost('location'),
+            'contact'        => $this->request->getPost('contact'),
+            'status'         => $this->request->getPost('status')
+        ];
+
+        // Update the franchise
+        if ($franchiseModel->update($id, $data)) {
+            return redirect()->to(base_url('Central_AD/franchising'))->with('success', 'Franchise updated successfully.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Failed to update franchise. Please try again.');
+        }
+    }
+
+    // Delete Franchise
+    public function deleteFranchise($id = null)
+    {
+        if ($id !== null) {
+            $this->franchiseModel->delete($id);
+        }
+        return redirect()->to('/Central_AD/franchising')->with('success', 'Franchise deleted successfully.');
+    }
+
     public function reports() { return view('managers/reports'); }
     public function settings() { return view('managers/settings'); }
 }

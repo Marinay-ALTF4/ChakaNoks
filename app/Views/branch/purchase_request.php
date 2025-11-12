@@ -21,6 +21,16 @@
         <h5 class="fw-bold text-dark mb-3"><i class="bi bi-pencil-square"></i> Request Details</h5>
         <form method="post" class="needs-validation" novalidate>
           <div class="mb-3">
+            <label class="form-label fw-semibold">Supplier</label>
+            <select name="supplier_id" class="form-select" required>
+              <option value="" disabled selected>Select Supplier</option>
+              <?php foreach ($suppliers as $supplier): ?>
+                <option value="<?= $supplier['id'] ?>"><?= $supplier['supplier_name'] ?> (<?= $supplier['branch_serve'] ?>)</option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="mb-3">
             <label class="form-label fw-semibold">Item Name</label>
             <input type="text" name="item_name" class="form-control" placeholder="e.g., Whole Chicken" required>
           </div>
@@ -28,6 +38,11 @@
           <div class="mb-3">
             <label class="form-label fw-semibold">Quantity</label>
             <input type="number" name="quantity" class="form-control" placeholder="Enter quantity" required min="1">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Unit Price</label>
+            <input type="number" name="unit_price" class="form-control" placeholder="Enter unit price" required min="0" step="0.01">
           </div>
 
           <div class="mb-4">

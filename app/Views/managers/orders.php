@@ -10,7 +10,7 @@
     <div class="page-card">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mb-0">Orders</h5>
-            <button class="btn btn-success">+ Create Order</button>
+            <a href="<?= base_url('Central_AD/createOrder') ?>" class="btn btn-success">+ Create Order</a>
         </div>
 
         <!-- Search and Filter -->
@@ -42,42 +42,28 @@
                 </tr>
             </thead>
             <tbody>
-                <tr data-status="pending">
-                    <td>#ORD-001</td>
-                    <td>Main Branch</td>
-                    <td>Chicken Thigh</td>
-                    <td>50 kg</td>
-                    <td><span class="status-badge pending">Pending</span></td>
-                    <td>2025-09-15</td>
-                    <td>
-                        <button class="btn btn-sm btn-primary">View</button>
-                        <button class="btn btn-sm btn-warning">Edit</button>
-                    </td>
-                </tr>
-                <tr data-status="completed">
-                    <td>#ORD-002</td>
-                    <td>Branch A</td>
-                    <td>Chicken Wing</td>
-                    <td>20 kg</td>
-                    <td><span class="status-badge completed">Completed</span></td>
-                    <td>2025-09-14</td>
-                    <td>
-                        <button class="btn btn-sm btn-primary">View</button>
-                        <button class="btn btn-sm btn-warning">Edit</button>
-                    </td>
-                </tr>
-                <tr data-status="cancelled">
-                    <td>#ORD-003</td>
-                    <td>Branch B</td>
-                    <td>Chicken Breast</td>
-                    <td>30 kg</td>
-                    <td><span class="status-badge cancelled">Cancelled</span></td>
-                    <td>2025-09-13</td>
-                    <td>
-                        <button class="btn btn-sm btn-primary">View</button>
-                        <button class="btn btn-sm btn-warning">Edit</button>
-                    </td>
-                </tr>
+                <?php if (!empty($orders)): ?>
+                    <?php foreach ($orders as $order): ?>
+                        <tr data-status="<?= $order['status'] ?>">
+                            <td>#ORD-<?= str_pad($order['id'], 3, '0', STR_PAD_LEFT) ?></td>
+                            <td><?= $order['branch_name'] ?></td>
+                            <td><?= $order['item_name'] ?></td>
+                            <td><?= $order['quantity'] ?> units</td>
+                            <td><span class="status-badge <?= $order['status'] ?>"><?= ucfirst($order['status']) ?></span></td>
+                            <td><?= date('Y-m-d', strtotime($order['order_date'])) ?></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary">View</button>
+                                <?php if ($order['status'] === 'pending'): ?>
+                                    <button class="btn btn-sm btn-success">Approve</button>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">No orders found. <a href="<?= base_url('Central_AD/createOrder') ?>">Create your first order</a></td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>

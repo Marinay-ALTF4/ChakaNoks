@@ -94,24 +94,30 @@ class Inventory extends BaseController
         return view('inventory/update_stock', $data);  
     }  
 
-    // 📦 Receive deliveries (new items come in)  
+    // 📦 Receive deliveries (new items come in)
     public function receive_delivery()
-  
-    {  
-        $inventoryModel = new InventoryModel();  
 
-        if ($this->request->getMethod() === 'post') {  
-            $inventoryModel->save([  
-                'item_name' => $this->request->getPost('item_name'),  
-                'quantity'  => $this->request->getPost('quantity'),  
-                'status'    => 'available',  
-                'updated_at'=> date('Y-m-d H:i:s')  
-            ]);  
-            return redirect()->to(site_url('inventory'))->with('success', 'Delivery added!');  
-        }  
+    {
+        $inventoryModel = new InventoryModel();
 
-        return view('inventory/receive_delivery');  
-    }  
+        if ($this->request->getMethod() === 'post') {
+            $data = [
+                'item_name' => $this->request->getPost('item_name'),
+                'quantity'  => $this->request->getPost('quantity'),
+                'type'      => $this->request->getPost('type'),
+                'barcode'   => $this->request->getPost('barcode') ?: $inventoryModel->generateBarcode(),
+                'expiry_date' => $this->request->getPost('expiry_date'),
+                'branch_id' => $this->request->getPost('branch_id'),
+                'status'    => 'available',
+                'updated_at'=> date('Y-m-d H:i:s')
+            ];
+
+            $inventoryModel->save($data);
+            return redirect()->to(site_url('inventory'))->with('success', 'Delivery added!');
+        }
+
+        return view('inventory/receive_delivery');
+    }
 
     // 🛑 Report damaged/expired goods  
     public function report_damage()  

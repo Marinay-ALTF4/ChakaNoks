@@ -34,11 +34,11 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
 
 // 🔹 Branch Manager Dashboard & Features
 $routes->group('branch', ['filter' => 'auth'], function($routes) {
-    $routes->get('dashboard', 'Branch::dashboard');                   // Branch manager main dashboard
-    $routes->get('monitor-inventory', 'Branch::monitorInventory');    // Monitor inventory
-    $routes->match(['get', 'post'], 'purchase-request', 'Branch::purchaseRequest'); // Create purchase request
-    $routes->get('approve-transfers', 'Branch::approveTransfers');    // Approve transfer requests
-    $routes->get('approve-transfer/(:num)', 'Branch::approveTransferAction/$1'); // Approve transfer by ID
+    $routes->get('dashboard', 'BranchManager::dashboard');                   // Branch manager main dashboard
+    $routes->get('monitor-inventory', 'BranchManager::inventory');    // Monitor inventory
+    $routes->match(['get', 'post'], 'purchase-request', 'BranchManager::createPurchaseRequest'); // Create purchase request
+    $routes->get('approve-transfers', 'BranchManager::approveTransfer');    // Approve transfer requests
+    $routes->get('approve-transfer/(:num)', 'BranchManager::approveTransfer/$1'); // Approve transfer by ID
 });
 
 // 🔹 Admin Inventory Management
@@ -98,11 +98,43 @@ $routes->get('/Central_AD/editItem/(:num)', 'Central_AD::editItem/$1');
 $routes->post('/Central_AD/updateItem/(:num)', 'Central_AD::updateItem/$1');
 $routes->get('/Central_AD/deleteItem/(:num)', 'Central_AD::deleteItem/$1');
 
+// Central Admin Order Management
+$routes->get('/Central_AD/createOrder', 'Central_AD::createOrder');
+$routes->post('/Central_AD/storeOrder', 'Central_AD::storeOrder');
+
 // Central Admin Franchising Management
 $routes->get('/Central_AD/addFranchise', 'Central_AD::addFranchise');
 $routes->post('/Central_AD/storeFranchise', 'Central_AD::storeFranchise');
 $routes->get('/Central_AD/editFranchise/(:num)', 'Central_AD::editFranchise/$1');
 $routes->post('/Central_AD/updateFranchise/(:num)', 'Central_AD::updateFranchise/$1');
 $routes->get('/Central_AD/deleteFranchise/(:num)', 'Central_AD::deleteFranchise/$1');
+
+// Logistics routes
+$routes->get('/logistics/dashboard', 'LogisticsController::dashboard');
+$routes->get('/logistics/schedule-delivery', 'LogisticsController::scheduleDelivery');
+$routes->post('/logistics/schedule-delivery', 'LogisticsController::scheduleDelivery');
+$routes->get('/logistics/update-delivery-status/(:num)', 'LogisticsController::updateDeliveryStatus/$1');
+$routes->post('/logistics/update-delivery-status/(:num)', 'LogisticsController::updateDeliveryStatus/$1');
+$routes->get('/logistics/deliveries', 'LogisticsController::deliveries');
+$routes->get('/logistics/optimize-routes', 'LogisticsController::optimizeRoutes');
+$routes->get('/logistics/track-delivery/(:any)', 'LogisticsController::trackDelivery/$1');
+
+// Franchise routes
+$routes->get('/franchise/dashboard', 'FranchiseController::dashboard');
+$routes->get('/franchise/applications', 'FranchiseController::applications');
+$routes->get('/franchise/approve/(:num)', 'FranchiseController::approveApplication/$1');
+$routes->get('/franchise/reject/(:num)', 'FranchiseController::rejectApplication/$1');
+$routes->get('/franchise/allocate-supply/(:num)', 'FranchiseController::allocateSupply/$1');
+$routes->post('/franchise/allocate-supply/(:num)', 'FranchiseController::allocateSupply/$1');
+$routes->get('/franchise/view/(:num)', 'FranchiseController::view/$1');
+$routes->get('/franchise/calculate-royalty/(:num)', 'FranchiseController::calculateRoyalty/$1');
+$routes->post('/franchise/calculate-royalty/(:num)', 'FranchiseController::calculateRoyalty/$1');
+$routes->get('/franchise/allocation-report', 'FranchiseController::allocationReport');
+
+// Alert routes
+$routes->get('/alerts/send-low-stock', 'AlertController::sendLowStockAlerts');
+$routes->get('/alerts/send-expiry', 'AlertController::sendExpiryAlerts');
+$routes->get('/alerts/get', 'AlertController::getAlerts');
+$routes->get('/api/alerts', 'AlertController::apiAlerts');
 
 

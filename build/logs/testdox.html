@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Test Documentation</title>
+        <style>
+            body {
+                text-rendering: optimizeLegibility;
+                font-family: Source SansSerif Pro, Arial, sans-serif;
+                font-variant-ligatures: common-ligatures;
+                font-kerning: normal;
+                margin-left: 2rem;
+                background-color: #fff;
+                color: #000;
+            }
+
+            body > ul > li {
+                font-size: larger;
+            }
+
+            h2 {
+                font-size: larger;
+                text-decoration-line: underline;
+                text-decoration-thickness: 2px;
+                margin: 0;
+                padding: 0.5rem 0;
+            }
+
+            ul {
+                list-style: none;
+                margin: 0 0 2rem;
+                padding: 0 0 0 1rem;
+                text-indent: -1rem;
+            }
+
+            .success:before {
+                color: #4e9a06;
+                content: '✓';
+                padding-right: 0.5rem;
+            }
+
+            .defect {
+                color: #a40000;
+            }
+
+            .defect:before {
+                color: #a40000;
+                content: '✗';
+                padding-right: 0.5rem;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Alert Controller (Tests\AlertController)</h2>
+        <ul>
+            <li class="defect">Send low stock alerts</li>
+            <li class="defect">Send expiry alerts</li>
+            <li class="defect">Get alerts</li>
+            <li class="defect">Api alerts</li>
+        </ul>
+        <h2>Barcode Generator (Tests\BarcodeGenerator)</h2>
+        <ul>
+            <li class="success">Can generate barcode</li>
+            <li class="success">Can validate barcode</li>
+            <li class="success">Can generate q r code data</li>
+            <li class="success">Barcode uniqueness</li>
+        </ul>
+        <h2>Central ADController (Tests\CentralADController)</h2>
+        <ul>
+            <li class="defect">Dashboard</li>
+            <li class="defect">Inventory</li>
+            <li class="defect">Suppliers</li>
+            <li class="defect">Reports</li>
+            <li class="defect">Franchising</li>
+            <li class="defect">Orders</li>
+        </ul>
+        <h2>Example Database</h2>
+        <ul>
+            <li class="defect">Model find all</li>
+            <li class="defect">Soft delete leaves row</li>
+        </ul>
+        <h2>Example Session</h2>
+        <ul>
+            <li class="success">Session simple</li>
+        </ul>
+        <h2>Franchise Controller (Tests\FranchiseController)</h2>
+        <ul>
+            <li class="defect">Dashboard</li>
+            <li class="defect">Applications</li>
+            <li class="defect">Allocation report</li>
+            <li class="defect">View</li>
+            <li class="defect">Approve application</li>
+            <li class="defect">Reject application</li>
+        </ul>
+        <h2>Health</h2>
+        <ul>
+            <li class="success">Is defined app path</li>
+            <li class="success">Base url has been set</li>
+        </ul>
+        <h2>Inventory Model (Tests\InventoryModel)</h2>
+        <ul>
+            <li class="defect">Can create inventory item</li>
+            <li class="defect">Can get low stock items</li>
+            <li class="defect">Can get expired items</li>
+            <li class="defect">Can get expiring soon</li>
+            <li class="defect">Can get alerts</li>
+            <li class="defect">Can update quantity</li>
+            <li class="defect">Can get by barcode</li>
+            <li class="defect">Can get by branch</li>
+        </ul>
+        <h2>Logistics Controller (Tests\LogisticsController)</h2>
+        <ul>
+            <li class="defect">Dashboard</li>
+            <li class="defect">Deliveries</li>
+            <li class="defect">Optimize routes</li>
+            <li class="defect">Schedule delivery</li>
+            <li class="defect">Track delivery</li>
+        </ul>
+        <h2>Purchase Order Model (Tests\PurchaseOrderModel)</h2>
+        <ul>
+            <li class="defect">Can create purchase order</li>
+            <li class="defect">Can get pending orders</li>
+            <li class="defect">Can approve order</li>
+            <li class="defect">Can get orders by branch</li>
+            <li class="defect">Can calculate total price</li>
+        </ul>
+        <h2>Supplier Model (Tests\SupplierModel)</h2>
+        <ul>
+            <li class="defect">Can create supplier</li>
+            <li class="defect">Can get active suppliers</li>
+            <li class="defect">Can get suppliers by branch</li>
+            <li class="defect">Can update status</li>
+            <li class="defect">Can get supplier performance</li>
+        </ul>
+    </body>
+</html>

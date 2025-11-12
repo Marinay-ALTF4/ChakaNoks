@@ -1,0 +1,70 @@
+Alert Controller (Tests\AlertController)
+ [ ] Send low stock alerts
+ [ ] Send expiry alerts
+ [ ] Get alerts
+ [ ] Api alerts
+
+Barcode Generator (Tests\BarcodeGenerator)
+ [x] Can generate barcode
+ [x] Can validate barcode
+ [x] Can generate q r code data
+ [x] Barcode uniqueness
+
+Central ADController (Tests\CentralADController)
+ [ ] Dashboard
+ [ ] Inventory
+ [ ] Suppliers
+ [ ] Reports
+ [ ] Franchising
+ [ ] Orders
+
+Example Database
+ [ ] Model find all
+ [ ] Soft delete leaves row
+
+Example Session
+ [x] Session simple
+
+Franchise Controller (Tests\FranchiseController)
+ [ ] Dashboard
+ [ ] Applications
+ [ ] Allocation report
+ [ ] View
+ [ ] Approve application
+ [ ] Reject application
+
+Health
+ [x] Is defined app path
+ [x] Base url has been set
+
+Inventory Model (Tests\InventoryModel)
+ [ ] Can create inventory item
+ [ ] Can get low stock items
+ [ ] Can get expired items
+ [ ] Can get expiring soon
+ [ ] Can get alerts
+ [ ] Can update quantity
+ [ ] Can get by barcode
+ [ ] Can get by branch
+
+Logistics Controller (Tests\LogisticsController)
+ [ ] Dashboard
+ [ ] Deliveries
+ [ ] Optimize routes
+ [ ] Schedule delivery
+ [ ] Track delivery
+
+Purchase Order Model (Tests\PurchaseOrderModel)
+ [ ] Can create purchase order
+ [ ] Can get pending orders
+ [ ] Can approve order
+ [ ] Can get orders by branch
+ [ ] Can calculate total price
+
+Supplier Model (Tests\SupplierModel)
+ [ ] Can create supplier
+ [ ] Can get active suppliers
+ [ ] Can get suppliers by branch
+ [ ] Can update status
+ [ ] Can get supplier performance
+

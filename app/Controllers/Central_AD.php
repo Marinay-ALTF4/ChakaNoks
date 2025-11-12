@@ -20,11 +20,7 @@ class Central_AD extends Controller
         $this->franchiseModel = new FranchiseModel();
     }
 
-    // Dashboard
-    public function dashboard()
-    {
-        return view('managers/Central_AD');
-    }
+
 
     // Inventory
     public function inventory()
@@ -254,8 +250,75 @@ class Central_AD extends Controller
         return redirect()->to('/Central_AD/inventory')->with('success', 'Item deleted successfully.');
     }
 
-    // Other pages
-    public function orders() { return view('managers/orders'); }
+    // Orders Management
+    public function orders()
+    {
+        $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+        $data['orders'] = $purchaseOrderModel->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
+            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
+            ->join('branches', 'branches.id = purchase_orders.branch_id')
+            ->findAll();
+        return view('managers/orders', $data);
+    }
+
+    // Create Order view
+    public function createOrder()
+    {
+        $branchModel = new \App\Models\BranchModel();
+        $supplierModel = new \App\Models\SupplierModel();
+
+        $data['branches'] = $branchModel->findAll();
+        $data['suppliers'] = $supplierModel->findAll();
+
+        return view('managers/create_order', $data);
+    }
+
+    // Store Order
+    public function storeOrder()
+    {
+        $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+
+        // Validation rules
+        $rules = [
+            'branch_id'   => 'required|integer',
+            'supplier_id' => 'required|integer',
+            'item_name'   => 'required|min_length[2]|max_length[255]',
+            'quantity'    => 'required|integer|greater_than[0]',
+            'unit_price'  => 'required|decimal|greater_than[0]',
+            'order_date'  => 'required|valid_date',
+            'goods_type'  => 'required|min_length[2]|max_length[100]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Calculate total amount
+        $quantity = $this->request->getPost('quantity');
+        $unitPrice = $this->request->getPost('unit_price');
+        $totalAmount = $quantity * $unitPrice;
+
+        // Get form data
+        $data = [
+            'branch_id'   => $this->request->getPost('branch_id'),
+            'supplier_id' => $this->request->getPost('supplier_id'),
+            'item_name'   => $this->request->getPost('item_name'),
+            'quantity'    => $quantity,
+            'unit_price'  => $unitPrice,
+            'total_price' => $totalAmount,
+            'order_date'  => $this->request->getPost('order_date'),
+            'goods_type'  => $this->request->getPost('goods_type'),
+            'notes'       => $this->request->getPost('notes'),
+            'status'      => 'pending'
+        ];
+
+        // Insert new order
+        if ($purchaseOrderModel->insert($data)) {
+            return redirect()->to(base_url('Central_AD/orders'))->with('success', 'Order created successfully and is pending approval.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Failed to create order. Please try again.');
+        }
+    }
     
     // FRANCHISING MANAGEMENT METHODS
     public function franchising()
@@ -361,6 +424,95 @@ class Central_AD extends Controller
         return redirect()->to('/Central_AD/franchising')->with('success', 'Franchise deleted successfully.');
     }
 
-    public function reports() { return view('managers/reports'); }
+    // Reports
+    public function reports()
+    {
+        $inventoryModel = new \App\Models\InventoryModel();
+        $supplierModel = new \App\Models\SupplierModel();
+        $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+
+        $data['totalInventory'] = $inventoryModel->countAll();
+        $data['lowStockItems'] = $inventoryModel->getLowStockItems();
+        $data['expiredItems'] = $inventoryModel->getExpiredItems();
+        $data['supplierPerformance'] = [];
+
+        $suppliers = $supplierModel->findAll();
+        foreach ($suppliers as $supplier) {
+            $data['supplierPerformance'][] = array_merge(
+                ['supplier_name' => $supplier['supplier_name']],
+                $supplierModel->getSupplierPerformance($supplier['id'])
+            );
+        }
+
+        $data['purchaseOrders'] = $purchaseOrderModel->findAll();
+
+        return view('managers/reports', $data);
+    }
+
     public function settings() { return view('managers/settings'); }
+
+    // Dashboard with consolidated reports
+    public function dashboard()
+    {
+        $inventoryModel = new \App\Models\InventoryModel();
+        $supplierModel = new \App\Models\SupplierModel();
+        $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+        $branchModel = new \App\Models\BranchModel();
+        $franchiseModel = new \App\Models\FranchiseModel();
+
+        $data['totalInventory'] = $inventoryModel->countAll();
+        $data['lowStockAlerts'] = count($inventoryModel->getLowStockItems());
+        $data['expiredItems'] = count($inventoryModel->getExpiredItems());
+        $data['totalSuppliers'] = $supplierModel->countAll();
+        $data['pendingOrders'] = $purchaseOrderModel->where('status', 'pending')->countAllResults();
+        $data['activeBranches'] = $branchModel->where('status', 'active')->countAllResults();
+        $data['activeFranchises'] = $franchiseModel->where('status', 'active')->countAllResults();
+
+        // Recent activities (simplified)
+        $data['recentOrders'] = $purchaseOrderModel->orderBy('created_at', 'DESC')->limit(5)->findAll();
+
+        // Pending purchase orders with details for approval
+        $data['pendingPurchaseOrders'] = $purchaseOrderModel->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
+            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
+            ->join('branches', 'branches.id = purchase_orders.branch_id')
+            ->where('purchase_orders.status', 'pending')
+            ->findAll();
+
+        // Inventory alerts
+        $alerts = $inventoryModel->getAlerts();
+        $data['inventoryAlerts'] = array_merge(
+            array_slice($alerts['low_stock'], 0, 5),
+            array_slice($alerts['expiring_soon'], 0, 3)
+        );
+
+        return view('managers/Central_AD', $data);
+    }
+
+    // Approve Purchase Order
+    public function approvePurchaseOrder($orderId)
+    {
+        $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+        $logModel = new \App\Models\LogModel();
+
+        $purchaseOrderModel->approveOrder($orderId, session()->get('user_id'));
+
+        // Log the action
+        $logModel->logAction(session()->get('user_id'), 'approved_purchase_order', "Approved purchase order #$orderId");
+
+        return redirect()->to('/Central_AD/dashboard')->with('success', 'Purchase order approved');
+    }
+
+    // Reject Purchase Order
+    public function rejectPurchaseOrder($orderId)
+    {
+        $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+        $logModel = new \App\Models\LogModel();
+
+        $purchaseOrderModel->update($orderId, ['status' => 'rejected']);
+
+        // Log the action
+        $logModel->logAction(session()->get('user_id'), 'rejected_purchase_order', "Rejected purchase order #$orderId");
+
+        return redirect()->to('/Central_AD/dashboard')->with('success', 'Purchase order rejected');
+    }
 }

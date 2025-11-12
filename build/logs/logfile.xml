@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="C:\xampp\htdocs\ChakaNoks\phpunit.xml.dist" tests="48" assertions="13" errors="41" failures="0" skipped="0" time="1.118434">
+    <testsuite name="App" tests="48" assertions="13" errors="41" failures="0" skipped="0" time="1.118434">
+      <testsuite name="Tests\AlertControllerTest" file="C:\xampp\htdocs\ChakaNoks\tests\AlertControllerTest.php" tests="4" assertions="0" errors="4" failures="0" skipped="0" time="0.044488">
+        <testcase name="testSendLowStockAlerts" file="C:\xampp\htdocs\ChakaNoks\tests\AlertControllerTest.php" line="10" class="Tests\AlertControllerTest" classname="Tests.AlertControllerTest" assertions="0" time="0.038522">
+          <error type="Error">Tests\AlertControllerTest::testSendLowStockAlerts&#13;
+Error: Call to undefined method Tests\AlertControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\AlertControllerTest.php:12</error>
+        </testcase>
+        <testcase name="testSendExpiryAlerts" file="C:\xampp\htdocs\ChakaNoks\tests\AlertControllerTest.php" line="23" class="Tests\AlertControllerTest" classname="Tests.AlertControllerTest" assertions="0" time="0.002241">
+          <error type="Error">Tests\AlertControllerTest::testSendExpiryAlerts&#13;
+Error: Call to undefined method Tests\AlertControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\AlertControllerTest.php:25</error>
+        </testcase>
+        <testcase name="testGetAlerts" file="C:\xampp\htdocs\ChakaNoks\tests\AlertControllerTest.php" line="36" class="Tests\AlertControllerTest" classname="Tests.AlertControllerTest" assertions="0" time="0.001061">
+          <error type="Error">Tests\AlertControllerTest::testGetAlerts&#13;
+Error: Call to undefined method Tests\AlertControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\AlertControllerTest.php:38</error>
+        </testcase>
+        <testcase name="testApiAlerts" file="C:\xampp\htdocs\ChakaNoks\tests\AlertControllerTest.php" line="47" class="Tests\AlertControllerTest" classname="Tests.AlertControllerTest" assertions="0" time="0.002663">
+          <error type="Error">Tests\AlertControllerTest::testApiAlerts&#13;
+Error: Call to undefined method Tests\AlertControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\AlertControllerTest.php:49</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\BarcodeGeneratorTest" file="C:\xampp\htdocs\ChakaNoks\tests\BarcodeGeneratorTest.php" tests="4" assertions="9" errors="0" failures="0" skipped="0" time="1.020665">
+        <testcase name="testCanGenerateBarcode" file="C:\xampp\htdocs\ChakaNoks\tests\BarcodeGeneratorTest.php" line="18" class="Tests\BarcodeGeneratorTest" classname="Tests.BarcodeGeneratorTest" assertions="3" time="0.003737"/>
+        <testcase name="testCanValidateBarcode" file="C:\xampp\htdocs\ChakaNoks\tests\BarcodeGeneratorTest.php" line="26" class="Tests\BarcodeGeneratorTest" classname="Tests.BarcodeGeneratorTest" assertions="2" time="0.000681"/>
+        <testcase name="testCanGenerateQRCodeData" file="C:\xampp\htdocs\ChakaNoks\tests\BarcodeGeneratorTest.php" line="35" class="Tests\BarcodeGeneratorTest" classname="Tests.BarcodeGeneratorTest" assertions="3" time="0.002309"/>
+        <testcase name="testBarcodeUniqueness" file="C:\xampp\htdocs\ChakaNoks\tests\BarcodeGeneratorTest.php" line="46" class="Tests\BarcodeGeneratorTest" classname="Tests.BarcodeGeneratorTest" assertions="1" time="1.013937"/>
+      </testsuite>
+      <testsuite name="Tests\CentralADControllerTest" file="C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php" tests="6" assertions="0" errors="6" failures="0" skipped="0" time="0.009954">
+        <testcase name="testDashboard" file="C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php" line="10" class="Tests\CentralADControllerTest" classname="Tests.CentralADControllerTest" assertions="0" time="0.001829">
+          <error type="Error">Tests\CentralADControllerTest::testDashboard&#13;
+Error: Call to undefined method Tests\CentralADControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php:12</error>
+        </testcase>
+        <testcase name="testInventory" file="C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php" line="20" class="Tests\CentralADControllerTest" classname="Tests.CentralADControllerTest" assertions="0" time="0.001621">
+          <error type="Error">Tests\CentralADControllerTest::testInventory&#13;
+Error: Call to undefined method Tests\CentralADControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php:22</error>
+        </testcase>
+        <testcase name="testSuppliers" file="C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php" line="30" class="Tests\CentralADControllerTest" classname="Tests.CentralADControllerTest" assertions="0" time="0.001625">
+          <error type="Error">Tests\CentralADControllerTest::testSuppliers&#13;
+Error: Call to undefined method Tests\CentralADControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php:32</error>
+        </testcase>
+        <testcase name="testReports" file="C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php" line="40" class="Tests\CentralADControllerTest" classname="Tests.CentralADControllerTest" assertions="0" time="0.001612">
+          <error type="Error">Tests\CentralADControllerTest::testReports&#13;
+Error: Call to undefined method Tests\CentralADControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php:42</error>
+        </testcase>
+        <testcase name="testFranchising" file="C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php" line="50" class="Tests\CentralADControllerTest" classname="Tests.CentralADControllerTest" assertions="0" time="0.001612">
+          <error type="Error">Tests\CentralADControllerTest::testFranchising&#13;
+Error: Call to undefined method Tests\CentralADControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php:52</error>
+        </testcase>
+        <testcase name="testOrders" file="C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php" line="60" class="Tests\CentralADControllerTest" classname="Tests.CentralADControllerTest" assertions="0" time="0.001656">
+          <error type="Error">Tests\CentralADControllerTest::testOrders&#13;
+Error: Call to undefined method Tests\CentralADControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\CentralADControllerTest.php:62</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\FranchiseControllerTest" file="C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php" tests="6" assertions="0" errors="6" failures="0" skipped="0" time="0.012216">
+        <testcase name="testDashboard" file="C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php" line="10" class="Tests\FranchiseControllerTest" classname="Tests.FranchiseControllerTest" assertions="0" time="0.002675">
+          <error type="Error">Tests\FranchiseControllerTest::testDashboard&#13;
+Error: Call to undefined method Tests\FranchiseControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php:12</error>
+        </testcase>
+        <testcase name="testApplications" file="C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php" line="20" class="Tests\FranchiseControllerTest" classname="Tests.FranchiseControllerTest" assertions="0" time="0.002187">
+          <error type="Error">Tests\FranchiseControllerTest::testApplications&#13;
+Error: Call to undefined method Tests\FranchiseControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php:22</error>
+        </testcase>
+        <testcase name="testAllocationReport" file="C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php" line="30" class="Tests\FranchiseControllerTest" classname="Tests.FranchiseControllerTest" assertions="0" time="0.001896">
+          <error type="Error">Tests\FranchiseControllerTest::testAllocationReport&#13;
+Error: Call to undefined method Tests\FranchiseControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php:32</error>
+        </testcase>
+        <testcase name="testView" file="C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php" line="40" class="Tests\FranchiseControllerTest" classname="Tests.FranchiseControllerTest" assertions="0" time="0.001816">
+          <error type="Error">Tests\FranchiseControllerTest::testView&#13;
+Error: Call to undefined method Tests\FranchiseControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php:42</error>
+        </testcase>
+        <testcase name="testApproveApplication" file="C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php" line="50" class="Tests\FranchiseControllerTest" classname="Tests.FranchiseControllerTest" assertions="0" time="0.001796">
+          <error type="Error">Tests\FranchiseControllerTest::testApproveApplication&#13;
+Error: Call to undefined method Tests\FranchiseControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php:52</error>
+        </testcase>
+        <testcase name="testRejectApplication" file="C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php" line="60" class="Tests\FranchiseControllerTest" classname="Tests.FranchiseControllerTest" assertions="0" time="0.001845">
+          <error type="Error">Tests\FranchiseControllerTest::testRejectApplication&#13;
+Error: Call to undefined method Tests\FranchiseControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\FranchiseControllerTest.php:62</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\InventoryModelTest" file="C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php" tests="8" assertions="0" errors="8" failures="0" skipped="0" time="0.000000">
+        <testcase name="testCanCreateInventoryItem" file="C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php" line="18" class="Tests\InventoryModelTest" classname="Tests.InventoryModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\InventoryModelTest::testCanCreateInventoryItem&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanGetLowStockItems" file="C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php" line="33" class="Tests\InventoryModelTest" classname="Tests.InventoryModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\InventoryModelTest::testCanGetLowStockItems&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanGetExpiredItems" file="C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php" line="49" class="Tests\InventoryModelTest" classname="Tests.InventoryModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\InventoryModelTest::testCanGetExpiredItems&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanGetExpiringSoon" file="C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php" line="66" class="Tests\InventoryModelTest" classname="Tests.InventoryModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\InventoryModelTest::testCanGetExpiringSoon&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanGetAlerts" file="C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php" line="83" class="Tests\InventoryModelTest" classname="Tests.InventoryModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\InventoryModelTest::testCanGetAlerts&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanUpdateQuantity" file="C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php" line="89" class="Tests\InventoryModelTest" classname="Tests.InventoryModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\InventoryModelTest::testCanUpdateQuantity&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanGetByBarcode" file="C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php" line="106" class="Tests\InventoryModelTest" classname="Tests.InventoryModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\InventoryModelTest::testCanGetByBarcode&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanGetByBranch" file="C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php" line="122" class="Tests\InventoryModelTest" classname="Tests.InventoryModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\InventoryModelTest::testCanGetByBranch&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\InventoryModelTest.php:15</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\LogisticsControllerTest" file="C:\xampp\htdocs\ChakaNoks\tests\LogisticsControllerTest.php" tests="5" assertions="0" errors="5" failures="0" skipped="0" time="0.009958">
+        <testcase name="testDashboard" file="C:\xampp\htdocs\ChakaNoks\tests\LogisticsControllerTest.php" line="10" class="Tests\LogisticsControllerTest" classname="Tests.LogisticsControllerTest" assertions="0" time="0.001389">
+          <error type="Error">Tests\LogisticsControllerTest::testDashboard&#13;
+Error: Call to undefined method Tests\LogisticsControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\LogisticsControllerTest.php:12</error>
+        </testcase>
+        <testcase name="testDeliveries" file="C:\xampp\htdocs\ChakaNoks\tests\LogisticsControllerTest.php" line="20" class="Tests\LogisticsControllerTest" classname="Tests.LogisticsControllerTest" assertions="0" time="0.001480">
+          <error type="Error">Tests\LogisticsControllerTest::testDeliveries&#13;
+Error: Call to undefined method Tests\LogisticsControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\LogisticsControllerTest.php:22</error>
+        </testcase>
+        <testcase name="testOptimizeRoutes" file="C:\xampp\htdocs\ChakaNoks\tests\LogisticsControllerTest.php" line="30" class="Tests\LogisticsControllerTest" classname="Tests.LogisticsControllerTest" assertions="0" time="0.001663">
+          <error type="Error">Tests\LogisticsControllerTest::testOptimizeRoutes&#13;
+Error: Call to undefined method Tests\LogisticsControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\LogisticsControllerTest.php:32</error>
+        </testcase>
+        <testcase name="testScheduleDelivery" file="C:\xampp\htdocs\ChakaNoks\tests\LogisticsControllerTest.php" line="40" class="Tests\LogisticsControllerTest" classname="Tests.LogisticsControllerTest" assertions="0" time="0.001379">
+          <error type="Error">Tests\LogisticsControllerTest::testScheduleDelivery&#13;
+Error: Call to undefined method Tests\LogisticsControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\LogisticsControllerTest.php:42</error>
+        </testcase>
+        <testcase name="testTrackDelivery" file="C:\xampp\htdocs\ChakaNoks\tests\LogisticsControllerTest.php" line="50" class="Tests\LogisticsControllerTest" classname="Tests.LogisticsControllerTest" assertions="0" time="0.004047">
+          <error type="Error">Tests\LogisticsControllerTest::testTrackDelivery&#13;
+Error: Call to undefined method Tests\LogisticsControllerTest::withURI()
+&#13;
+C:\xampp\htdocs\ChakaNoks\tests\LogisticsControllerTest.php:52</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\PurchaseOrderModelTest" file="C:\xampp\htdocs\ChakaNoks\tests\PurchaseOrderModelTest.php" tests="5" assertions="0" errors="5" failures="0" skipped="0" time="0.000000">
+        <testcase name="testCanCreatePurchaseOrder" file="C:\xampp\htdocs\ChakaNoks\tests\PurchaseOrderModelTest.php" line="18" class="Tests\PurchaseOrderModelTest" classname="Tests.PurchaseOrderModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\PurchaseOrderModelTest::testCanCreatePurchaseOrder&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\PurchaseOrderModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanGetPendingOrders" file="C:\xampp\htdocs\ChakaNoks\tests\PurchaseOrderModelTest.php" line="37" class="Tests\PurchaseOrderModelTest" classname="Tests.PurchaseOrderModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\PurchaseOrderModelTest::testCanGetPendingOrders&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\PurchaseOrderModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanApproveOrder" file="C:\xampp\htdocs\ChakaNoks\tests\PurchaseOrderModelTest.php" line="43" class="Tests\PurchaseOrderModelTest" classname="Tests.PurchaseOrderModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\PurchaseOrderModelTest::testCanApproveOrder&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\PurchaseOrderModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanGetOrdersByBranch" file="C:\xampp\htdocs\ChakaNoks\tests\PurchaseOrderModelTest.php" line="65" class="Tests\PurchaseOrderModelTest" classname="Tests.PurchaseOrderModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\PurchaseOrderModelTest::testCanGetOrdersByBranch&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\PurchaseOrderModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanCalculateTotalPrice" file="C:\xampp\htdocs\ChakaNoks\tests\PurchaseOrderModelTest.php" line="72" class="Tests\PurchaseOrderModelTest" classname="Tests.PurchaseOrderModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\PurchaseOrderModelTest::testCanCalculateTotalPrice&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\PurchaseOrderModelTest.php:15</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\SupplierModelTest" file="C:\xampp\htdocs\ChakaNoks\tests\SupplierModelTest.php" tests="5" assertions="0" errors="5" failures="0" skipped="0" time="0.000000">
+        <testcase name="testCanCreateSupplier" file="C:\xampp\htdocs\ChakaNoks\tests\SupplierModelTest.php" line="18" class="Tests\SupplierModelTest" classname="Tests.SupplierModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\SupplierModelTest::testCanCreateSupplier&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\SupplierModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanGetActiveSuppliers" file="C:\xampp\htdocs\ChakaNoks\tests\SupplierModelTest.php" line="33" class="Tests\SupplierModelTest" classname="Tests.SupplierModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\SupplierModelTest::testCanGetActiveSuppliers&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\SupplierModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanGetSuppliersByBranch" file="C:\xampp\htdocs\ChakaNoks\tests\SupplierModelTest.php" line="39" class="Tests\SupplierModelTest" classname="Tests.SupplierModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\SupplierModelTest::testCanGetSuppliersByBranch&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\SupplierModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanUpdateStatus" file="C:\xampp\htdocs\ChakaNoks\tests\SupplierModelTest.php" line="46" class="Tests\SupplierModelTest" classname="Tests.SupplierModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\SupplierModelTest::testCanUpdateStatus&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\SupplierModelTest.php:15</error>
+        </testcase>
+        <testcase name="testCanGetSupplierPerformance" file="C:\xampp\htdocs\ChakaNoks\tests\SupplierModelTest.php" line="64" class="Tests\SupplierModelTest" classname="Tests.SupplierModelTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">Tests\SupplierModelTest::testCanGetSupplierPerformance&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Model.php:155
+C:\xampp\htdocs\ChakaNoks\tests\SupplierModelTest.php:15</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="ExampleDatabaseTest" file="C:\xampp\htdocs\ChakaNoks\tests\database\ExampleDatabaseTest.php" tests="2" assertions="0" errors="2" failures="0" skipped="0" time="0.000000">
+        <testcase name="testModelFindAll" file="C:\xampp\htdocs\ChakaNoks\tests\database\ExampleDatabaseTest.php" line="17" class="ExampleDatabaseTest" classname="ExampleDatabaseTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">ExampleDatabaseTest::testModelFindAll&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Test\DatabaseTestTrait.php:82
+C:\xampp\htdocs\ChakaNoks\system\Test\DatabaseTestTrait.php:59
+C:\xampp\htdocs\ChakaNoks\system\Test\CIUnitTestCase.php:251</error>
+        </testcase>
+        <testcase name="testSoftDeleteLeavesRow" file="C:\xampp\htdocs\ChakaNoks\tests\database\ExampleDatabaseTest.php" line="28" class="ExampleDatabaseTest" classname="ExampleDatabaseTest" assertions="0" time="0.000000">
+          <error type="CodeIgniter\Exceptions\CriticalError">ExampleDatabaseTest::testSoftDeleteLeavesRow&#13;
+CodeIgniter\Exceptions\CriticalError: The required PHP extension "sqlite3" is not loaded. Install and enable it to use "SQLite3" driver.
+&#13;
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:182
+C:\xampp\htdocs\ChakaNoks\system\Database\Database.php:59
+C:\xampp\htdocs\ChakaNoks\system\Database\Config.php:82
+C:\xampp\htdocs\ChakaNoks\system\Test\DatabaseTestTrait.php:82
+C:\xampp\htdocs\ChakaNoks\system\Test\DatabaseTestTrait.php:59
+C:\xampp\htdocs\ChakaNoks\system\Test\CIUnitTestCase.php:251</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="ExampleSessionTest" file="C:\xampp\htdocs\ChakaNoks\tests\session\ExampleSessionTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.002195">
+        <testcase name="testSessionSimple" file="C:\xampp\htdocs\ChakaNoks\tests\session\ExampleSessionTest.php" line="10" class="ExampleSessionTest" classname="ExampleSessionTest" assertions="1" time="0.002195"/>
+      </testsuite>
+      <testsuite name="HealthTest" file="C:\xampp\htdocs\ChakaNoks\tests\unit\HealthTest.php" tests="2" assertions="3" errors="0" failures="0" skipped="0" time="0.018957">
+        <testcase name="testIsDefinedAppPath" file="C:\xampp\htdocs\ChakaNoks\tests\unit\HealthTest.php" line="12" class="HealthTest" classname="HealthTest" assertions="1" time="0.001947"/>
+        <testcase name="testBaseUrlHasBeenSet" file="C:\xampp\htdocs\ChakaNoks\tests\unit\HealthTest.php" line="17" class="HealthTest" classname="HealthTest" assertions="2" time="0.017010"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

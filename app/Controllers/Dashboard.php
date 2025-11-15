@@ -53,6 +53,43 @@ class Dashboard extends BaseController
                 ->orderBy('updated_at', 'DESC')
                 ->limit(5)
                 ->get()->getResultArray();
+
+            // Low Stock Alerts: items with quantity < 5
+            $data['lowStockAlerts'] = $db->table('branch_inventory')
+                ->select('item_name, quantity')
+                ->where('branch_id', $branchId)
+                ->where('quantity <', 5)
+                ->get()->getResultArray();
+
+            // Activity Log: recent transfers and purchase requests
+            $transfers = $db->table('transfers')
+                ->select("'Transfer' as type, CONCAT('Transfer of ', quantity, ' ', item_name, ' from branch ', from_branch) as description, created_at")
+                ->where('to_branch', $branchId)
+                ->orWhere('from_branch', $branchId)
+                ->orderBy('created_at', 'DESC')
+                ->limit(3)
+                ->get()->getResultArray();
+
+            $requests = $db->table('purchase_requests')
+                ->select("'Purchase Request' as type, CONCAT('Requested ', quantity, ' ', item_name) as description, created_at")
+                ->where('branch_id', $branchId)
+                ->orderBy('created_at', 'DESC')
+                ->limit(2)
+                ->get()->getResultArray();
+
+            $data['activityLog'] = array_merge($transfers, $requests);
+            usort($data['activityLog'], fn($a, $b) => strtotime($b['created_at']) <=> strtotime($a['created_at']));
+            $data['activityLog'] = array_slice($data['activityLog'], 0, 5);
+
+            // Sales Trend: simulated monthly data
+            $data['salesTrend'] = [
+                ['month' => 'Jan', 'sales' => 120],
+                ['month' => 'Feb', 'sales' => 150],
+                ['month' => 'Mar', 'sales' => 180],
+                ['month' => 'Apr', 'sales' => 200],
+                ['month' => 'May', 'sales' => 170],
+                ['month' => 'Jun', 'sales' => 220],
+            ];
         } elseif ($role === 'inventory') {
             $inventoryModel = new InventoryModel();
             $data['metrics'] = [

@@ -74,7 +74,10 @@ class Admin extends Controller
             return redirect()->to('/');
         }
 
-        return view('managers/request_stock');
+        $db = Database::connect();
+        $branches = $db->table('branches')->get()->getResultArray();
+
+        return view('managers/request_stock', ['branches' => $branches]);
     }
 
     public function inventory()
@@ -134,8 +137,186 @@ public function suppliers()
         return view('auth/forgot_password');
     }
 
+    public function storeStockRequest()
+    {
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+            return redirect()->to('/');
+        }
+
+        $db = Database::connect();
+
+        // Validation rules
+        $rules = [
+            'branch_id' => 'required|integer',
+            'item_name' => 'required|min_length[2]|max_length[255]',
+            'quantity'  => 'required|integer|greater_than[0]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Get form data
+        $data = [
+            'branch_id' => $this->request->getPost('branch_id'),
+            'item_name' => $this->request->getPost('item_name'),
+            'quantity'  => $this->request->getPost('quantity'),
+            'status'    => 'pending',
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        // Insert into purchase_requests table
+        if ($db->table('purchase_requests')->insert($data)) {
+            return redirect()->to(base_url('Central_AD/request_stock'))->with('success', 'Stock request submitted successfully.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Failed to submit stock request. Please try again.');
+        }
+    }
+
     public function forgotPasswordSubmit()
     {
         return redirect()->back()->with('success', 'If this email exists, a reset link was sent.');
+    }
+
+    // User Management Methods
+    public function users()
+    {
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+            return redirect()->to('/');
+        }
+
+        $db = Database::connect();
+        $selectedBranch = $this->request->getGet('branch');
+
+        $builder = $db->table('users')
+            ->select('users.*, branches.name as branch_name')
+            ->join('branches', 'branches.id = users.branch_id', 'left');
+
+        if ($selectedBranch) {
+            $builder->where('users.branch_id', $selectedBranch);
+        }
+
+        $data['users'] = $builder->get()->getResultArray();
+        $data['branches'] = $db->table('branches')->get()->getResultArray();
+        $data['selectedBranch'] = $selectedBranch;
+
+        return view('managers/users', $data);
+    }
+
+    public function createUser()
+    {
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+            return redirect()->to('/');
+        }
+
+        $db = Database::connect();
+        $data['branches'] = $db->table('branches')->get()->getResultArray();
+
+        return view('managers/create_user', $data);
+    }
+
+    public function storeUser()
+    {
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+            return redirect()->to('/');
+        }
+
+        $rules = [
+            'username' => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
+            'email' => 'required|valid_email|is_unique[users.email]',
+            'password' => 'required|min_length[6]',
+            'role' => 'required|in_list[admin,branch_manager,inventory]',
+            'branch_id' => 'permit_empty|integer'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $db = Database::connect();
+        $data = [
+            'username' => $this->request->getPost('username'),
+            'email' => $this->request->getPost('email'),
+            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
+            'role' => $this->request->getPost('role'),
+            'branch_id' => $this->request->getPost('branch_id') ?: null,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        if ($db->table('users')->insert($data)) {
+            return redirect()->to('/admin/users')->with('success', 'User created successfully.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Failed to create user.');
+        }
+    }
+
+    public function editUser($id)
+    {
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+            return redirect()->to('/');
+        }
+
+        $db = Database::connect();
+        $data['user'] = $db->table('users')->where('id', $id)->get()->getRowArray();
+        $data['branches'] = $db->table('branches')->get()->getResultArray();
+
+        if (!$data['user']) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('User not found');
+        }
+
+        return view('managers/edit_user', $data);
+    }
+
+    public function updateUser($id)
+    {
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+            return redirect()->to('/');
+        }
+
+        $rules = [
+            'username' => 'required|min_length[3]|max_length[50]|is_unique[users.username,id,' . $id . ']',
+            'email' => 'required|valid_email|is_unique[users.email,id,' . $id . ']',
+            'role' => 'required|in_list[admin,branch_manager,inventory]',
+            'branch_id' => 'permit_empty|integer'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $db = Database::connect();
+        $data = [
+            'username' => $this->request->getPost('username'),
+            'email' => $this->request->getPost('email'),
+            'role' => $this->request->getPost('role'),
+            'branch_id' => $this->request->getPost('branch_id') ?: null,
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+
+        // Update password only if provided
+        $password = $this->request->getPost('password');
+        if (!empty($password)) {
+            $data['password'] = password_hash($password, PASSWORD_DEFAULT);
+        }
+
+        if ($db->table('users')->where('id', $id)->update($data)) {
+            return redirect()->to('/admin/users')->with('success', 'User updated successfully.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Failed to update user.');
+        }
+    }
+
+    public function deleteUser($id)
+    {
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+            return redirect()->to('/');
+        }
+
+        $db = Database::connect();
+        if ($db->table('users')->where('id', $id)->delete()) {
+            return redirect()->to('/admin/users')->with('success', 'User deleted successfully.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Failed to delete user.');
+        }
     }
 }

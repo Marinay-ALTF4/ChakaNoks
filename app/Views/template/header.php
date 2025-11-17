@@ -60,7 +60,9 @@ $role = session()->get('role');
 
         <?php if ($role === 'admin'): ?>
             <a href="<?= base_url('dashboard') ?>" class="btn btn-dark w-100 <?= (uri_string() == 'dashboard') ? 'active' : '' ?>">Dashboard</a>
+                        <a href="<?= base_url('admin/users') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'admin/users') !== false) ? 'active' : '' ?>">User Management</a>
             <a href="<?= base_url('Central_AD/inventory') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/inventory') !== false) ? 'active' : '' ?>">Inventory</a>
+            <a href="<?= base_url('Central_AD/branches') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/branches') !== false) ? 'active' : '' ?>">Branches</a>
             <a href="<?= base_url('Central_AD/suppliers') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/supplier') !== false) ? 'active' : '' ?>">Suppliers</a>
             <a href="<?= base_url('Central_AD/orders') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/orders') !== false) ? 'active' : '' ?>">Orders</a>
             <a href="<?= base_url('Central_AD/franchising') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/franchising') !== false) ? 'active' : '' ?>">Franchising</a>
@@ -68,7 +70,7 @@ $role = session()->get('role');
             <a href="<?= base_url('Central_AD/settings') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/settings') !== false) ? 'active' : '' ?>">Settings</a>
         <?php elseif ($role === 'branch_manager'): ?>
             <a href="<?= site_url('dashboard') ?>" class="btn btn-dark w-100 <?= (uri_string() == 'dashboard') ? 'active' : '' ?>">Dashboard</a>
-            <a href="<?= site_url('branch/monitor-inventory') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'branch/monitor-inventory') !== false) ? 'active' : '' ?>">Monitor Inventory</a>
+            <a href="<?= site_url('branch/inventory') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'branch/inventory') !== false) ? 'active' : '' ?>">Inventory</a>
             <a href="<?= site_url('branch/purchase-request') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'branch/purchase-request') !== false) ? 'active' : '' ?>">Create Purchase Request</a>
             <a href="<?= site_url('branch/approve-transfers') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'branch/approve-transfers') !== false) ? 'active' : '' ?>">Approve Transfers</a>
         <?php elseif ($role === 'inventory'): ?>

@@ -9,8 +9,8 @@ class PurchaseOrderModel extends Model
     protected $table = 'purchase_orders';
     protected $primaryKey = 'id';
     protected $allowedFields = [
-        'supplier_id', 'branch_id', 'item_name', 'quantity', 'unit_price',
-        'total_price', 'status', 'order_date', 'delivery_date', 'approved_by'
+        'supplier_id', 'branch_id', 'item_name', 'quantity', 'unit', 'unit_price',
+        'total_price', 'description', 'status', 'order_date', 'delivery_date', 'approved_by'
     ];
     protected $useTimestamps = false;
 

@@ -449,6 +449,108 @@ class Central_AD extends Controller
         return view('managers/reports', $data);
     }
 
+    public function branches()
+    {
+        $branchModel = new \App\Models\BranchModel();
+        $data['branches'] = $branchModel->findAll();
+        return view('managers/branches', $data);
+    }
+
+    // Add Branch view
+    public function addBranch()
+    {
+        return view('managers/add_branch');
+    }
+
+    // Store Branch
+    public function storeBranch()
+    {
+        $branchModel = new \App\Models\BranchModel();
+
+        // Validation rules
+        $rules = [
+            'name' => 'required|min_length[2]|max_length[100]',
+            'location' => 'required|min_length[2]|max_length[255]',
+            'manager_name' => 'permit_empty|max_length[100]',
+            'status' => 'required|in_list[active,inactive]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Get form data
+        $data = [
+            'name' => $this->request->getPost('name'),
+            'location' => $this->request->getPost('location'),
+            'manager_name' => $this->request->getPost('manager_name'),
+            'status' => $this->request->getPost('status')
+        ];
+
+        // Insert new branch
+        if ($branchModel->insert($data)) {
+            return redirect()->to(base_url('Central_AD/branches'))->with('success', 'Branch added successfully.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Failed to add branch. Please try again.');
+        }
+    }
+
+    // Edit Branch view
+    public function editBranch($id = null)
+    {
+        $branchModel = new \App\Models\BranchModel();
+        $data['branch'] = $branchModel->find($id);
+
+        if (!$data['branch']) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('Branch not found');
+        }
+
+        return view('managers/edit_branch', $data);
+    }
+
+    // Update Branch
+    public function updateBranch($id)
+    {
+        $branchModel = new \App\Models\BranchModel();
+
+        // Validation rules
+        $rules = [
+            'name' => 'required|min_length[2]|max_length[100]',
+            'location' => 'required|min_length[2]|max_length[255]',
+            'manager_name' => 'permit_empty|max_length[100]',
+            'status' => 'required|in_list[active,inactive]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Get form data
+        $data = [
+            'name' => $this->request->getPost('name'),
+            'location' => $this->request->getPost('location'),
+            'manager_name' => $this->request->getPost('manager_name'),
+            'status' => $this->request->getPost('status')
+        ];
+
+        // Update the branch
+        if ($branchModel->update($id, $data)) {
+            return redirect()->to(base_url('Central_AD/branches'))->with('success', 'Branch updated successfully.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Failed to update branch. Please try again.');
+        }
+    }
+
+    // Delete Branch
+    public function deleteBranch($id = null)
+    {
+        $branchModel = new \App\Models\BranchModel();
+        if ($id !== null) {
+            $branchModel->delete($id);
+        }
+        return redirect()->to('/Central_AD/branches')->with('success', 'Branch deleted successfully.');
+    }
+
     public function settings() { return view('managers/settings'); }
 
     // Dashboard with consolidated reports
@@ -514,5 +616,33 @@ class Central_AD extends Controller
         $logModel->logAction(session()->get('user_id'), 'rejected_purchase_order', "Rejected purchase order #$orderId");
 
         return redirect()->to('/Central_AD/dashboard')->with('success', 'Purchase order rejected');
+    }
+
+    // Approve Purchase Request
+    public function approvePurchaseRequest($requestId)
+    {
+        $purchaseRequestModel = new \App\Models\PurchaseRequestModel();
+        $logModel = new \App\Models\LogModel();
+
+        $purchaseRequestModel->approveRequest($requestId, session()->get('user_id'));
+
+        // Log the action
+        $logModel->logAction(session()->get('user_id'), 'approved_purchase_request', "Approved purchase request #$requestId");
+
+        return redirect()->to('/dashboard')->with('success', 'Purchase request approved');
+    }
+
+    // Reject Purchase Request
+    public function rejectPurchaseRequest($requestId)
+    {
+        $purchaseRequestModel = new \App\Models\PurchaseRequestModel();
+        $logModel = new \App\Models\LogModel();
+
+        $purchaseRequestModel->rejectRequest($requestId, session()->get('user_id'));
+
+        // Log the action
+        $logModel->logAction(session()->get('user_id'), 'rejected_purchase_request', "Rejected purchase request #$requestId");
+
+        return redirect()->to('/dashboard')->with('success', 'Purchase request rejected');
     }
 }

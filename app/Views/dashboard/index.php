@@ -2,55 +2,97 @@
 
 <?= $this->section('content') ?>
 
-<div class="container-fluid">
-    <h2 class="mb-4">Dashboard</h2>
+<div class="container-fluid position-relative">
+    <h2 class="mb-4" style="font-weight: 600; color: #333;">Dashboard</h2>
+
+    <a href="<?= base_url('Central_AD/branches/add') ?>" class="btn btn-primary position-absolute" style="top: 0; right: 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Add New Branch</a>
 
     <?php if ($role === 'admin'): ?>
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="text-muted">Total Items</h6>
-                        <h3 class="mb-0"><?= esc($metrics['totalItems'] ?? 0) ?></h3>
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-box-seam fs-1 text-primary mb-2"></i>
+                        <h6 class="text-muted fw-semibold">Total Items</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['totalItems'] ?? 0) ?></h3>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="text-muted">Low Stock</h6>
-                        <h3 class="mb-0"><?= esc($metrics['lowStock'] ?? 0) ?></h3>
+            <div class="col-md-3">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-exclamation-triangle fs-1 text-warning mb-2"></i>
+                        <h6 class="text-muted fw-semibold">Low Stock</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['lowStock'] ?? 0) ?></h3>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="text-muted">Suppliers</h6>
-                        <h3 class="mb-0"><?= esc($metrics['suppliers'] ?? 0) ?></h3>
+            <div class="col-md-3">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-truck fs-1 text-info mb-2"></i>
+                        <h6 class="text-muted fw-semibold">Suppliers</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['suppliers'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-building fs-1 text-success mb-2"></i>
+                        <h6 class="text-muted fw-semibold">Total Branches</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['totalBranches'] ?? 0) ?></h3>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">Recent Items</div>
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-clipboard-check fs-1 text-secondary mb-2"></i>
+                        <h6 class="text-muted fw-semibold">Pending Purchase Requests</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['pendingPurchaseRequests'] ?? 0) ?></h3>
+                        <?php if (!empty($pendingPurchaseRequests)): ?>
+                            <div class="mt-3">
+                                <h6 class="text-muted">Recent Requests:</h6>
+                                <ul class="list-unstyled">
+                                    <?php foreach (array_slice($pendingPurchaseRequests, 0, 3) as $request): ?>
+                                        <li class="small">
+                                            <strong><?= esc($request['item_name']) ?></strong> (<?= esc($request['quantity']) ?>) - Branch <?= esc($request['branch_name'] ?? 'N/A') ?>
+                                            <div class="mt-1">
+                                                <a href="<?= base_url('Central_AD/approvePurchaseRequest/' . $request['id']) ?>" class="btn btn-sm btn-success me-1">Approve</a>
+                                                <a href="<?= base_url('Central_AD/rejectPurchaseRequest/' . $request['id']) ?>" class="btn btn-sm btn-danger">Reject</a>
+                                            </div>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm rounded-3 bg-white border-0">
+            <div class="card-header bg-light border-0 fw-semibold">Recent Items</div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table mb-0">
-                        <thead>
-                            <tr><th>Item</th><th>Qty</th><th>Status</th><th>Updated</th></tr>
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr><th class="border-0 fw-semibold">Item</th><th class="border-0 fw-semibold">Qty</th><th class="border-0 fw-semibold">Status</th><th class="border-0 fw-semibold">Updated</th></tr>
                         </thead>
                         <tbody>
                             <?php if (!empty($recentItems)): foreach ($recentItems as $item): ?>
-                                <tr>
-                                    <td><?= esc($item['item_name'] ?? '') ?></td>
-                                    <td><?= esc($item['quantity'] ?? '') ?></td>
-                                    <td><?= esc($item['status'] ?? '') ?></td>
-                                    <td><?= esc($item['updated_at'] ?? '') ?></td>
+                                <tr class="border-bottom">
+                                    <td class="border-0"><?= esc($item['item_name'] ?? '') ?></td>
+                                    <td class="border-0"><?= esc($item['quantity'] ?? '') ?></td>
+                                    <td class="border-0"><?= esc($item['status'] ?? '') ?></td>
+                                    <td class="border-0"><?= esc($item['updated_at'] ?? '') ?></td>
                                 </tr>
                             <?php endforeach; else: ?>
-                                <tr><td colspan="4" class="text-center">No data</td></tr>
+                                <tr><td colspan="4" class="text-center border-0">No data</td></tr>
                             <?php endif; ?>
                         </tbody>
                     </table>

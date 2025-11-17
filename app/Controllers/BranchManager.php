@@ -5,6 +5,7 @@ namespace App\Controllers;
 use CodeIgniter\Controller;
 use App\Models\InventoryModel;
 use App\Models\PurchaseOrderModel;
+use App\Models\PurchaseRequestModel;
 use App\Models\BranchModel;
 use App\Models\LogModel;
 
@@ -12,6 +13,7 @@ class BranchManager extends Controller
 {
     protected $inventoryModel;
     protected $purchaseOrderModel;
+    protected $purchaseRequestModel;
     protected $branchModel;
     protected $logModel;
 
@@ -19,6 +21,7 @@ class BranchManager extends Controller
     {
         $this->inventoryModel = new InventoryModel();
         $this->purchaseOrderModel = new PurchaseOrderModel();
+        $this->purchaseRequestModel = new PurchaseRequestModel();
         $this->branchModel = new BranchModel();
         $this->logModel = new LogModel();
     }
@@ -43,42 +46,65 @@ class BranchManager extends Controller
     {
         if ($this->request->getMethod() === 'post') {
             $branchId = session()->get('branch_id');
+            $items = $this->request->getPost('items');
 
-            // Validation
-            $rules = [
-                'supplier_id' => 'required|integer',
-                'item_name' => 'required|min_length[2]|max_length[255]',
-                'quantity' => 'required|integer|greater_than[0]',
-                'unit_price' => 'required|numeric|greater_than[0]'
-            ];
-
-            if (!$this->validate($rules)) {
-                return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            if (empty($items)) {
+                return redirect()->back()->withInput()->with('error', 'At least one item is required');
             }
 
-            $data = [
-                'supplier_id' => $this->request->getPost('supplier_id'),
-                'branch_id' => $branchId,
-                'item_name' => $this->request->getPost('item_name'),
-                'quantity' => $this->request->getPost('quantity'),
-                'unit_price' => $this->request->getPost('unit_price'),
-                'total_price' => $this->request->getPost('quantity') * $this->request->getPost('unit_price'),
-                'status' => 'pending',
-                'order_date' => date('Y-m-d')
-            ];
+            $db = \Config\Database::connect();
+            $db->transStart();
 
-            if ($this->purchaseOrderModel->insert($data)) {
+            try {
+                foreach ($items as $item) {
+                    // Validation for each item
+                    if (empty($item['item_name']) || empty($item['quantity'])) {
+                        throw new \Exception('Item name and quantity are required');
+                    }
+
+                    $data = [
+                        'branch_id' => $branchId,
+                        'item_name' => $item['item_name'],
+                        'quantity' => $item['quantity'],
+                        'status' => 'pending'
+                    ];
+
+                    if (!$this->purchaseRequestModel->insert($data)) {
+                        throw new \Exception('Failed to insert purchase request item');
+                    }
+                }
+
+                $db->transComplete();
+
+                if ($db->transStatus() === false) {
+                    throw new \Exception('Transaction failed');
+                }
+
                 // Log the action
-                $this->logModel->logAction(session()->get('user_id'), 'created_purchase_request', "Created purchase request for {$data['item_name']}");
+                $this->logModel->logAction(session()->get('user_id'), 'created_purchase_request', "Created purchase request with " . count($items) . " items");
 
                 return redirect()->to('/branch/dashboard')->with('success', 'Purchase request submitted successfully');
-            } else {
-                return redirect()->back()->withInput()->with('error', 'Failed to submit purchase request');
+            } catch (\Exception $e) {
+                $db->transRollback();
+                return redirect()->back()->withInput()->with('error', $e->getMessage());
             }
         }
 
         $data['suppliers'] = (new \App\Models\SupplierModel())->getActiveSuppliers();
         return view('branch_managers/create_purchase_request', $data);
+    }
+
+    // Get supplier items via AJAX
+    public function getSupplierItems($supplierId)
+    {
+        if (!session()->get('logged_in') || session()->get('role') !== 'branch_manager') {
+            return $this->response->setJSON(['error' => 'Unauthorized'])->setStatusCode(401);
+        }
+
+        $inventoryModel = new InventoryModel();
+        $items = $inventoryModel->where('supplier_id', $supplierId)->findAll();
+
+        return $this->response->setJSON(['items' => $items]);
     }
 
     // Approve Intra-branch Transfer
@@ -100,6 +126,8 @@ class BranchManager extends Controller
         $data['inventory'] = $this->inventoryModel->getByBranch($branchId);
         return view('branch_managers/inventory', $data);
     }
+
+
 
     // Monitor Branch Performance
     public function performance()

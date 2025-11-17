@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\InventoryModel;
 use App\Models\SupplierModel;
+use App\Models\BranchModel;
 use Config\Database;
 
 class Dashboard extends BaseController
@@ -32,13 +33,24 @@ class Dashboard extends BaseController
         if ($role === 'admin') {
             $inventoryModel = new InventoryModel();
             $supplierModel = new SupplierModel();
+            $branchModel = new BranchModel();
+            $db = Database::connect();
 
             $data['metrics'] = [
                 'totalItems' => $inventoryModel->countAll(),
                 'lowStock' => $inventoryModel->where('quantity <', 5)->countAllResults(),
                 'suppliers' => $supplierModel->countAll(),
+                'totalBranches' => $branchModel->countAll(),
+                'pendingPurchaseRequests' => $db->table('purchase_requests')->where('status', 'pending')->countAllResults(),
             ];
             $data['recentItems'] = $inventoryModel->orderBy('updated_at', 'DESC')->findAll(5);
+            $data['pendingPurchaseRequests'] = $db->table('purchase_requests')
+                ->select('purchase_requests.*, branches.name as branch_name')
+                ->join('branches', 'branches.id = purchase_requests.branch_id')
+                ->where('purchase_requests.status', 'pending')
+                ->orderBy('purchase_requests.created_at', 'DESC')
+                ->limit(5)
+                ->get()->getResultArray();
         } elseif ($role === 'branch_manager') {
             $db = Database::connect();
             $branchId = session()->get('branch_id');
@@ -46,7 +58,7 @@ class Dashboard extends BaseController
             $data['metrics'] = [
                 'branchInventoryCount' => $db->table('branch_inventory')->where('branch_id', $branchId)->countAllResults(),
                 'pendingTransfers' => $db->table('transfers')->where('to_branch', $branchId)->where('status', 'pending')->countAllResults(),
-                'purchaseRequests' => $db->table('purchase_requests')->where('branch_id', $branchId)->countAllResults(),
+                'purchaseRequests' => $db->table('purchase_requests')->where('branch_id', $branchId)->where('status', 'pending')->countAllResults(),
             ];
             $data['inventory'] = $db->table('branch_inventory')
                 ->where('branch_id', $branchId)

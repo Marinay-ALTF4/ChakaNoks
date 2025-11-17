@@ -21,22 +21,45 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     $routes->get('Central_AD', 'Admin::dashboard');                     
     $routes->get('Central_AD/other-branches', 'Admin::otherBranches');  
     $routes->get('Central_AD/request_stock', 'Admin::request_stock');
-    
+    $routes->post('Admin/storeStockRequest', 'Admin::storeStockRequest');
 
-  $routes->get('Central_AD/dashboard', 'Central_AD::dashboard');
+
+    $routes->get('Central_AD/dashboard', 'Central_AD::dashboard');
     $routes->get('Central_AD/inventory', 'Central_AD::inventory');
+    $routes->get('Central_AD/branches', 'Central_AD::branches');
+    $routes->get('Central_AD/branches/add', 'Central_AD::addBranch');
+    $routes->post('Central_AD/branches/store', 'Central_AD::storeBranch');
+    $routes->get('Central_AD/branches/edit/(:num)', 'Central_AD::editBranch/$1');
+    $routes->post('Central_AD/branches/update/(:num)', 'Central_AD::updateBranch/$1');
+    $routes->get('Central_AD/branches/delete/(:num)', 'Central_AD::deleteBranch/$1');
     $routes->get('Central_AD/suppliers', 'Central_AD::suppliers');
     $routes->get('Central_AD/orders', 'Central_AD::orders');
     $routes->get('Central_AD/franchising', 'Central_AD::franchising');
     $routes->get('Central_AD/reports', 'Central_AD::reports');
     $routes->get('Central_AD/settings', 'Central_AD::settings');
+
+    
+    // User Management Routes
+    $routes->get('admin/users', 'Admin::users'); // List users
+    $routes->get('admin/users/create', 'Admin::createUser'); // Create user form
+    $routes->post('admin/users/store', 'Admin::storeUser'); // Store new user
+    $routes->get('admin/users/edit/(:num)', 'Admin::editUser/$1'); // Edit user form
+    $routes->post('admin/users/update/(:num)', 'Admin::updateUser/$1'); // Update user
+    $routes->get('admin/users/delete/(:num)', 'Admin::deleteUser/$1'); // Delete user
 });
 
 // 🔹 Branch Manager Dashboard & Features
 $routes->group('branch', ['filter' => 'auth'], function($routes) {
     $routes->get('dashboard', 'BranchManager::dashboard');                   // Branch manager main dashboard
     $routes->get('monitor-inventory', 'BranchManager::inventory');    // Monitor inventory
+    $routes->get('inventory', 'BranchManager::inventory');       // Inventory view
     $routes->match(['get', 'post'], 'purchase-request', 'BranchManager::createPurchaseRequest'); // Create purchase request
+    $routes->get('get-supplier-items/(:num)', 'BranchManager::getSupplierItems/$1'); // Get supplier items via AJAX
+
+
+    // Purchase Request Approval Routes
+    $routes->post('Central_AD/approvePurchaseRequest/(:num)', 'Central_AD::approvePurchaseRequest/$1'); // Approve PR
+    $routes->post('Central_AD/rejectPurchaseRequest/(:num)', 'Central_AD::rejectPurchaseRequest/$1'); // Reject PR
     $routes->get('approve-transfers', 'BranchManager::approveTransfer');    // Approve transfer requests
     $routes->get('approve-transfer/(:num)', 'BranchManager::approveTransfer/$1'); // Approve transfer by ID
 });

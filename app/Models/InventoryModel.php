@@ -12,7 +12,7 @@ class InventoryModel extends Model
     protected $returnType     = 'array';
     protected $allowedFields  = [
         'item_name', 'quantity', 'status', 'created_at', 'updated_at',
-        'type', 'barcode', 'expiry_date', 'branch_id'
+        'type', 'barcode', 'expiry_date', 'branch_id', 'supplier_id'
     ];
 
     // timestamps
@@ -24,6 +24,11 @@ class InventoryModel extends Model
     public function branch()
     {
         return $this->belongsTo('App\Models\BranchModel', 'branch_id');
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo('App\Models\SupplierModel', 'supplier_id');
     }
 
     // Methods for alerts and expiry
@@ -59,6 +64,11 @@ class InventoryModel extends Model
     public function getByBranch($branchId)
     {
         return $this->where('branch_id', $branchId)->findAll();
+    }
+
+    public function getBySupplier($supplierId)
+    {
+        return $this->where('supplier_id', $supplierId)->findAll();
     }
 
     public function getTotalStockValue()

@@ -20,11 +20,12 @@ class LogModel extends Model
     // Methods
     public function logAction($userId, $action, $details = '')
     {
+        $request = \Config\Services::request();
         return $this->insert([
             'user_id' => $userId,
             'action' => $action,
             'details' => $details,
-            'ip_address' => $this->request->getIPAddress(),
+            'ip_address' => $request->getIPAddress(),
             'timestamp' => date('Y-m-d H:i:s')
         ]);
     }

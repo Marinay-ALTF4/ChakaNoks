@@ -35,7 +35,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted">Purchase Requests</h6>
-                    <h3 class="mb-0 text-success"><?php echo $this->db->table('purchase_requests')->where('branch_id', session()->get('branch_id'))->where('status', 'pending')->countAllResults(); ?></h3>
+                    <h3 class="mb-0 text-success"><?= $pendingPurchaseRequests ?? 0 ?></h3>
                 </div>
             </div>
         </div>

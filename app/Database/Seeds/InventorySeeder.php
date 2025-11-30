@@ -17,6 +17,7 @@ class InventorySeeder extends Seeder
                 'barcode' => '123456789012',
                 'expiry_date' => '2025-12-01',
                 'branch_id' => 1,
+                'supplier_id' => 3, // Local Produce Co.
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
@@ -28,6 +29,7 @@ class InventorySeeder extends Seeder
                 'barcode' => '123456789013',
                 'expiry_date' => '2025-11-20',
                 'branch_id' => 1,
+                'supplier_id' => 3, // Local Produce Co.
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
@@ -39,6 +41,7 @@ class InventorySeeder extends Seeder
                 'barcode' => '123456789014',
                 'expiry_date' => '2025-12-05',
                 'branch_id' => 2,
+                'supplier_id' => 3, // Local Produce Co.
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
@@ -50,6 +53,7 @@ class InventorySeeder extends Seeder
                 'barcode' => '123456789015',
                 'expiry_date' => '2025-11-25',
                 'branch_id' => 1,
+                'supplier_id' => 1, // Fresh Foods Inc.
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
@@ -61,6 +65,7 @@ class InventorySeeder extends Seeder
                 'barcode' => '123456789016',
                 'expiry_date' => '2025-11-18',
                 'branch_id' => 2,
+                'supplier_id' => 1, // Fresh Foods Inc.
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
@@ -72,6 +77,7 @@ class InventorySeeder extends Seeder
                 'barcode' => '123456789017',
                 'expiry_date' => '2025-11-30',
                 'branch_id' => 1,
+                'supplier_id' => 2, // Global Distributors
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
@@ -83,6 +89,7 @@ class InventorySeeder extends Seeder
                 'barcode' => '123456789018',
                 'expiry_date' => '2025-11-22',
                 'branch_id' => 3,
+                'supplier_id' => 1, // Fresh Foods Inc.
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],

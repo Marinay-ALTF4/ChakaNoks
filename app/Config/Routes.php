@@ -38,6 +38,10 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     $routes->get('Central_AD/reports', 'Central_AD::reports');
     $routes->get('Central_AD/settings', 'Central_AD::settings');
 
+    // Purchase Request Approval Routes
+    $routes->get('Central_AD/approvePurchaseRequest/(:num)', 'Central_AD::approvePurchaseRequest/$1'); // Approve PR
+    $routes->get('Central_AD/rejectPurchaseRequest/(:num)', 'Central_AD::rejectPurchaseRequest/$1'); // Reject PR
+
     
     // User Management Routes
     $routes->get('admin/users', 'Admin::users'); // List users
@@ -53,13 +57,11 @@ $routes->group('branch', ['filter' => 'auth'], function($routes) {
     $routes->get('dashboard', 'BranchManager::dashboard');                   // Branch manager main dashboard
     $routes->get('monitor-inventory', 'BranchManager::inventory');    // Monitor inventory
     $routes->get('inventory', 'BranchManager::inventory');       // Inventory view
-    $routes->match(['get', 'post'], 'purchase-request', 'BranchManager::createPurchaseRequest'); // Create purchase request
+    $routes->match(['GET', 'POST'], 'purchase-request', 'BranchManager::createPurchaseRequest'); // Create purchase request
     $routes->get('get-supplier-items/(:num)', 'BranchManager::getSupplierItems/$1'); // Get supplier items via AJAX
 
 
-    // Purchase Request Approval Routes
-    $routes->post('Central_AD/approvePurchaseRequest/(:num)', 'Central_AD::approvePurchaseRequest/$1'); // Approve PR
-    $routes->post('Central_AD/rejectPurchaseRequest/(:num)', 'Central_AD::rejectPurchaseRequest/$1'); // Reject PR
+    // Purchase Request Approval Routes (moved outside branch group)
     $routes->get('approve-transfers', 'BranchManager::approveTransfer');    // Approve transfer requests
     $routes->get('approve-transfer/(:num)', 'BranchManager::approveTransfer/$1'); // Approve transfer by ID
 });

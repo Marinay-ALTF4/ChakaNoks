@@ -32,12 +32,19 @@ class Admin extends Controller
         if ($user) {
             if (password_verify($password, $user->password)) {
                 // Save user session
-                session()->set([
+                $sessionData = [
                     'logged_in' => true,
                     'user_id'   => $user->id,
                     'username'  => $user->username,
                     'role'      => $user->role // admin, inventory, branch_manager
-                ]);
+                ];
+
+                // Add branch_id to session if user has one
+                if (isset($user->branch_id) && !empty($user->branch_id)) {
+                    $sessionData['branch_id'] = $user->branch_id;
+                }
+
+                session()->set($sessionData);
 
                 // ✅ Unified redirect
                 return redirect()->to('/dashboard');

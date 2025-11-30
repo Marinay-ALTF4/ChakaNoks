@@ -14,6 +14,7 @@ class UserSeeder extends Seeder
                 'email'      => 'admin@example.com',
                 'password'   => password_hash('admin123', PASSWORD_DEFAULT),
                 'role'       => 'admin',
+                'branch_id'  => null, // Admin doesn't belong to a branch
                 'created_at' => date('Y-m-d H:i:s'),
             ],
             [
@@ -21,6 +22,7 @@ class UserSeeder extends Seeder
                 'email'      => 'staff@example.com',
                 'password'   => password_hash('staff123', PASSWORD_DEFAULT),
                 'role'       => 'inventory',
+                'branch_id'  => null, // Inventory staff might not belong to a specific branch
                 'created_at' => date('Y-m-d H:i:s'),
             ],
             [
@@ -28,6 +30,7 @@ class UserSeeder extends Seeder
                 'email'      => 'branch@company.com',
                 'password'   => password_hash('branch123', PASSWORD_DEFAULT),
                 'role'       => 'branch_manager',
+                'branch_id'  => 1, // Assign to Branch 1 - Downtown
                 'created_at' => date('Y-m-d H:i:s'),
             ],
         ];

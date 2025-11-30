@@ -9,8 +9,8 @@ class PurchaseRequestModel extends Model
     protected $table = 'purchase_requests';
     protected $primaryKey = 'id';
     protected $allowedFields = [
-        'branch_id', 'item_name', 'quantity', 'status', 'approved_by',
-        'created_at', 'updated_at'
+        'branch_id', 'supplier_id', 'item_name', 'quantity', 'unit', 'unit_price', 
+        'description', 'status', 'approved_by', 'created_at', 'updated_at'
     ];
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
@@ -20,6 +20,11 @@ class PurchaseRequestModel extends Model
     public function branch()
     {
         return $this->belongsTo('App\Models\BranchModel', 'branch_id');
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo('App\Models\SupplierModel', 'supplier_id');
     }
 
     public function approver()

@@ -25,7 +25,23 @@ class Central_AD extends Controller
     // Inventory
     public function inventory()
     {
-        $data['inventory'] = $this->inventoryModel->findAll();
+        // Get all inventory items ordered by most recently updated
+        $data['inventory'] = $this->inventoryModel
+            ->orderBy('updated_at', 'DESC')
+            ->findAll();
+        
+        // Get summary statistics
+        $db = \Config\Database::connect();
+        $totalQuantityResult = $db->table('inventory')->selectSum('quantity')->get()->getRow();
+        
+        $data['stats'] = [
+            'totalItems' => $this->inventoryModel->countAll(),
+            'totalQuantity' => $totalQuantityResult->quantity ?? 0,
+            'lowStockItems' => $this->inventoryModel->where('quantity <=', 5)->countAllResults(),
+            'availableItems' => $this->inventoryModel->where('status', 'available')->countAllResults(),
+            'expiringSoon' => count($this->inventoryModel->getExpiringSoon(7)),
+        ];
+        
         return view('managers/inventory_AD', $data);
     }
 
@@ -254,11 +270,86 @@ class Central_AD extends Controller
     public function orders()
     {
         $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
-        $data['orders'] = $purchaseOrderModel->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
+        $data['orders'] = $purchaseOrderModel
+            ->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
             ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
             ->join('branches', 'branches.id = purchase_orders.branch_id')
+            ->orderBy('purchase_orders.created_at', 'DESC')
             ->findAll();
         return view('managers/orders', $data);
+    }
+
+    // Supplier Order Management - View pending orders for supplier
+    public function supplierOrders()
+    {
+        $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+        $data['pendingOrders'] = $purchaseOrderModel
+            ->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
+            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
+            ->join('branches', 'branches.id = purchase_orders.branch_id')
+            ->where('purchase_orders.status', 'pending_supplier')
+            ->orderBy('purchase_orders.order_date', 'ASC')
+            ->findAll();
+        
+        $data['confirmedOrders'] = $purchaseOrderModel
+            ->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
+            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
+            ->join('branches', 'branches.id = purchase_orders.branch_id')
+            ->where('purchase_orders.status', 'confirmed')
+            ->orderBy('purchase_orders.supplier_confirmed_at', 'DESC')
+            ->findAll();
+        
+        $data['preparingOrders'] = $purchaseOrderModel
+            ->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
+            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
+            ->join('branches', 'branches.id = purchase_orders.branch_id')
+            ->where('purchase_orders.status', 'preparing')
+            ->orderBy('purchase_orders.prepared_at', 'DESC')
+            ->findAll();
+        
+        return view('managers/supplier_orders', $data);
+    }
+
+    // Supplier confirms order
+    public function confirmSupplierOrder($orderId)
+    {
+        $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+        $logModel = new \App\Models\LogModel();
+
+        if ($purchaseOrderModel->confirmBySupplier($orderId)) {
+            $logModel->logAction(session()->get('user_id'), 'supplier_confirmed_order', "Supplier confirmed order #$orderId");
+            return redirect()->to('/Central_AD/supplier-orders')->with('success', 'Order confirmed successfully');
+        }
+        
+        return redirect()->back()->with('error', 'Failed to confirm order');
+    }
+
+    // Supplier marks order as preparing
+    public function markOrderPreparing($orderId)
+    {
+        $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+        $logModel = new \App\Models\LogModel();
+
+        if ($purchaseOrderModel->markAsPreparing($orderId)) {
+            $logModel->logAction(session()->get('user_id'), 'order_preparing', "Order #$orderId marked as preparing");
+            return redirect()->to('/Central_AD/supplier-orders')->with('success', 'Order marked as preparing');
+        }
+        
+        return redirect()->back()->with('error', 'Failed to update order status');
+    }
+
+    // Supplier marks order as ready for delivery
+    public function markOrderReadyForDelivery($orderId)
+    {
+        $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+        $logModel = new \App\Models\LogModel();
+
+        if ($purchaseOrderModel->markAsReadyForDelivery($orderId)) {
+            $logModel->logAction(session()->get('user_id'), 'order_ready_delivery', "Order #$orderId marked as ready for delivery");
+            return redirect()->to('/Central_AD/supplier-orders')->with('success', 'Order marked as ready for delivery');
+        }
+        
+        return redirect()->back()->with('error', 'Failed to update order status');
     }
 
     // Create Order view
@@ -566,18 +657,31 @@ class Central_AD extends Controller
         $data['lowStockAlerts'] = count($inventoryModel->getLowStockItems());
         $data['expiredItems'] = count($inventoryModel->getExpiredItems());
         $data['totalSuppliers'] = $supplierModel->countAll();
-        $data['pendingOrders'] = $purchaseOrderModel->where('status', 'pending')->countAllResults();
+        $data['pendingSupplierOrders'] = $purchaseOrderModel->where('status', 'pending_supplier')->countAllResults();
+        $data['confirmedOrders'] = $purchaseOrderModel->where('status', 'confirmed')->countAllResults();
+        $data['preparingOrders'] = $purchaseOrderModel->where('status', 'preparing')->countAllResults();
+        $data['readyForDelivery'] = $purchaseOrderModel->where('status', 'ready_for_delivery')->countAllResults();
         $data['activeBranches'] = $branchModel->where('status', 'active')->countAllResults();
         $data['activeFranchises'] = $franchiseModel->where('status', 'active')->countAllResults();
 
         // Recent activities (simplified)
-        $data['recentOrders'] = $purchaseOrderModel->orderBy('created_at', 'DESC')->limit(5)->findAll();
+        $data['recentOrders'] = $purchaseOrderModel->orderBy('order_date', 'DESC')->limit(5)->findAll();
 
-        // Pending purchase orders with details for approval
-        $data['pendingPurchaseOrders'] = $purchaseOrderModel->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
+        // Get orders by status for workflow tracking
+        $data['pendingSupplierOrdersList'] = $purchaseOrderModel
+            ->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
             ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
             ->join('branches', 'branches.id = purchase_orders.branch_id')
-            ->where('purchase_orders.status', 'pending')
+            ->where('purchase_orders.status', 'pending_supplier')
+            ->orderBy('purchase_orders.order_date', 'ASC')
+            ->findAll();
+        
+        $data['readyForDeliveryOrders'] = $purchaseOrderModel
+            ->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
+            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
+            ->join('branches', 'branches.id = purchase_orders.branch_id')
+            ->where('purchase_orders.status', 'ready_for_delivery')
+            ->orderBy('purchase_orders.prepared_at', 'ASC')
             ->findAll();
 
         // Inventory alerts
@@ -621,28 +725,131 @@ class Central_AD extends Controller
     // Approve Purchase Request
     public function approvePurchaseRequest($requestId)
     {
+        // Check if user is logged in and is admin
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+            return redirect()->to('/')->with('error', 'Unauthorized access');
+        }
+
         $purchaseRequestModel = new \App\Models\PurchaseRequestModel();
+        $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
         $logModel = new \App\Models\LogModel();
 
-        $purchaseRequestModel->approveRequest($requestId, session()->get('user_id'));
+        $db = \Config\Database::connect();
+        $db->transStart();
 
-        // Log the action
-        $logModel->logAction(session()->get('user_id'), 'approved_purchase_request', "Approved purchase request #$requestId");
+        try {
+            // Get the purchase request
+            $request = $purchaseRequestModel->find($requestId);
+            
+            if (!$request) {
+                throw new \Exception('Purchase request not found');
+            }
 
-        return redirect()->to('/dashboard')->with('success', 'Purchase request approved');
+            // Check if request is already approved or rejected
+            if ($request['status'] !== 'pending') {
+                return redirect()->to('/dashboard')->with('error', 'Purchase request has already been ' . $request['status']);
+            }
+
+            // Validate required fields
+            if (empty($request['branch_id'])) {
+                throw new \Exception('Branch ID is missing in purchase request');
+            }
+
+            if (empty($request['supplier_id'])) {
+                throw new \Exception('Supplier ID is missing. Please ensure the purchase request has a supplier assigned.');
+            }
+
+            // Approve the request
+            if (!$purchaseRequestModel->approveRequest($requestId, session()->get('user_id'))) {
+                $errors = $purchaseRequestModel->errors();
+                throw new \Exception('Failed to approve request: ' . (!empty($errors) ? implode(', ', $errors) : 'Unknown error'));
+            }
+
+            // Create Purchase Order from approved request
+            $totalPrice = ($request['quantity'] ?? 0) * ($request['unit_price'] ?? 0);
+            
+            $orderData = [
+                'purchase_request_id' => $requestId,
+                'supplier_id' => $request['supplier_id'],
+                'branch_id' => $request['branch_id'],
+                'item_name' => $request['item_name'],
+                'quantity' => $request['quantity'],
+                'unit' => $request['unit'] ?? null,
+                'unit_price' => $request['unit_price'] ?? null,
+                'total_price' => $totalPrice,
+                'description' => $request['description'] ?? null,
+                'status' => 'pending_supplier', // Goes to supplier for confirmation
+                'order_date' => date('Y-m-d H:i:s'),
+                'approved_by' => session()->get('user_id')
+            ];
+
+            if (!$purchaseOrderModel->insert($orderData)) {
+                $errors = $purchaseOrderModel->errors();
+                throw new \Exception('Failed to create purchase order: ' . (!empty($errors) ? implode(', ', $errors) : 'Unknown error'));
+            }
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \Exception('Transaction failed. Please try again.');
+            }
+
+            // Log the action
+            try {
+                $logModel->logAction(session()->get('user_id'), 'approved_purchase_request', "Approved purchase request #$requestId and created purchase order");
+            } catch (\Exception $e) {
+                // Log error but don't fail the approval
+                log_message('warning', 'Failed to log approval action: ' . $e->getMessage());
+            }
+
+            return redirect()->to('/dashboard')->with('success', 'Purchase request approved and sent to supplier for confirmation');
+        } catch (\Exception $e) {
+            $db->transRollback();
+            log_message('error', 'Purchase Request Approval Error: ' . $e->getMessage());
+            return redirect()->to('/dashboard')->with('error', 'Error: ' . $e->getMessage());
+        }
     }
 
     // Reject Purchase Request
     public function rejectPurchaseRequest($requestId)
     {
+        // Check if user is logged in and is admin
+        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+            return redirect()->to('/')->with('error', 'Unauthorized access');
+        }
+
         $purchaseRequestModel = new \App\Models\PurchaseRequestModel();
         $logModel = new \App\Models\LogModel();
 
-        $purchaseRequestModel->rejectRequest($requestId, session()->get('user_id'));
+        try {
+            // Get the purchase request
+            $request = $purchaseRequestModel->find($requestId);
+            
+            if (!$request) {
+                return redirect()->to('/dashboard')->with('error', 'Purchase request not found');
+            }
 
-        // Log the action
-        $logModel->logAction(session()->get('user_id'), 'rejected_purchase_request', "Rejected purchase request #$requestId");
+            // Check if request is already processed
+            if ($request['status'] !== 'pending') {
+                return redirect()->to('/dashboard')->with('error', 'Purchase request has already been ' . $request['status']);
+            }
 
-        return redirect()->to('/dashboard')->with('success', 'Purchase request rejected');
+            if (!$purchaseRequestModel->rejectRequest($requestId, session()->get('user_id'))) {
+                $errors = $purchaseRequestModel->errors();
+                return redirect()->to('/dashboard')->with('error', 'Failed to reject request: ' . (!empty($errors) ? implode(', ', $errors) : 'Unknown error'));
+            }
+
+            // Log the action
+            try {
+                $logModel->logAction(session()->get('user_id'), 'rejected_purchase_request', "Rejected purchase request #$requestId");
+            } catch (\Exception $e) {
+                log_message('warning', 'Failed to log rejection action: ' . $e->getMessage());
+            }
+
+            return redirect()->to('/dashboard')->with('success', 'Purchase request rejected');
+        } catch (\Exception $e) {
+            log_message('error', 'Purchase Request Rejection Error: ' . $e->getMessage());
+            return redirect()->to('/dashboard')->with('error', 'Error: ' . $e->getMessage());
+        }
     }
 }

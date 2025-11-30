@@ -36,12 +36,20 @@ class Dashboard extends BaseController
             $branchModel = new BranchModel();
             $db = Database::connect();
 
+            $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+            $deliveryModel = new \App\Models\DeliveryModel();
+            
             $data['metrics'] = [
                 'totalItems' => $inventoryModel->countAll(),
                 'lowStock' => $inventoryModel->where('quantity <', 5)->countAllResults(),
                 'suppliers' => $supplierModel->countAll(),
                 'totalBranches' => $branchModel->countAll(),
                 'pendingPurchaseRequests' => $db->table('purchase_requests')->where('status', 'pending')->countAllResults(),
+                'pendingSupplierOrders' => $purchaseOrderModel->where('status', 'pending_supplier')->countAllResults(),
+                'confirmedOrders' => $purchaseOrderModel->where('status', 'confirmed')->countAllResults(),
+                'preparingOrders' => $purchaseOrderModel->where('status', 'preparing')->countAllResults(),
+                'readyForDelivery' => $purchaseOrderModel->where('status', 'ready_for_delivery')->countAllResults(),
+                'scheduledDeliveries' => $deliveryModel->where('status', 'scheduled')->countAllResults(),
             ];
             $data['recentItems'] = $inventoryModel->orderBy('updated_at', 'DESC')->findAll(5);
             $data['pendingPurchaseRequests'] = $db->table('purchase_requests')
@@ -51,6 +59,12 @@ class Dashboard extends BaseController
                 ->orderBy('purchase_requests.created_at', 'DESC')
                 ->limit(5)
                 ->get()->getResultArray();
+        } elseif ($role === 'supplier') {
+            // Supplier dashboard - redirect to supplier controller
+            return redirect()->to('/supplier/dashboard');
+        } elseif ($role === 'logistics_coordinator') {
+            // Logistics dashboard - redirect to logistics controller
+            return redirect()->to('/logistics/dashboard');
         } elseif ($role === 'branch_manager') {
             $db = Database::connect();
             $branchId = session()->get('branch_id');

@@ -62,7 +62,9 @@ $role = session()->get('role');
             <a href="<?= base_url('dashboard') ?>" class="btn btn-dark w-100 <?= (uri_string() == 'dashboard') ? 'active' : '' ?>">Dashboard</a>
                         <a href="<?= base_url('admin/users') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'admin/users') !== false) ? 'active' : '' ?>">User Management</a>
             <a href="<?= base_url('Central_AD/branches') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/branches') !== false) ? 'active' : '' ?>">Branches</a>
-            <a href="<?= base_url('Central_AD/suppliers') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/supplier') !== false) ? 'active' : '' ?>">Suppliers</a>
+            <a href="<?= base_url('Central_AD/suppliers') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/supplier') !== false && strpos(uri_string(), 'supplier-orders') === false) ? 'active' : '' ?>">Suppliers</a>
+            <a href="<?= base_url('Central_AD/supplier-orders') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'supplier-orders') !== false) ? 'active' : '' ?>">Supplier Orders</a>
+            <a href="<?= base_url('Central_AD/orders') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/orders') !== false && strpos(uri_string(), 'supplier-orders') === false) ? 'active' : '' ?>">All Orders</a>
             <a href="<?= base_url('Central_AD/franchising') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/franchising') !== false) ? 'active' : '' ?>">Franchising</a>
             <a href="<?= base_url('Central_AD/reports') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/reports') !== false) ? 'active' : '' ?>">Reports</a>
             <a href="<?= base_url('Central_AD/settings') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/settings') !== false) ? 'active' : '' ?>">Settings</a>
@@ -80,6 +82,13 @@ $role = session()->get('role');
             <a href="<?= site_url('inventory/stock-list') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'inventory/stock-list') !== false) ? 'active' : '' ?>">Stock List</a>
             <a href="<?= site_url('inventory/alerts') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'inventory/alerts') !== false) ? 'active' : '' ?>">Alerts</a>
              <a href="<?= base_url('Central_AD/inventory') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'Central_AD/inventory') !== false) ? 'active' : '' ?>">Inventory</a>
+        <?php elseif ($role === 'supplier'): ?>
+            <a href="<?= base_url('supplier/dashboard') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'supplier/dashboard') !== false) ? 'active' : '' ?>">Dashboard</a>
+            <a href="<?= base_url('supplier/orders') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'supplier/orders') !== false) ? 'active' : '' ?>">All Orders</a>
+        <?php elseif ($role === 'logistics_coordinator'): ?>
+            <a href="<?= base_url('logistics/dashboard') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'logistics/dashboard') !== false) ? 'active' : '' ?>">Dashboard</a>
+            <a href="<?= base_url('logistics/schedule-delivery') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'logistics/schedule-delivery') !== false) ? 'active' : '' ?>">Schedule Delivery</a>
+            <a href="<?= base_url('logistics/deliveries') ?>" class="btn btn-dark w-100 <?= (strpos(uri_string(), 'logistics/deliveries') !== false) ? 'active' : '' ?>">All Deliveries</a>
         <?php endif; ?>
 
         <a href="<?= base_url('logout') ?>" class="btn btn-danger w-100">Logout</a>

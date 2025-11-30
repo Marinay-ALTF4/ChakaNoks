@@ -44,6 +44,11 @@ class Admin extends Controller
                     $sessionData['branch_id'] = $user->branch_id;
                 }
 
+                // Add supplier_id to session if user has one (for supplier role)
+                if (isset($user->supplier_id) && !empty($user->supplier_id)) {
+                    $sessionData['supplier_id'] = $user->supplier_id;
+                }
+
                 session()->set($sessionData);
 
                 // ✅ Unified redirect
@@ -218,6 +223,7 @@ public function suppliers()
 
         $db = Database::connect();
         $data['branches'] = $db->table('branches')->get()->getResultArray();
+        $data['suppliers'] = $db->table('suppliers')->get()->getResultArray();
 
         return view('managers/create_user', $data);
     }
@@ -232,8 +238,9 @@ public function suppliers()
             'username' => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
             'email' => 'required|valid_email|is_unique[users.email]',
             'password' => 'required|min_length[6]',
-            'role' => 'required|in_list[admin,branch_manager,inventory]',
-            'branch_id' => 'permit_empty|integer'
+            'role' => 'required|in_list[admin,branch_manager,inventory,supplier,logistics_coordinator]',
+            'branch_id' => 'permit_empty|integer',
+            'supplier_id' => 'permit_empty|integer'
         ];
 
         if (!$this->validate($rules)) {
@@ -247,6 +254,7 @@ public function suppliers()
             'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
             'role' => $this->request->getPost('role'),
             'branch_id' => $this->request->getPost('branch_id') ?: null,
+            'supplier_id' => $this->request->getPost('supplier_id') ?: null,
             'created_at' => date('Y-m-d H:i:s')
         ];
 

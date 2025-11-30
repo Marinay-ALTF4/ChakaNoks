@@ -3,9 +3,18 @@
 <?= $this->section('content') ?>
 
 <div class="container-fluid position-relative">
-    <h2 class="mb-4" style="font-weight: 600; color: #333;">Dashboard</h2>
-
-    <a href="<?= base_url('Central_AD/branches/add') ?>" class="btn btn-primary position-absolute" style="top: 0; right: 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Add New Branch</a>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0" style="font-weight: 600; color: #333;">Dashboard</h2>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-success" id="realtime-indicator" style="display: none;">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Live Updates Active
+            </span>
+            <?php if ($role === 'admin'): ?>
+                <a href="<?= base_url('Central_AD/branches/add') ?>" class="btn btn-primary" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Add New Branch</a>
+            <?php endif; ?>
+        </div>
+    </div>
 
     <?php if ($role === 'admin'): ?>
         <div class="row g-4 mb-4">
@@ -47,6 +56,46 @@
             </div>
         </div>
 
+        <!-- Workflow Status Cards -->
+        <div class="row g-3 mb-4" id="workflow-stats-container">
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">Pending PRs</h6>
+                        <h3 class="mb-0 text-warning" data-stat="pendingPurchaseRequests"><?= esc($metrics['pendingPurchaseRequests'] ?? 0) ?></h3>
+                        <small class="text-muted">Awaiting Approval</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">Supplier Pending</h6>
+                        <h3 class="mb-0 text-info" data-stat="pendingSupplierOrders"><?= esc($metrics['pendingSupplierOrders'] ?? 0) ?></h3>
+                        <small class="text-muted">Awaiting Confirmation</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">Ready for Delivery</h6>
+                        <h3 class="mb-0 text-success" data-stat="readyForDelivery"><?= esc($metrics['readyForDelivery'] ?? 0) ?></h3>
+                        <small class="text-muted">Ready to Schedule</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">Scheduled</h6>
+                        <h3 class="mb-0 text-primary" data-stat="scheduledDeliveries"><?= esc($metrics['scheduledDeliveries'] ?? 0) ?></h3>
+                        <small class="text-muted">In Transit</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row g-4 mb-4">
             <div class="col-md-6">
                 <div class="card shadow-sm rounded-3 bg-white border-0">
@@ -54,22 +103,53 @@
                         <i class="bi bi-clipboard-check fs-1 text-secondary mb-2"></i>
                         <h6 class="text-muted fw-semibold">Pending Purchase Requests</h6>
                         <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['pendingPurchaseRequests'] ?? 0) ?></h3>
-                        <?php if (!empty($pendingPurchaseRequests)): ?>
-                            <div class="mt-3">
-                                <h6 class="text-muted">Recent Requests:</h6>
-                                <ul class="list-unstyled">
-                                    <?php foreach (array_slice($pendingPurchaseRequests, 0, 3) as $request): ?>
-                                        <li class="small">
-                                            <strong><?= esc($request['item_name']) ?></strong> (<?= esc($request['quantity']) ?>) - Branch <?= esc($request['branch_name'] ?? 'N/A') ?>
-                                            <div class="mt-1">
-                                                <a href="<?= base_url('Central_AD/approvePurchaseRequest/' . $request['id']) ?>" class="btn btn-sm btn-success me-1">Approve</a>
-                                                <a href="<?= base_url('Central_AD/rejectPurchaseRequest/' . $request['id']) ?>" class="btn btn-sm btn-danger">Reject</a>
-                                            </div>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
-                        <?php endif; ?>
+                        <div id="purchase-requests-container">
+                            <?php if (!empty($pendingPurchaseRequests)): ?>
+                                <div class="mt-3">
+                                    <h6 class="text-muted">Recent Requests:</h6>
+                                    <ul class="list-unstyled purchase-requests-list">
+                                        <?php foreach (array_slice($pendingPurchaseRequests, 0, 3) as $request): ?>
+                                            <li class="small">
+                                                <strong><?= esc($request['item_name']) ?></strong> (<?= esc($request['quantity']) ?>) - Branch <?= esc($request['branch_name'] ?? 'N/A') ?>
+                                                <div class="mt-1">
+                                                    <a href="<?= base_url('Central_AD/approvePurchaseRequest/' . $request['id']) ?>" class="btn btn-sm btn-success me-1">Approve</a>
+                                                    <a href="<?= base_url('Central_AD/rejectPurchaseRequest/' . $request['id']) ?>" class="btn btn-sm btn-danger">Reject</a>
+                                                </div>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                            <?php else: ?>
+                                <div class="mt-3">
+                                    <h6 class="text-muted">Recent Requests:</h6>
+                                    <ul class="list-unstyled purchase-requests-list">
+                                        <li class="small text-muted">No pending requests</li>
+                                    </ul>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body">
+                        <h6 class="text-muted fw-semibold mb-3">Order Workflow Status</h6>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Confirmed Orders:</span>
+                            <strong class="text-info"><?= esc($metrics['confirmedOrders'] ?? 0) ?></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Preparing Orders:</span>
+                            <strong class="text-primary"><?= esc($metrics['preparingOrders'] ?? 0) ?></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Ready for Delivery:</span>
+                            <strong class="text-success"><?= esc($metrics['readyForDelivery'] ?? 0) ?></strong>
+                        </div>
+                        <div class="mt-3">
+                            <a href="<?= base_url('Central_AD/supplier-orders') ?>" class="btn btn-sm btn-outline-primary">Manage Supplier Orders</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -247,6 +327,19 @@
             }
         });
     <?php endif; ?>
+
+// Real-time updates initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // Start real-time updates for workflow stats
+    if (document.getElementById('workflow-stats-container')) {
+        realTime.startWorkflowStats('workflow-stats-container');
+    }
+
+    // Start real-time updates for purchase requests
+    if (document.getElementById('purchase-requests-container')) {
+        realTime.startPurchaseRequests('purchase-requests-container');
+    }
+});
 </script>
 
 

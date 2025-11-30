@@ -32,33 +32,8 @@
                 </div>
             <?php endif; ?>
 
-            <?php if (isset($debug) && ENVIRONMENT !== 'production'): ?>
-                <div class="alert alert-info">
-                    <strong>Debug Info:</strong><br>
-                    Branch ID: <?= $debug['branch_id'] ?? 'NOT SET' ?><br>
-                    User ID: <?= $debug['user_id'] ?? 'NOT SET' ?><br>
-                    Role: <?= $debug['role'] ?? 'NOT SET' ?><br>
-                    Logged In: <?= $debug['logged_in'] ? 'YES' : 'NO' ?>
-                </div>
-            <?php endif; ?>
-
             <form id="purchaseRequestForm" action="<?= base_url('branch/purchase-request') ?>" method="post">
                 <?= csrf_field() ?>
-                
-                <script>
-                // Debug form submission
-                document.getElementById('purchaseRequestForm').addEventListener('submit', function(e) {
-                    console.log('Form submitting...');
-                    console.log('Form action:', this.action);
-                    console.log('Form method:', this.method);
-                    
-                    const formData = new FormData(this);
-                    console.log('Form data:');
-                    for (let [key, value] of formData.entries()) {
-                        console.log(key + ':', value);
-                    }
-                });
-                </script>
 
                 <div id="itemsContainer">
                     <!-- Item Row Template -->

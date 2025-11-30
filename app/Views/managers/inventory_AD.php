@@ -10,6 +10,44 @@
         <a href="<?= base_url('Central_AD/addItem') ?>" class="btn btn-primary">+ Add Item</a>
     </div>
 
+    <!-- Summary Statistics -->
+    <?php if (isset($stats)): ?>
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-muted mb-2">Total Items</h6>
+                    <h3 class="mb-0 text-primary"><?= esc($stats['totalItems'] ?? 0) ?></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-muted mb-2">Total Quantity</h6>
+                    <h3 class="mb-0 text-info"><?= number_format($stats['totalQuantity'] ?? 0) ?></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-muted mb-2">Low Stock Items</h6>
+                    <h3 class="mb-0 text-warning"><?= esc($stats['lowStockItems'] ?? 0) ?></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-muted mb-2">Available Items</h6>
+                    <h3 class="mb-0 text-success"><?= esc($stats['availableItems'] ?? 0) ?></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- Inventory Table -->
     <div class="card">
         <div class="card-header">
@@ -31,11 +69,29 @@
                         </thead>
                         <tbody>
                             <?php foreach ($inventory as $item): ?>
-                                <tr>
-                                    <td><?= esc($item['item_name']) ?></td>
+                                <tr class="<?= ($item['quantity'] ?? 0) <= 5 ? 'table-warning' : '' ?>">
+                                    <td>
+                                        <strong><?= esc($item['item_name']) ?></strong>
+                                        <?php if (($item['quantity'] ?? 0) <= 5): ?>
+                                            <span class="badge bg-warning text-dark ms-2">Low Stock</span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td><?= esc($item['type'] ?? 'N/A') ?></td>
-                                    <td><?= esc($item['quantity']) ?> kg</td>
-                                    <td><?= esc($item['updated_at']) ?></td>
+                                    <td>
+                                        <strong><?= esc($item['quantity'] ?? 0) ?></strong>
+                                        <?php if (!empty($item['unit'])): ?>
+                                            <span class="text-muted"><?= esc($item['unit']) ?></span>
+                                        <?php else: ?>
+                                            <span class="text-muted">units</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($item['updated_at'])): ?>
+                                            <?= date('M d, Y H:i', strtotime($item['updated_at'])) ?>
+                                        <?php else: ?>
+                                            <span class="text-muted">N/A</span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td>
                                         <?php if (!empty($item['barcode'])): ?>
                                             <div class="barcode-container">

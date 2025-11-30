@@ -9,8 +9,9 @@ class PurchaseOrderModel extends Model
     protected $table = 'purchase_orders';
     protected $primaryKey = 'id';
     protected $allowedFields = [
-        'supplier_id', 'branch_id', 'item_name', 'quantity', 'unit', 'unit_price',
-        'total_price', 'description', 'status', 'order_date', 'delivery_date', 'approved_by'
+        'purchase_request_id', 'supplier_id', 'branch_id', 'item_name', 'quantity', 'unit', 'unit_price',
+        'total_price', 'description', 'status', 'order_date', 'supplier_confirmed_at', 'prepared_at',
+        'delivery_date', 'approved_by'
     ];
     protected $useTimestamps = false;
 
@@ -35,10 +36,35 @@ class PurchaseOrderModel extends Model
         return $this->hasOne('App\Models\DeliveryModel', 'order_id');
     }
 
+    public function purchaseRequest()
+    {
+        return $this->belongsTo('App\Models\PurchaseRequestModel', 'purchase_request_id');
+    }
+
     // Methods
     public function getPendingOrders()
     {
-        return $this->where('status', 'pending')->findAll();
+        return $this->where('status', 'pending_supplier')->findAll();
+    }
+
+    public function getSupplierPendingOrders()
+    {
+        return $this->where('status', 'pending_supplier')->findAll();
+    }
+
+    public function getConfirmedOrders()
+    {
+        return $this->where('status', 'confirmed')->findAll();
+    }
+
+    public function getPreparingOrders()
+    {
+        return $this->where('status', 'preparing')->findAll();
+    }
+
+    public function getReadyForDeliveryOrders()
+    {
+        return $this->where('status', 'ready_for_delivery')->findAll();
     }
 
     public function approveOrder($orderId, $approverId)
@@ -46,6 +72,29 @@ class PurchaseOrderModel extends Model
         return $this->update($orderId, [
             'status' => 'approved',
             'approved_by' => $approverId
+        ]);
+    }
+
+    public function confirmBySupplier($orderId)
+    {
+        return $this->update($orderId, [
+            'status' => 'confirmed',
+            'supplier_confirmed_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    public function markAsPreparing($orderId)
+    {
+        return $this->update($orderId, [
+            'status' => 'preparing',
+            'prepared_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    public function markAsReadyForDelivery($orderId)
+    {
+        return $this->update($orderId, [
+            'status' => 'ready_for_delivery'
         ]);
     }
 

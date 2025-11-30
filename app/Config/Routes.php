@@ -127,12 +127,36 @@ $routes->get('/Central_AD/deleteItem/(:num)', 'Central_AD::deleteItem/$1');
 $routes->get('/Central_AD/createOrder', 'Central_AD::createOrder');
 $routes->post('/Central_AD/storeOrder', 'Central_AD::storeOrder');
 
+// Supplier Order Management
+$routes->get('/Central_AD/supplier-orders', 'Central_AD::supplierOrders');
+$routes->get('/Central_AD/confirm-supplier-order/(:num)', 'Central_AD::confirmSupplierOrder/$1');
+$routes->get('/Central_AD/mark-preparing/(:num)', 'Central_AD::markOrderPreparing/$1');
+$routes->get('/Central_AD/mark-ready-delivery/(:num)', 'Central_AD::markOrderReadyForDelivery/$1');
+
 // Central Admin Franchising Management
 $routes->get('/Central_AD/addFranchise', 'Central_AD::addFranchise');
 $routes->post('/Central_AD/storeFranchise', 'Central_AD::storeFranchise');
 $routes->get('/Central_AD/editFranchise/(:num)', 'Central_AD::editFranchise/$1');
 $routes->post('/Central_AD/updateFranchise/(:num)', 'Central_AD::updateFranchise/$1');
 $routes->get('/Central_AD/deleteFranchise/(:num)', 'Central_AD::deleteFranchise/$1');
+
+// Supplier routes
+$routes->get('/supplier/dashboard', 'SupplierController::dashboard');
+$routes->get('/supplier/orders', 'SupplierController::orders');
+$routes->get('/supplier/confirm-order/(:num)', 'SupplierController::confirmOrder/$1');
+$routes->get('/supplier/mark-preparing/(:num)', 'SupplierController::markPreparing/$1');
+$routes->get('/supplier/mark-ready/(:num)', 'SupplierController::markReadyForDelivery/$1');
+
+// API Routes for Real-time Updates
+$routes->group('api', ['filter' => 'auth'], function($routes) {
+    $routes->get('purchase-requests-count', 'ApiController::getPurchaseRequestsCount');
+    $routes->get('purchase-requests', 'ApiController::getPurchaseRequests');
+    $routes->get('supplier-orders', 'ApiController::getSupplierOrders');
+    $routes->get('ready-for-delivery', 'ApiController::getReadyForDeliveryOrders');
+    $routes->get('workflow-stats', 'ApiController::getWorkflowStats');
+    $routes->get('order-status/(:num)', 'ApiController::getOrderStatus/$1');
+    $routes->get('delivery-status/(:num)', 'ApiController::getDeliveryStatus/$1');
+});
 
 // Logistics routes
 $routes->get('/logistics/dashboard', 'LogisticsController::dashboard');

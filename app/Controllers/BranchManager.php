@@ -53,41 +53,18 @@ class BranchManager extends Controller
         // Check if POST request (case-insensitive)
         $method = strtolower($this->request->getMethod());
         
-        // TEMPORARY DEBUG - Remove after testing
-        if (ENVIRONMENT !== 'production' && $method === 'post') {
-            $debugInfo = [
-                'method' => $this->request->getMethod(),
-                'branch_id' => session()->get('branch_id'),
-                'items' => $this->request->getPost('items'),
-                'all_post' => $this->request->getPost(),
-                'session' => session()->get()
-            ];
-            log_message('debug', '=== PURCHASE REQUEST DEBUG === ' . json_encode($debugInfo));
-        }
-        
         if ($method === 'post') {
             helper(['form', 'url']);
             
             $branchId = session()->get('branch_id');
             $items = $this->request->getPost('items');
-            $allPost = $this->request->getPost();
-
-            // Debug: Log what we're receiving
-            log_message('debug', '=== PURCHASE REQUEST POST RECEIVED ===');
-            log_message('debug', 'Method: ' . $this->request->getMethod());
-            log_message('debug', 'Branch ID from session: ' . ($branchId ?? 'NULL'));
-            log_message('debug', 'Items array: ' . json_encode($items));
-            log_message('debug', 'All POST data: ' . json_encode($allPost));
-            log_message('debug', 'Session data: ' . json_encode(session()->get()));
 
             // Check if branch_id is set in session
             if (empty($branchId)) {
-                log_message('error', 'Purchase Request failed: Branch ID not found in session');
                 return redirect()->back()->withInput()->with('error', 'Branch ID not found. Please log out and log back in.');
             }
 
             if (empty($items) || !is_array($items)) {
-                log_message('error', 'Purchase Request failed: No items received');
                 return redirect()->back()->withInput()->with('error', 'At least one item is required');
             }
 
@@ -121,13 +98,10 @@ class BranchManager extends Controller
                         'status' => 'pending'
                     ];
 
-                    log_message('debug', 'Purchase Request - Inserting data: ' . json_encode($data));
-
                     // Get model errors if insert fails
                     if (!$this->purchaseRequestModel->insert($data)) {
                         $modelErrors = $this->purchaseRequestModel->errors();
                         $errorMsg = !empty($modelErrors) ? implode(', ', $modelErrors) : 'Failed to insert purchase request item';
-                        log_message('error', 'Purchase Request - Insert failed: ' . $errorMsg);
                         $errors[] = "Item #" . ($index + 1) . ": " . $errorMsg;
                         continue;
                     }
@@ -148,18 +122,16 @@ class BranchManager extends Controller
                 $db->transComplete();
 
                 if ($db->transStatus() === false) {
-                    log_message('error', 'Purchase Request - Transaction failed');
                     throw new \Exception('Transaction failed. Please try again.');
                 }
 
                 // Log the action (only if logModel is available)
-                try {
-                    if ($this->logModel) {
+                if ($this->logModel) {
+                    try {
                         $this->logModel->logAction(session()->get('user_id'), 'created_purchase_request', "Created purchase request with " . $savedCount . " items");
+                    } catch (\Exception $e) {
+                        // Don't fail if logging fails
                     }
-                } catch (\Exception $e) {
-                    // Don't fail if logging fails
-                    log_message('warning', 'Purchase Request - Logging failed: ' . $e->getMessage());
                 }
 
                 $successMsg = $savedCount . ' item(s) saved successfully';
@@ -170,21 +142,11 @@ class BranchManager extends Controller
                 return redirect()->to('/branch/dashboard')->with('success', $successMsg);
             } catch (\Exception $e) {
                 $db->transRollback();
-                log_message('error', 'Purchase Request - Exception: ' . $e->getMessage());
                 return redirect()->back()->withInput()->with('error', 'Error: ' . $e->getMessage());
             }
         }
 
         $data['suppliers'] = (new \App\Models\SupplierModel())->getActiveSuppliers();
-        
-        // Debug: Check session
-        $data['debug'] = [
-            'branch_id' => session()->get('branch_id'),
-            'user_id' => session()->get('user_id'),
-            'role' => session()->get('role'),
-            'logged_in' => session()->get('logged_in')
-        ];
-        
         return view('branch_managers/create_purchase_request', $data);
     }
 

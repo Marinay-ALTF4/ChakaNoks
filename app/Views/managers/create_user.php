@@ -51,10 +51,12 @@
                                 <option value="admin" <?= old('role') === 'admin' ? 'selected' : '' ?>>Admin</option>
                                 <option value="branch_manager" <?= old('role') === 'branch_manager' ? 'selected' : '' ?>>Branch Manager</option>
                                 <option value="inventory" <?= old('role') === 'inventory' ? 'selected' : '' ?>>Inventory Staff</option>
+                                <option value="supplier" <?= old('role') === 'supplier' ? 'selected' : '' ?>>Supplier</option>
+                                <option value="logistics_coordinator" <?= old('role') === 'logistics_coordinator' ? 'selected' : '' ?>>Logistics Coordinator</option>
                             </select>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3" id="branch_field">
                             <label for="branch_id" class="form-label">Branch</label>
                             <select class="form-select" id="branch_id" name="branch_id">
                                 <option value="">Select Branch (Optional)</option>
@@ -65,6 +67,21 @@
                                 <?php endforeach; ?>
                             </select>
                             <div class="form-text">Required for Branch Manager role</div>
+                        </div>
+
+                        <div class="mb-3" id="supplier_field" style="display: none;">
+                            <label for="supplier_id" class="form-label">Supplier *</label>
+                            <select class="form-select" id="supplier_id" name="supplier_id">
+                                <option value="">Select Supplier</option>
+                                <?php if (isset($suppliers)): ?>
+                                    <?php foreach ($suppliers as $supplier): ?>
+                                        <option value="<?= $supplier['id'] ?>" <?= old('supplier_id') == $supplier['id'] ? 'selected' : '' ?>>
+                                            <?= esc($supplier['supplier_name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                            <div class="form-text">Required for Supplier role</div>
                         </div>
 
                         <div class="d-flex gap-2">
@@ -80,15 +97,29 @@
 
 <script>
 document.getElementById('role').addEventListener('change', function() {
+    const branchField = document.getElementById('branch_field');
     const branchSelect = document.getElementById('branch_id');
     const branchLabel = branchSelect.previousElementSibling;
+    const supplierField = document.getElementById('supplier_field');
+    const supplierSelect = document.getElementById('supplier_id');
 
     if (this.value === 'branch_manager') {
+        branchField.style.display = 'block';
         branchSelect.required = true;
         branchLabel.innerHTML = 'Branch *';
+        supplierField.style.display = 'none';
+        supplierSelect.required = false;
+    } else if (this.value === 'supplier') {
+        branchField.style.display = 'none';
+        branchSelect.required = false;
+        supplierField.style.display = 'block';
+        supplierSelect.required = true;
     } else {
+        branchField.style.display = 'block';
         branchSelect.required = false;
         branchLabel.innerHTML = 'Branch';
+        supplierField.style.display = 'none';
+        supplierSelect.required = false;
     }
 });
 

@@ -33,9 +33,30 @@ class UserSeeder extends Seeder
                 'branch_id'  => 1, // Assign to Branch 1 - Downtown
                 'created_at' => date('Y-m-d H:i:s'),
             ],
+            [
+                'username'   => 'logistics',
+                'email'      => 'logistics@chakanoks.com',
+                'password'   => password_hash('logistics123', PASSWORD_DEFAULT),
+                'role'       => 'logistics_coordinator',
+                'branch_id'  => null,
+                'created_at' => date('Y-m-d H:i:s'),
+            ],
         ];
 
-        // insert multiple rows
-        $this->db->table('users')->insertBatch($data);
+        // Insert users one by one, checking if they already exist
+        foreach ($data as $user) {
+            $existing = $this->db->table('users')
+                ->where('username', $user['username'])
+                ->orWhere('email', $user['email'])
+                ->get()
+                ->getRow();
+            
+            if (!$existing) {
+                $this->db->table('users')->insert($user);
+                echo "Created user: {$user['username']}\n";
+            } else {
+                echo "User {$user['username']} already exists. Skipping.\n";
+            }
+        }
     }
 }

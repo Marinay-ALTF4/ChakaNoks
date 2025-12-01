@@ -49,6 +49,14 @@ class UserSeeder extends Seeder
                 'branch_id'  => null,
                 'created_at' => date('Y-m-d H:i:s'),
             ],
+            [
+                'username'   => 'franchise_manager',
+                'email'      => 'franchise@chakanoks.com',
+                'password'   => password_hash('franchise123', PASSWORD_DEFAULT),
+                'role'       => 'franchise_manager',
+                'branch_id'  => null,
+                'created_at' => date('Y-m-d H:i:s'),
+            ],
         ];
 
         // Insert users one by one, checking if they already exist

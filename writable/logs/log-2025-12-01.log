@@ -415,3 +415,580 @@ DEBUG - 2025-12-01 02:05:47 --> Session: Class initialized using 'CodeIgniter\Se
 DEBUG - 2025-12-01 02:05:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2025-12-01 02:05:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2025-12-01 02:05:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:08:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:08:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-12-01 02:08:24 --> mysqli_sql_exception: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist in C:\xampp\htdocs\ChakaNoks\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\ChakaNoks\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `franchi...', 0)
+#1 C:\xampp\htdocs\ChakaNoks\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `franchi...')
+#2 C:\xampp\htdocs\ChakaNoks\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `franchi...')
+#3 C:\xampp\htdocs\ChakaNoks\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchi...', Array, false)
+#4 C:\xampp\htdocs\ChakaNoks\app\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\ChakaNoks\system\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+#6 C:\xampp\htdocs\ChakaNoks\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+#7 C:\xampp\htdocs\ChakaNoks\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\ChakaNoks\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\ChakaNoks\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\ChakaNoks\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+CRITICAL - 2025-12-01 02:08:24 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', [], false)
+ 2 APPPATH\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-01 02:08:24 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', [], false)
+ 4 APPPATH\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-01 02:08:24 --> [Caused by] mysqli_sql_exception: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', [], false)
+ 5 APPPATH\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-12-01 02:09:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-12-01 02:09:23 --> mysqli_sql_exception: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist in C:\xampp\htdocs\ChakaNoks\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\ChakaNoks\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `franchi...', 0)
+#1 C:\xampp\htdocs\ChakaNoks\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `franchi...')
+#2 C:\xampp\htdocs\ChakaNoks\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `franchi...')
+#3 C:\xampp\htdocs\ChakaNoks\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchi...', Array, false)
+#4 C:\xampp\htdocs\ChakaNoks\app\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\ChakaNoks\system\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+#6 C:\xampp\htdocs\ChakaNoks\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+#7 C:\xampp\htdocs\ChakaNoks\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\ChakaNoks\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\ChakaNoks\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\ChakaNoks\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+CRITICAL - 2025-12-01 02:09:23 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', [], false)
+ 2 APPPATH\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-01 02:09:23 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', [], false)
+ 4 APPPATH\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-01 02:09:23 --> [Caused by] mysqli_sql_exception: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', [], false)
+ 5 APPPATH\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-12-01 02:09:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-12-01 02:09:26 --> mysqli_sql_exception: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist in C:\xampp\htdocs\ChakaNoks\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\ChakaNoks\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `franchi...', 0)
+#1 C:\xampp\htdocs\ChakaNoks\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `franchi...')
+#2 C:\xampp\htdocs\ChakaNoks\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `franchi...')
+#3 C:\xampp\htdocs\ChakaNoks\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchi...', Array, false)
+#4 C:\xampp\htdocs\ChakaNoks\app\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\ChakaNoks\system\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+#6 C:\xampp\htdocs\ChakaNoks\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+#7 C:\xampp\htdocs\ChakaNoks\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\ChakaNoks\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\ChakaNoks\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\ChakaNoks\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+CRITICAL - 2025-12-01 02:09:26 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', [], false)
+ 2 APPPATH\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-01 02:09:26 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', [], false)
+ 4 APPPATH\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-01 02:09:26 --> [Caused by] mysqli_sql_exception: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', [], false)
+ 5 APPPATH\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-12-01 02:09:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-12-01 02:09:28 --> mysqli_sql_exception: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist in C:\xampp\htdocs\ChakaNoks\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\ChakaNoks\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `franchi...', 0)
+#1 C:\xampp\htdocs\ChakaNoks\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `franchi...')
+#2 C:\xampp\htdocs\ChakaNoks\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `franchi...')
+#3 C:\xampp\htdocs\ChakaNoks\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchi...', Array, false)
+#4 C:\xampp\htdocs\ChakaNoks\app\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\ChakaNoks\system\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+#6 C:\xampp\htdocs\ChakaNoks\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+#7 C:\xampp\htdocs\ChakaNoks\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\ChakaNoks\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\ChakaNoks\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\ChakaNoks\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+CRITICAL - 2025-12-01 02:09:28 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', [], false)
+ 2 APPPATH\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-01 02:09:28 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', [], false)
+ 4 APPPATH\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-01 02:09:28 --> [Caused by] mysqli_sql_exception: Table 'chakanoks_db.franchise_supply_allocations' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `franchise_supply_allocations`.*, `franchises`.`franchise_name`
+FROM `franchise_supply_allocations`
+LEFT JOIN `franchises` ON `franchises`.`id` = `franchise_supply_allocations`.`franchise_id`
+ORDER BY `franchise_supply_allocations`.`created_at` DESC
+ LIMIT 5', [], false)
+ 5 APPPATH\Controllers\Dashboard.php(189): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-12-01 02:09:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-01 02:09:44 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "franchise/applications.php"
+[Method: GET, Route: franchise/applications]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('franchise/applications.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('franchise/applications', [], true)
+ 3 APPPATH\Controllers\FranchiseController.php(48): view('franchise/applications', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\FranchiseController->applications()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\FranchiseController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-01 02:09:58 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "franchise/applications.php"
+[Method: GET, Route: franchise/applications]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('franchise/applications.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('franchise/applications', [], true)
+ 3 APPPATH\Controllers\FranchiseController.php(48): view('franchise/applications', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\FranchiseController->applications()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\FranchiseController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-12-01 02:10:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:10:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-01 02:10:37 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "franchise/applications.php"
+[Method: GET, Route: franchise/applications]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('franchise/applications.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('franchise/applications', [], true)
+ 3 APPPATH\Controllers\FranchiseController.php(48): view('franchise/applications', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\FranchiseController->applications()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\FranchiseController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-12-01 02:10:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:10:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:10:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:11:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-01 02:12:06 --> ErrorException: ini_set(): Session ini settings cannot be changed when a session is active
+[Method: GET, Route: franchise/allocation-report]
+in SYSTEMPATH\Session\Handlers\FileHandler.php on line 74.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'ini_set(): Session ini settings cannot be changed when a session is active', 'C:\\xampp\\htdocs\\ChakaNoks\\system\\Session\\Handlers\\FileHandler.php', 74)
+ 2 SYSTEMPATH\Session\Handlers\FileHandler.php(74): ini_set('session.save_path', 'C:\\xampp\\htdocs\\ChakaNoks\\writable\\session')
+ 3 SYSTEMPATH\Config\Services.php(702): CodeIgniter\Session\Handlers\FileHandler->__construct(Object(Config\Session), '::1')
+ 4 SYSTEMPATH\Config\BaseService.php(312): CodeIgniter\Config\Services::session(Object(Config\Session), false)
+ 5 SYSTEMPATH\Config\BaseService.php(251): CodeIgniter\Config\BaseService::__callStatic('session', [...])
+ 6 SYSTEMPATH\Config\Services.php(668): CodeIgniter\Config\BaseService::getSharedInstance('session', null)
+ 7 SYSTEMPATH\Config\BaseService.php(321): CodeIgniter\Config\Services::session()
+ 8 SYSTEMPATH\Config\BaseService.php(202): CodeIgniter\Config\BaseService::__callStatic('session', [])
+ 9 SYSTEMPATH\Common.php(995): CodeIgniter\Config\BaseService::get('session')
+10 SYSTEMPATH\Common.php(968): service('session')
+11 APPPATH\Views\template\header.php(5): session()
+12 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\ChakaNoks\\app\\Views\\template\\header.php')
+13 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+14 SYSTEMPATH\View\View.php(475): CodeIgniter\View\View->render('template/header', null, true)
+15 APPPATH\Views\Layout.php(1): CodeIgniter\View\View->include('template/header')
+16 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\ChakaNoks\\app\\Views\\Layout.php')
+17 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+18 SYSTEMPATH\View\View.php(242): CodeIgniter\View\View->render('layout', [], true)
+19 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('franchise/allocation_report', [], true)
+20 APPPATH\Controllers\FranchiseController.php(122): view('franchise/allocation_report', [...])
+21 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\FranchiseController->allocationReport()
+22 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\FranchiseController))
+23 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+24 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+25 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+26 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-12-01 02:12:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:12:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-01 02:12:16 --> ErrorException: ini_set(): Session ini settings cannot be changed when a session is active
+[Method: GET, Route: franchise/index]
+in SYSTEMPATH\Session\Handlers\FileHandler.php on line 74.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'ini_set(): Session ini settings cannot be changed when a session is active', 'C:\\xampp\\htdocs\\ChakaNoks\\system\\Session\\Handlers\\FileHandler.php', 74)
+ 2 SYSTEMPATH\Session\Handlers\FileHandler.php(74): ini_set('session.save_path', 'C:\\xampp\\htdocs\\ChakaNoks\\writable\\session')
+ 3 SYSTEMPATH\Config\Services.php(702): CodeIgniter\Session\Handlers\FileHandler->__construct(Object(Config\Session), '::1')
+ 4 SYSTEMPATH\Config\BaseService.php(312): CodeIgniter\Config\Services::session(Object(Config\Session), false)
+ 5 SYSTEMPATH\Config\BaseService.php(251): CodeIgniter\Config\BaseService::__callStatic('session', [...])
+ 6 SYSTEMPATH\Config\Services.php(668): CodeIgniter\Config\BaseService::getSharedInstance('session', null)
+ 7 SYSTEMPATH\Config\BaseService.php(321): CodeIgniter\Config\Services::session()
+ 8 SYSTEMPATH\Config\BaseService.php(202): CodeIgniter\Config\BaseService::__callStatic('session', [])
+ 9 SYSTEMPATH\Common.php(995): CodeIgniter\Config\BaseService::get('session')
+10 SYSTEMPATH\Common.php(968): service('session')
+11 APPPATH\Views\template\header.php(5): session()
+12 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\ChakaNoks\\app\\Views\\template\\header.php')
+13 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+14 SYSTEMPATH\View\View.php(475): CodeIgniter\View\View->render('template/header', null, true)
+15 APPPATH\Views\Layout.php(1): CodeIgniter\View\View->include('template/header')
+16 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\ChakaNoks\\app\\Views\\Layout.php')
+17 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+18 SYSTEMPATH\View\View.php(242): CodeIgniter\View\View->render('layout', [], true)
+19 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('franchise/index', [], true)
+20 APPPATH\Controllers\FranchiseController.php(41): view('franchise/index', [...])
+21 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\FranchiseController->index()
+22 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\FranchiseController))
+23 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+24 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+25 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+26 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-01 02:12:26 --> ErrorException: ini_set(): Session ini settings cannot be changed when a session is active
+[Method: GET, Route: franchise/allocation-report]
+in SYSTEMPATH\Session\Handlers\FileHandler.php on line 74.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'ini_set(): Session ini settings cannot be changed when a session is active', 'C:\\xampp\\htdocs\\ChakaNoks\\system\\Session\\Handlers\\FileHandler.php', 74)
+ 2 SYSTEMPATH\Session\Handlers\FileHandler.php(74): ini_set('session.save_path', 'C:\\xampp\\htdocs\\ChakaNoks\\writable\\session')
+ 3 SYSTEMPATH\Config\Services.php(702): CodeIgniter\Session\Handlers\FileHandler->__construct(Object(Config\Session), '::1')
+ 4 SYSTEMPATH\Config\BaseService.php(312): CodeIgniter\Config\Services::session(Object(Config\Session), false)
+ 5 SYSTEMPATH\Config\BaseService.php(251): CodeIgniter\Config\BaseService::__callStatic('session', [...])
+ 6 SYSTEMPATH\Config\Services.php(668): CodeIgniter\Config\BaseService::getSharedInstance('session', null)
+ 7 SYSTEMPATH\Config\BaseService.php(321): CodeIgniter\Config\Services::session()
+ 8 SYSTEMPATH\Config\BaseService.php(202): CodeIgniter\Config\BaseService::__callStatic('session', [])
+ 9 SYSTEMPATH\Common.php(995): CodeIgniter\Config\BaseService::get('session')
+10 SYSTEMPATH\Common.php(968): service('session')
+11 APPPATH\Views\template\header.php(5): session()
+12 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\ChakaNoks\\app\\Views\\template\\header.php')
+13 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+14 SYSTEMPATH\View\View.php(475): CodeIgniter\View\View->render('template/header', null, true)
+15 APPPATH\Views\Layout.php(1): CodeIgniter\View\View->include('template/header')
+16 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\ChakaNoks\\app\\Views\\Layout.php')
+17 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+18 SYSTEMPATH\View\View.php(242): CodeIgniter\View\View->render('layout', [], true)
+19 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('franchise/allocation_report', [], true)
+20 APPPATH\Controllers\FranchiseController.php(128): view('franchise/allocation_report', [...])
+21 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\FranchiseController->allocationReport()
+22 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\FranchiseController))
+23 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+24 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+25 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+26 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-12-01 02:12:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:12:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:12:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:12:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-01 02:12:41 --> ErrorException: ini_set(): Session ini settings cannot be changed when a session is active
+[Method: GET, Route: franchise/allocation-report]
+in SYSTEMPATH\Session\Handlers\FileHandler.php on line 74.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'ini_set(): Session ini settings cannot be changed when a session is active', 'C:\\xampp\\htdocs\\ChakaNoks\\system\\Session\\Handlers\\FileHandler.php', 74)
+ 2 SYSTEMPATH\Session\Handlers\FileHandler.php(74): ini_set('session.save_path', 'C:\\xampp\\htdocs\\ChakaNoks\\writable\\session')
+ 3 SYSTEMPATH\Config\Services.php(702): CodeIgniter\Session\Handlers\FileHandler->__construct(Object(Config\Session), '::1')
+ 4 SYSTEMPATH\Config\BaseService.php(312): CodeIgniter\Config\Services::session(Object(Config\Session), false)
+ 5 SYSTEMPATH\Config\BaseService.php(251): CodeIgniter\Config\BaseService::__callStatic('session', [...])
+ 6 SYSTEMPATH\Config\Services.php(668): CodeIgniter\Config\BaseService::getSharedInstance('session', null)
+ 7 SYSTEMPATH\Config\BaseService.php(321): CodeIgniter\Config\Services::session()
+ 8 SYSTEMPATH\Config\BaseService.php(202): CodeIgniter\Config\BaseService::__callStatic('session', [])
+ 9 SYSTEMPATH\Common.php(995): CodeIgniter\Config\BaseService::get('session')
+10 SYSTEMPATH\Common.php(968): service('session')
+11 APPPATH\Views\template\header.php(5): session()
+12 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\ChakaNoks\\app\\Views\\template\\header.php')
+13 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+14 SYSTEMPATH\View\View.php(475): CodeIgniter\View\View->render('template/header', null, true)
+15 APPPATH\Views\Layout.php(1): CodeIgniter\View\View->include('template/header')
+16 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\ChakaNoks\\app\\Views\\Layout.php')
+17 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+18 SYSTEMPATH\View\View.php(242): CodeIgniter\View\View->render('layout', [], true)
+19 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('franchise/allocation_report', [], true)
+20 APPPATH\Controllers\FranchiseController.php(128): view('franchise/allocation_report', [...])
+21 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\FranchiseController->allocationReport()
+22 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\FranchiseController))
+23 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+24 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+25 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+26 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-01 02:12:44 --> ErrorException: ini_set(): Session ini settings cannot be changed when a session is active
+[Method: GET, Route: franchise/index]
+in SYSTEMPATH\Session\Handlers\FileHandler.php on line 74.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'ini_set(): Session ini settings cannot be changed when a session is active', 'C:\\xampp\\htdocs\\ChakaNoks\\system\\Session\\Handlers\\FileHandler.php', 74)
+ 2 SYSTEMPATH\Session\Handlers\FileHandler.php(74): ini_set('session.save_path', 'C:\\xampp\\htdocs\\ChakaNoks\\writable\\session')
+ 3 SYSTEMPATH\Config\Services.php(702): CodeIgniter\Session\Handlers\FileHandler->__construct(Object(Config\Session), '::1')
+ 4 SYSTEMPATH\Config\BaseService.php(312): CodeIgniter\Config\Services::session(Object(Config\Session), false)
+ 5 SYSTEMPATH\Config\BaseService.php(251): CodeIgniter\Config\BaseService::__callStatic('session', [...])
+ 6 SYSTEMPATH\Config\Services.php(668): CodeIgniter\Config\BaseService::getSharedInstance('session', null)
+ 7 SYSTEMPATH\Config\BaseService.php(321): CodeIgniter\Config\Services::session()
+ 8 SYSTEMPATH\Config\BaseService.php(202): CodeIgniter\Config\BaseService::__callStatic('session', [])
+ 9 SYSTEMPATH\Common.php(995): CodeIgniter\Config\BaseService::get('session')
+10 SYSTEMPATH\Common.php(968): service('session')
+11 APPPATH\Views\template\header.php(5): session()
+12 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\ChakaNoks\\app\\Views\\template\\header.php')
+13 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+14 SYSTEMPATH\View\View.php(475): CodeIgniter\View\View->render('template/header', null, true)
+15 APPPATH\Views\Layout.php(1): CodeIgniter\View\View->include('template/header')
+16 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\ChakaNoks\\app\\Views\\Layout.php')
+17 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+18 SYSTEMPATH\View\View.php(242): CodeIgniter\View\View->render('layout', [], true)
+19 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('franchise/index', [], true)
+20 APPPATH\Controllers\FranchiseController.php(41): view('franchise/index', [...])
+21 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\FranchiseController->index()
+22 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\FranchiseController))
+23 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+24 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+25 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+26 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-12-01 02:12:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:12:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:12:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-12-01 02:13:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-12-01 02:13:25 --> ErrorException: ini_set(): Session ini settings cannot be changed when a session is active
+[Method: GET, Route: franchise/index]
+in SYSTEMPATH\Session\Handlers\FileHandler.php on line 74.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'ini_set(): Session ini settings cannot be changed when a session is active', 'C:\\xampp\\htdocs\\ChakaNoks\\system\\Session\\Handlers\\FileHandler.php', 74)
+ 2 SYSTEMPATH\Session\Handlers\FileHandler.php(74): ini_set('session.save_path', 'C:\\xampp\\htdocs\\ChakaNoks\\writable\\session')
+ 3 SYSTEMPATH\Config\Services.php(702): CodeIgniter\Session\Handlers\FileHandler->__construct(Object(Config\Session), '::1')
+ 4 SYSTEMPATH\Config\BaseService.php(312): CodeIgniter\Config\Services::session(Object(Config\Session), false)
+ 5 SYSTEMPATH\Config\BaseService.php(251): CodeIgniter\Config\BaseService::__callStatic('session', [...])
+ 6 SYSTEMPATH\Config\Services.php(668): CodeIgniter\Config\BaseService::getSharedInstance('session', null)
+ 7 SYSTEMPATH\Config\BaseService.php(321): CodeIgniter\Config\Services::session()
+ 8 SYSTEMPATH\Config\BaseService.php(202): CodeIgniter\Config\BaseService::__callStatic('session', [])
+ 9 SYSTEMPATH\Common.php(995): CodeIgniter\Config\BaseService::get('session')
+10 SYSTEMPATH\Common.php(968): service('session')
+11 APPPATH\Views\template\header.php(5): session()
+12 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\ChakaNoks\\app\\Views\\template\\header.php')
+13 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+14 SYSTEMPATH\View\View.php(475): CodeIgniter\View\View->render('template/header', null, true)
+15 APPPATH\Views\Layout.php(1): CodeIgniter\View\View->include('template/header')
+16 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\ChakaNoks\\app\\Views\\Layout.php')
+17 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+18 SYSTEMPATH\View\View.php(242): CodeIgniter\View\View->render('layout', [], true)
+19 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('franchise/index', [], true)
+20 APPPATH\Controllers\FranchiseController.php(41): view('franchise/index', [...])
+21 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\FranchiseController->index()
+22 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\FranchiseController))
+23 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+24 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+25 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+26 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-12-01 02:13:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

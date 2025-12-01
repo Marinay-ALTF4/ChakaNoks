@@ -174,6 +174,8 @@ $routes->get('/logistics/track-delivery/(:any)', 'LogisticsController::trackDeli
 
 // Franchise routes
 $routes->get('/franchise/dashboard', 'FranchiseController::dashboard');
+$routes->get('/franchise', 'FranchiseController::index');
+$routes->get('/franchise/index', 'FranchiseController::index');
 $routes->get('/franchise/applications', 'FranchiseController::applications');
 $routes->get('/franchise/approve/(:num)', 'FranchiseController::approveApplication/$1');
 $routes->get('/franchise/reject/(:num)', 'FranchiseController::rejectApplication/$1');

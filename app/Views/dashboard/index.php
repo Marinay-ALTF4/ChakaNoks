@@ -14,6 +14,8 @@
                 <a href="<?= base_url('Central_AD/branches/add') ?>" class="btn btn-primary" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Add New Branch</a>
             <?php elseif ($role === 'system_administrator'): ?>
                 <a href="<?= base_url('system/users') ?>" class="btn btn-primary" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Manage Users</a>
+            <?php elseif ($role === 'franchise_manager'): ?>
+                <a href="<?= base_url('franchise/applications') ?>" class="btn btn-primary" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">View Applications</a>
             <?php endif; ?>
         </div>
     </div>
@@ -503,6 +505,180 @@
                         <a href="<?= base_url('system/security') ?>" class="btn btn-outline-warning w-100">
                             <i class="bi bi-shield-lock"></i><br>
                             <small>Security Settings</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <?php elseif ($role === 'franchise_manager'): ?>
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-building fs-1 text-primary mb-2"></i>
+                        <h6 class="text-muted fw-semibold">Total Franchises</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['totalFranchises'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-check-circle fs-1 text-success mb-2"></i>
+                        <h6 class="text-muted fw-semibold">Active Franchises</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['activeFranchises'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-clock-history fs-1 text-warning mb-2"></i>
+                        <h6 class="text-muted fw-semibold">Pending Applications</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['pendingApplications'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-x-circle fs-1 text-danger mb-2"></i>
+                        <h6 class="text-muted fw-semibold">Inactive Franchises</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['inactiveFranchises'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-header bg-light border-0 fw-semibold">Pending Franchise Applications</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="border-0 fw-semibold">Franchise Name</th>
+                                        <th class="border-0 fw-semibold">Owner</th>
+                                        <th class="border-0 fw-semibold">Location</th>
+                                        <th class="border-0 fw-semibold">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($pendingApplications)): foreach ($pendingApplications as $application): ?>
+                                        <tr class="border-bottom">
+                                            <td class="border-0"><?= esc($application['franchise_name'] ?? '') ?></td>
+                                            <td class="border-0"><?= esc($application['owner'] ?? '') ?></td>
+                                            <td class="border-0"><?= esc($application['location'] ?? '') ?></td>
+                                            <td class="border-0">
+                                                <a href="<?= base_url('franchise/approve/' . $application['id']) ?>" class="btn btn-sm btn-success me-1">Approve</a>
+                                                <a href="<?= base_url('franchise/reject/' . $application['id']) ?>" class="btn btn-sm btn-danger">Reject</a>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; else: ?>
+                                        <tr><td colspan="4" class="text-center border-0">No pending applications</td></tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-header bg-light border-0 fw-semibold">Recent Active Franchises</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="border-0 fw-semibold">Franchise Name</th>
+                                        <th class="border-0 fw-semibold">Owner</th>
+                                        <th class="border-0 fw-semibold">Location</th>
+                                        <th class="border-0 fw-semibold">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($recentFranchises)): foreach ($recentFranchises as $franchise): ?>
+                                        <tr class="border-bottom">
+                                            <td class="border-0"><?= esc($franchise['franchise_name'] ?? '') ?></td>
+                                            <td class="border-0"><?= esc($franchise['owner'] ?? '') ?></td>
+                                            <td class="border-0"><?= esc($franchise['location'] ?? '') ?></td>
+                                            <td class="border-0">
+                                                <span class="badge bg-success"><?= esc(ucfirst($franchise['status'] ?? '')) ?></span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; else: ?>
+                                        <tr><td colspan="4" class="text-center border-0">No active franchises</td></tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm rounded-3 bg-white border-0">
+            <div class="card-header bg-light border-0 fw-semibold">Recent Supply Allocations</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="border-0 fw-semibold">Franchise</th>
+                                <th class="border-0 fw-semibold">Item Name</th>
+                                <th class="border-0 fw-semibold">Quantity</th>
+                                <th class="border-0 fw-semibold">Period</th>
+                                <th class="border-0 fw-semibold">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                    <?php if (!empty($recentAllocations)): foreach ($recentAllocations as $allocation): ?>
+                                        <tr class="border-bottom">
+                                            <td class="border-0"><?= esc($allocation['franchise_name'] ?? 'N/A') ?></td>
+                                            <td class="border-0"><?= esc($allocation['item_name'] ?? '') ?></td>
+                                            <td class="border-0"><?= esc($allocation['allocated_quantity'] ?? '') ?></td>
+                                            <td class="border-0"><?= esc($allocation['period'] ?? '') ?></td>
+                                            <td class="border-0"><?= $allocation['created_at'] ? date('M d, Y', strtotime($allocation['created_at'])) : 'N/A' ?></td>
+                                        </tr>
+                                    <?php endforeach; else: ?>
+                                        <tr><td colspan="5" class="text-center border-0">No supply allocations yet</td></tr>
+                                    <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm rounded-3 bg-white border-0 mt-4">
+            <div class="card-header bg-light border-0 fw-semibold">Quick Actions</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="<?= base_url('franchise/applications') ?>" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-file-earmark-text"></i><br>
+                            <small>View Applications</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="<?= base_url('franchise/index') ?>" class="btn btn-outline-info w-100">
+                            <i class="bi bi-list-ul"></i><br>
+                            <small>All Franchises</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="<?= base_url('franchise/allocation-report') ?>" class="btn btn-outline-success w-100">
+                            <i class="bi bi-clipboard-data"></i><br>
+                            <small>Allocation Report</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="<?= base_url('Central_AD/addFranchise') ?>" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-plus-circle"></i><br>
+                            <small>Add Franchise</small>
                         </a>
                     </div>
                 </div>

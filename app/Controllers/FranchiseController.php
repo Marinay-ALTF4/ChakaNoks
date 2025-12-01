@@ -118,7 +118,13 @@ class FranchiseController extends Controller
     // Supply Allocation Report
     public function allocationReport()
     {
-        $data['allocations'] = $this->allocationModel->findAll();
+        $db = \Config\Database::connect();
+        $data['allocations'] = $db->table('franchise_supply_allocations')
+            ->select('franchise_supply_allocations.*, franchises.franchise_name')
+            ->join('franchises', 'franchises.id = franchise_supply_allocations.franchise_id', 'left')
+            ->orderBy('franchise_supply_allocations.created_at', 'DESC')
+            ->get()
+            ->getResultArray();
         return view('franchise/allocation_report', $data);
     }
 }

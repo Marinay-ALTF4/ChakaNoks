@@ -155,6 +155,39 @@ class Dashboard extends BaseController
             
             // System logs
             $data['systemLogs'] = $logModel->orderBy('timestamp', 'DESC')->limit(10)->findAll();
+        } elseif ($role === 'franchise_manager') {
+            $franchiseModel = new \App\Models\FranchiseModel();
+            $allocationModel = new \App\Models\FranchiseSupplyAllocationModel();
+            
+            // Franchise Manager metrics
+            $data['metrics'] = [
+                'totalFranchises' => $franchiseModel->countAll(),
+                'activeFranchises' => $franchiseModel->where('status', 'active')->countAllResults(),
+                'pendingApplications' => $franchiseModel->where('status', 'pending')->countAllResults(),
+                'inactiveFranchises' => $franchiseModel->where('status', 'inactive')->countAllResults(),
+            ];
+            
+            // Recent franchise applications
+            $data['pendingApplications'] = $franchiseModel->where('status', 'pending')
+                ->orderBy('created_at', 'DESC')
+                ->limit(5)
+                ->findAll();
+            
+            // Recent active franchises
+            $data['recentFranchises'] = $franchiseModel->where('status', 'active')
+                ->orderBy('updated_at', 'DESC')
+                ->limit(5)
+                ->findAll();
+            
+            // Recent supply allocations with franchise names
+            $db = Database::connect();
+            $data['recentAllocations'] = $db->table('franchise_supply_allocations')
+                ->select('franchise_supply_allocations.*, franchises.franchise_name')
+                ->join('franchises', 'franchises.id = franchise_supply_allocations.franchise_id', 'left')
+                ->orderBy('franchise_supply_allocations.created_at', 'DESC')
+                ->limit(5)
+                ->get()
+                ->getResultArray();
         }
 
         return view('dashboard/index', $data);

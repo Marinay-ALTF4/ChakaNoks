@@ -35,8 +35,9 @@
         </div>
         
         <div class="mb-3">
-            <label class="form-label">Quantity (kg)</label>
-            <input type="number" name="quantity" class="form-control" value="<?= old('quantity', $item['quantity']) ?>" min="1" required>
+            <label class="form-label">Quantity <span class="text-danger">*</span></label>
+            <input type="number" name="quantity" id="quantityInput" class="form-control" value="<?= old('quantity', $item['quantity']) ?>" min="0" required>
+            <small class="form-text text-muted">Status will auto-update: 0 = Out of Stock, 1-5 = Low Stock, >5 = Available</small>
         </div>
         
         <div class="mb-3">
@@ -53,12 +54,36 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Status</label>
-            <select name="status" class="form-select" required>
-                <option value="available" <?= old('status', $item['status']) === 'available' ? 'selected' : '' ?>>Available</option>
-                <option value="low_stock" <?= old('status', $item['status']) === 'low_stock' ? 'selected' : '' ?>>Low Stock</option>
-                <option value="out_of_stock" <?= old('status', $item['status']) === 'out_of_stock' ? 'selected' : '' ?>>Out of Stock</option>
+            <label class="form-label">Expiry Date</label>
+            <input type="date" name="expiry_date" class="form-control" value="<?= old('expiry_date', $item['expiry_date'] ?? '') ?>">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Branch</label>
+            <select name="branch_id" class="form-select">
+                <option value="">Select Branch (Optional)</option>
+                <?php
+                $branchModel = new \App\Models\BranchModel();
+                $branches = $branchModel->getActiveBranches();
+                foreach ($branches as $branch):
+                ?>
+                    <option value="<?= esc($branch['id']) ?>" <?= (isset($item['branch_id']) && $item['branch_id'] == $branch['id']) || old('branch_id') == $branch['id'] ? 'selected' : '' ?>>
+                        <?= esc($branch['name']) ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select name="status" id="statusSelect" class="form-select">
+                <option value="available" <?= old('status', $item['status'] ?? 'available') === 'available' ? 'selected' : '' ?>>Available</option>
+                <option value="low_stock" <?= old('status', $item['status'] ?? 'available') === 'low_stock' ? 'selected' : '' ?>>Low Stock</option>
+                <option value="out_of_stock" <?= old('status', $item['status'] ?? 'available') === 'out_of_stock' ? 'selected' : '' ?>>Out of Stock</option>
+                <option value="damaged" <?= old('status', $item['status'] ?? 'available') === 'damaged' ? 'selected' : '' ?>>Damaged</option>
+                <option value="unavailable" <?= old('status', $item['status'] ?? 'available') === 'unavailable' ? 'selected' : '' ?>>Unavailable</option>
+            </select>
+            <small class="form-text text-muted">Note: Status will auto-update based on quantity. You can manually override by selecting a different status.</small>
         </div>
 
         <button type="submit" class="btn btn-primary">Update Item</button>
@@ -137,6 +162,35 @@ document.addEventListener('DOMContentLoaded', function() {
     if (barcodeInput.value.trim().length > 0) {
         barcodeInput.dispatchEvent(new Event('input'));
     }
+    
+    // Auto-update status based on quantity
+    const quantityInput = document.getElementById('quantityInput');
+    const statusSelect = document.getElementById('statusSelect');
+    let userChangedStatus = false;
+    
+    // Track if user manually changes status
+    statusSelect.addEventListener('change', function() {
+        userChangedStatus = true;
+    });
+    
+    // Auto-update status when quantity changes (only if user hasn't manually set it)
+    quantityInput.addEventListener('input', function() {
+        if (!userChangedStatus) {
+            const quantity = parseInt(this.value) || 0;
+            if (quantity <= 0) {
+                statusSelect.value = 'out_of_stock';
+            } else if (quantity <= 5) {
+                statusSelect.value = 'low_stock';
+            } else {
+                statusSelect.value = 'available';
+            }
+        }
+    });
+    
+    // Reset flag when form is submitted (so it works on next edit)
+    document.querySelector('form').addEventListener('submit', function() {
+        userChangedStatus = false;
+    });
 });
 </script>
 

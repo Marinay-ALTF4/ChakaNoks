@@ -35,8 +35,9 @@
         </div>
         
         <div class="mb-3">
-            <label class="form-label">Quantity (kg)</label>
-            <input type="number" name="quantity" class="form-control" value="<?= old('quantity') ?>" min="1" required>
+            <label class="form-label">Quantity <span class="text-danger">*</span></label>
+            <input type="number" name="quantity" class="form-control" value="<?= old('quantity') ?>" min="0" required>
+            <small class="form-text text-muted">Status will auto-update: 0 = Out of Stock, 1-5 = Low Stock, >5 = Available</small>
         </div>
         
         <div class="mb-3">
@@ -51,6 +52,27 @@
                 <svg id="barcodePreviewSvg" class="barcode-preview-svg"></svg>
                 <small id="barcodePreviewText" class="barcode-preview-text"></small>
             </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Expiry Date</label>
+            <input type="date" name="expiry_date" class="form-control" value="<?= old('expiry_date') ?>">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Branch</label>
+            <select name="branch_id" class="form-select">
+                <option value="">Select Branch (Optional)</option>
+                <?php
+                $branchModel = new \App\Models\BranchModel();
+                $branches = $branchModel->getActiveBranches();
+                foreach ($branches as $branch):
+                ?>
+                    <option value="<?= esc($branch['id']) ?>" <?= old('branch_id') == $branch['id'] ? 'selected' : '' ?>>
+                        <?= esc($branch['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
         </div>
 
         <button type="submit" class="btn btn-primary">Add Item</button>

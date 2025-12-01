@@ -165,11 +165,36 @@
                         </thead>
                         <tbody>
                             <?php if (!empty($recentItems)): foreach ($recentItems as $item): ?>
+                                <?php
+                                // Format status for display
+                                $status = $item['status'] ?? 'available';
+                                $statusText = ucfirst(str_replace('_', ' ', $status));
+                                $statusClass = 'bg-secondary';
+                                switch($status) {
+                                    case 'available':
+                                        $statusClass = 'bg-success';
+                                        break;
+                                    case 'low_stock':
+                                        $statusClass = 'bg-warning text-dark';
+                                        break;
+                                    case 'out_of_stock':
+                                        $statusClass = 'bg-danger';
+                                        break;
+                                    case 'damaged':
+                                        $statusClass = 'bg-dark';
+                                        break;
+                                    case 'unavailable':
+                                        $statusClass = 'bg-secondary';
+                                        break;
+                                }
+                                ?>
                                 <tr class="border-bottom">
                                     <td class="border-0"><?= esc($item['item_name'] ?? '') ?></td>
                                     <td class="border-0"><?= esc($item['quantity'] ?? '') ?></td>
-                                    <td class="border-0"><?= esc($item['status'] ?? '') ?></td>
-                                    <td class="border-0"><?= esc($item['updated_at'] ?? '') ?></td>
+                                    <td class="border-0">
+                                        <span class="badge <?= $statusClass ?>"><?= esc($statusText) ?></span>
+                                    </td>
+                                    <td class="border-0"><?= $item['updated_at'] ? date('M d, Y H:i', strtotime($item['updated_at'])) : 'N/A' ?></td>
                                 </tr>
                             <?php endforeach; else: ?>
                                 <tr><td colspan="4" class="text-center border-0">No data</td></tr>
@@ -274,11 +299,36 @@
                         </thead>
                         <tbody>
                             <?php if (!empty($recentItems)): foreach ($recentItems as $item): ?>
+                                <?php
+                                // Format status for display
+                                $status = $item['status'] ?? 'available';
+                                $statusText = ucfirst(str_replace('_', ' ', $status));
+                                $statusClass = 'bg-secondary';
+                                switch($status) {
+                                    case 'available':
+                                        $statusClass = 'bg-success';
+                                        break;
+                                    case 'low_stock':
+                                        $statusClass = 'bg-warning text-dark';
+                                        break;
+                                    case 'out_of_stock':
+                                        $statusClass = 'bg-danger';
+                                        break;
+                                    case 'damaged':
+                                        $statusClass = 'bg-dark';
+                                        break;
+                                    case 'unavailable':
+                                        $statusClass = 'bg-secondary';
+                                        break;
+                                }
+                                ?>
                                 <tr>
                                     <td><?= esc($item['item_name'] ?? '') ?></td>
                                     <td><?= esc($item['quantity'] ?? '') ?></td>
-                                    <td><?= esc($item['status'] ?? '') ?></td>
-                                    <td><?= esc($item['updated_at'] ?? '') ?></td>
+                                    <td>
+                                        <span class="badge <?= $statusClass ?>"><?= esc($statusText) ?></span>
+                                    </td>
+                                    <td><?= $item['updated_at'] ? date('M d, Y H:i', strtotime($item['updated_at'])) : 'N/A' ?></td>
                                 </tr>
                             <?php endforeach; else: ?>
                                 <tr><td colspan="4" class="text-center">No data</td></tr>

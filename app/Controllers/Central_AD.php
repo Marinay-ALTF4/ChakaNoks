@@ -34,11 +34,24 @@ class Central_AD extends Controller
         $db = \Config\Database::connect();
         $totalQuantityResult = $db->table('inventory')->selectSum('quantity')->get()->getRow();
         
+        // Count available items (including low stock items as available, but excluding expired items)
+        $today = date('Y-m-d');
+        $availableItems = $db->table('inventory')
+            ->groupStart()
+                ->where('status', 'available')
+                ->orWhere('status', 'low_stock')
+            ->groupEnd()
+            ->groupStart()
+                ->where('expiry_date >=', $today)
+                ->orWhere('expiry_date IS NULL', null, false)
+                ->orWhere('expiry_date', '')
+            ->groupEnd()
+            ->countAllResults();
+        
         $data['stats'] = [
             'totalItems' => $this->inventoryModel->countAll(),
             'totalQuantity' => $totalQuantityResult->quantity ?? 0,
-            'lowStockItems' => $this->inventoryModel->where('quantity <=', 5)->countAllResults(),
-            'availableItems' => $this->inventoryModel->where('status', 'available')->countAllResults(),
+            'availableItems' => $availableItems,
             'expiringSoon' => count($this->inventoryModel->getExpiringSoon(7)),
         ];
         
@@ -182,8 +195,10 @@ class Central_AD extends Controller
         $rules = [
             'item_name' => 'required|min_length[2]|max_length[255]',
             'type'       => 'required|min_length[2]|max_length[100]',
-            'quantity'   => 'required|integer|greater_than[0]',
-            'barcode'    => 'permit_empty|max_length[100]'
+            'quantity'   => 'required|integer|greater_than_equal_to[0]',
+            'barcode'    => 'permit_empty|max_length[100]',
+            'expiry_date' => 'permit_empty|valid_date',
+            'branch_id' => 'permit_empty|integer'
         ];
 
         if (!$this->validate($rules)) {
@@ -193,16 +208,27 @@ class Central_AD extends Controller
         // Generate barcode if not provided
         $barcode = $this->request->getPost('barcode');
         if (empty($barcode)) {
-            $barcode = 'BC' . time() . rand(100, 999);
+            $barcode = $this->inventoryModel->generateBarcode();
+        }
+
+        // Get quantity and auto-determine status
+        $quantity = (int)$this->request->getPost('quantity');
+        $status = 'available';
+        if ($quantity <= 0) {
+            $status = 'out_of_stock';
+        } elseif ($quantity <= 5) {
+            $status = 'low_stock';
         }
 
         // Get form data
         $data = [
             'item_name' => $this->request->getPost('item_name'),
             'type'       => $this->request->getPost('type'),
-            'quantity'   => $this->request->getPost('quantity'),
+            'quantity'   => $quantity,
             'barcode'    => $barcode,
-            'status'     => 'available'
+            'expiry_date'=> $this->request->getPost('expiry_date') ?: null,
+            'branch_id'  => $this->request->getPost('branch_id') ?: null,
+            'status'     => $status
         ];
 
         // Insert new item
@@ -232,21 +258,50 @@ class Central_AD extends Controller
         $rules = [
             'item_name' => 'required|min_length[2]|max_length[255]',
             'type'       => 'required|min_length[2]|max_length[100]',
-            'quantity'   => 'required|integer|greater_than[0]',
-            'barcode'    => 'permit_empty|max_length[100]'
+            'quantity'   => 'required|integer|greater_than_equal_to[0]',
+            'barcode'    => 'permit_empty|max_length[100]',
+            'expiry_date' => 'permit_empty|valid_date',
+            'branch_id' => 'permit_empty|integer'
         ];
 
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
+        // Get quantity and determine status
+        $quantity = (int)$this->request->getPost('quantity');
+        $requestedStatus = $this->request->getPost('status');
+        
+        // Calculate what status should be based on quantity
+        $autoStatus = 'available';
+        if ($quantity <= 0) {
+            $autoStatus = 'out_of_stock';
+        } elseif ($quantity <= 5) {
+            $autoStatus = 'low_stock';
+        }
+        
+        // Respect manual status selection if it's a valid choice
+        // Allow manual override for: low_stock, out_of_stock, available, damaged, unavailable
+        if (in_array($requestedStatus, ['low_stock', 'out_of_stock', 'available', 'damaged', 'unavailable'])) {
+            $status = $requestedStatus;
+        } else {
+            // If no valid status selected, use auto-calculated status
+            $status = $autoStatus;
+        }
+        
+        // Special handling: if status is damaged or unavailable, keep it regardless of quantity
+        // Otherwise, if quantity suggests a different status and user selected a standard status,
+        // we still respect their choice but log it (they might want to mark it low_stock even if quantity is higher)
+
         // Get form data
         $data = [
             'item_name' => $this->request->getPost('item_name'),
             'type'       => $this->request->getPost('type'),
-            'quantity'   => $this->request->getPost('quantity'),
-            'barcode'    => $this->request->getPost('barcode'),
-            'status'     => $this->request->getPost('status')
+            'quantity'   => $quantity,
+            'barcode'    => $this->request->getPost('barcode') ?: null,
+            'expiry_date'=> $this->request->getPost('expiry_date') ?: null,
+            'branch_id'  => $this->request->getPost('branch_id') ?: null,
+            'status'     => $status
         ];
 
         // Update the item

@@ -34,20 +34,57 @@ class InventoryModel extends Model
     // Methods for alerts and expiry
     public function getLowStockItems($threshold = 5)
     {
-        return $this->where('quantity <=', $threshold)->findAll();
+        // Use DB builder directly to ensure clean query
+        // Get items with low quantity (<= threshold) OR status 'low_stock'
+        // Exclude out of stock items
+        return $this->db->table($this->table)
+                    ->groupStart()
+                        ->groupStart()
+                            ->where('quantity <=', $threshold)
+                            ->where('quantity >', 0)
+                        ->groupEnd()
+                        ->orWhere('status', 'low_stock')
+                    ->groupEnd()
+                    ->where('status !=', 'out_of_stock')
+                    ->get()
+                    ->getResultArray();
+    }
+
+    public function getOutOfStockItems()
+    {
+        // Use DB builder directly to ensure clean query
+        return $this->db->table($this->table)
+                    ->groupStart()
+                    ->where('quantity', 0)
+                    ->orWhere('status', 'out_of_stock')
+                    ->groupEnd()
+                    ->get()
+                    ->getResultArray();
     }
 
     public function getExpiredItems()
     {
-        return $this->where('expiry_date <', date('Y-m-d'))->findAll();
+        // Use DB builder directly to ensure clean query
+        return $this->db->table($this->table)
+                    ->where('expiry_date <', date('Y-m-d'))
+                    ->where('expiry_date IS NOT NULL')
+                    ->where('expiry_date !=', '')
+                    ->get()
+                    ->getResultArray();
     }
 
     public function getExpiringSoon($days = 7)
     {
+        // Use DB builder directly to ensure clean query
+        $today = date('Y-m-d');
         $futureDate = date('Y-m-d', strtotime("+$days days"));
-        return $this->where('expiry_date <=', $futureDate)
-                    ->where('expiry_date >=', date('Y-m-d'))
-                    ->findAll();
+        return $this->db->table($this->table)
+                    ->where('expiry_date <=', $futureDate)
+                    ->where('expiry_date >=', $today)
+                    ->where('expiry_date IS NOT NULL')
+                    ->where('expiry_date !=', '')
+                    ->get()
+                    ->getResultArray();
     }
 
     public function generateBarcode()
@@ -82,16 +119,43 @@ class InventoryModel extends Model
         return $this->update($id, ['quantity' => $newQuantity]);
     }
 
+    public function getDamagedItems()
+    {
+        // Use DB builder directly to ensure clean query
+        return $this->db->table($this->table)
+                    ->where('status', 'damaged')
+                    ->get()
+                    ->getResultArray();
+    }
+
     public function getAlerts()
     {
+        // Use DB builder directly to avoid query builder conflicts
         $lowStock = $this->getLowStockItems();
+        $outOfStock = $this->getOutOfStockItems();
         $expiring = $this->getExpiringSoon();
         $expired = $this->getExpiredItems();
+        $damaged = $this->getDamagedItems();
 
         return [
             'low_stock' => $lowStock,
+            'out_of_stock' => $outOfStock,
             'expiring_soon' => $expiring,
-            'expired' => $expired
+            'expired' => $expired,
+            'damaged' => $damaged
         ];
+    }
+
+    // Auto-update status based on quantity
+    public function autoUpdateStatus($id, $quantity)
+    {
+        $status = 'available';
+        if ($quantity <= 0) {
+            $status = 'out_of_stock';
+        } elseif ($quantity <= 5) {
+            $status = 'low_stock';
+        }
+        
+        return $this->update($id, ['status' => $status]);
     }
 }

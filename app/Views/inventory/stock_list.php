@@ -9,10 +9,27 @@
       <h1 class="h4 fw-bold mb-1"> Stock List</h1>
       <span class="text-muted">Welcome, <?= esc(session()->get('username')) ?>!</span>
     </div>
-    <a href="<?= site_url('inventory/add-stock') ?>" class="btn btn-success px-3">
-      <i class="bi bi-plus-circle me-1"></i> Add Stock
-    </a>
+    <div>
+      <a href="<?= site_url('inventory/alerts') ?>" class="btn btn-warning px-3">
+        <i class="bi bi-exclamation-triangle me-1"></i> View Alerts
+      </a>
+    </div>
   </div>
+
+  <!-- Success/Error Messages -->
+  <?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <?= session()->getFlashdata('success') ?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <?php endif; ?>
+
+  <?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <?= session()->getFlashdata('error') ?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <?php endif; ?>
 
   <!-- Card -->
   <div class="card shadow-sm border-0">
@@ -25,56 +42,91 @@
             <tr>
               <th scope="col">Item ID</th>
               <th scope="col">Item Name</th>
+              <th scope="col">Type</th>
               <th scope="col">Quantity</th>
-              <th scope="col">Last Update</th>
+              <th scope="col">Status</th>
               <th scope="col">Expiry Date</th>
               <th scope="col">Branch</th>
               <th scope="col">Barcode</th>
-              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>Whole Chicken</td>
-              <td><span class="badge bg-primary">50</span></td>
-              <td>2025-09-07 14:32</td>
-              <td>2025-10-15</td>
-              <td>Branch A</td>
-              <td>
-                <div class="barcode-container">
-                  <svg class="barcode" jsbarcode-value="1-Whole Chicken"></svg>
-                  <small class="text-muted">Whole Chicken</small>
-                </div>
-              </td>
-              <td>
-              <a href="<?= site_url('inventory/edit-stock') ?>" class="btn btn-success px-3">
-      <i class="bi bi-plus-circle me-1"></i> Edit
-    </a>
-              </td>
-            </tr>
-
-            <tr>
-              <td>2</td>
-              <td>Cooking Oink</td>
-              <td><span class="badge bg-primary">30</span></td>
-              <td>2025-09-08 09:10</td>
-              <td>2025-11-02</td>
-              <td>Branch B</td>
-              <td>
-                <div class="barcode-container">
-                  <svg class="barcode" jsbarcode-value="2-Cooking Oink"></svg>
-                  <small class="text-muted">Cooking Oink</small>
-                </div>
-              </td>
-              <td>
-              <a href="<?= site_url('inventory/edit-stock') ?>" class="btn btn-success px-3">
-  <i class="bi bi-plus-circle me-1"></i> Edit
-</a>
-
-                </a>
-              </td>
-            </tr>
+            <?php if (empty($items)): ?>
+              <tr>
+                <td colspan="8" class="text-center text-muted py-4">
+                  No items found.
+                </td>
+              </tr>
+            <?php else: ?>
+              <?php foreach ($items as $item): ?>
+                <?php
+                // Get branch name
+                $branchName = 'N/A';
+                if (!empty($item['branch_id'])) {
+                  $branchModel = new \App\Models\BranchModel();
+                  $branch = $branchModel->find($item['branch_id']);
+                  $branchName = $branch ? esc($branch['name']) : 'N/A';
+                }
+                
+                // Determine status badge color
+                $statusClass = 'bg-secondary';
+                $statusText = ucfirst(str_replace('_', ' ', $item['status'] ?? 'available'));
+                switch($item['status'] ?? 'available') {
+                  case 'available':
+                    $statusClass = 'bg-success';
+                    break;
+                  case 'low_stock':
+                    $statusClass = 'bg-warning text-dark';
+                    break;
+                  case 'out_of_stock':
+                    $statusClass = 'bg-danger';
+                    break;
+                  case 'damaged':
+                    $statusClass = 'bg-dark';
+                    break;
+                  case 'unavailable':
+                    $statusClass = 'bg-secondary';
+                    break;
+                }
+                
+                // Check if expired or expiring soon
+                $expiryWarning = '';
+                if (!empty($item['expiry_date'])) {
+                  $expiryDate = new \DateTime($item['expiry_date']);
+                  $today = new \DateTime();
+                  if ($expiryDate < $today) {
+                    $expiryWarning = ' <span class="badge bg-dark">EXPIRED</span>';
+                  } elseif ($expiryDate->diff($today)->days <= 7) {
+                    $expiryWarning = ' <span class="badge bg-warning text-dark">Expiring Soon</span>';
+                  }
+                }
+                ?>
+                <tr>
+                  <td><?= esc($item['id']) ?></td>
+                  <td><strong><?= esc($item['item_name']) ?></strong></td>
+                  <td><?= esc($item['type'] ?? 'N/A') ?></td>
+                  <td><span class="badge bg-primary"><?= esc($item['quantity']) ?></span></td>
+                  <td>
+                    <span class="badge <?= $statusClass ?>"><?= $statusText ?></span>
+                  </td>
+                  <td>
+                    <?= $item['expiry_date'] ? esc($item['expiry_date']) : 'N/A' ?>
+                    <?= $expiryWarning ?>
+                  </td>
+                  <td><?= $branchName ?></td>
+                  <td>
+                    <?php if (!empty($item['barcode'])): ?>
+                      <div class="barcode-container">
+                        <svg class="barcode" jsbarcode-value="<?= esc($item['barcode']) ?>"></svg>
+                        <small class="text-muted"><?= esc($item['barcode']) ?></small>
+                      </div>
+                    <?php else: ?>
+                      <span class="text-muted">No barcode</span>
+                    <?php endif; ?>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            <?php endif; ?>
           </tbody>
         </table>
       </div>
@@ -95,6 +147,7 @@
       });
     });
   });
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 

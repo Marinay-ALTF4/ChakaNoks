@@ -85,8 +85,9 @@ $routes->get('inventory', 'Inventory::dashboard');
 $routes->get('inventory/stock-list', 'Inventory::stockList');
 $routes->get('inventory/add-stock', 'Inventory::addStock');
 $routes->post('inventory/add-stock', 'Inventory::addStock');
-$routes->get('inventory/edit-stock', 'Inventory::editStock');
-$routes->post('inventory/edit-stock', 'Inventory::editStock');
+$routes->get('inventory/edit-stock/(:num)', 'Inventory::editStock/$1');
+$routes->post('inventory/edit-stock/(:num)', 'Inventory::editStock/$1');
+$routes->post('inventory/quick-update', 'Inventory::quickUpdate');
 
 // ✅ Update stock (matches updateStock method)
 $routes->get('inventory/update_stock', 'Inventory::updateStock');

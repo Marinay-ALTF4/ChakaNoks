@@ -39,9 +39,13 @@ class Dashboard extends BaseController
             $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
             $deliveryModel = new \App\Models\DeliveryModel();
             
+            // Count low stock items using the same logic as InventoryModel
+            $lowStockItems = $inventoryModel->getLowStockItems(5);
+            $lowStockCount = count($lowStockItems);
+            
             $data['metrics'] = [
                 'totalItems' => $inventoryModel->countAll(),
-                'lowStock' => $inventoryModel->where('quantity <', 5)->countAllResults(),
+                'lowStock' => $lowStockCount,
                 'suppliers' => $supplierModel->countAll(),
                 'totalBranches' => $branchModel->countAll(),
                 'pendingPurchaseRequests' => $db->table('purchase_requests')->where('status', 'pending')->countAllResults(),
@@ -118,9 +122,14 @@ class Dashboard extends BaseController
             ];
         } elseif ($role === 'inventory') {
             $inventoryModel = new InventoryModel();
+            
+            // Count low stock items using the same logic as InventoryModel
+            $lowStockItems = $inventoryModel->getLowStockItems(5);
+            $lowStockCount = count($lowStockItems);
+            
             $data['metrics'] = [
                 'stockCount' => $inventoryModel->countAll(),
-                'lowStock' => $inventoryModel->where('quantity <', 5)->countAllResults(),
+                'lowStock' => $lowStockCount,
             ];
             $data['recentItems'] = $inventoryModel->orderBy('updated_at', 'DESC')->findAll(5);
         }

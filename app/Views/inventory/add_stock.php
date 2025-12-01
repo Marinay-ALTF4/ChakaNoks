@@ -18,23 +18,68 @@
     <h2 class="mb-2">New Stock Entry</h2>
     <p class="text-muted mb-4">Fill in the details below to add stock to the inventory.</p>
 
-    <form method="post" action="">
+    <?php if (session()->getFlashdata('error')): ?>
+      <div class="alert alert-danger">
+        <?= session()->getFlashdata('error') ?>
+      </div>
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('errors')): ?>
+      <div class="alert alert-danger">
+        <ul class="mb-0">
+          <?php foreach (session()->getFlashdata('errors') as $error): ?>
+            <li><?= esc($error) ?></li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    <?php endif; ?>
+
+    <form method="post" action="<?= site_url('inventory/add-stock') ?>">
+      <?= csrf_field() ?>
       <div class="form-group mb-3">
-        <label>Item Name</label>
-        <input type="text" name="item_name" class="form-control" required>
+        <label>Item Name <span class="text-danger">*</span></label>
+        <input type="text" name="item_name" class="form-control" value="<?= old('item_name') ?>" required>
       </div>
 
       <div class="form-group mb-3">
-        <label>Quantity</label>
-        <input type="number" name="quantity" class="form-control" required>
+        <label>Type</label>
+        <input type="text" name="type" class="form-control" value="<?= old('type') ?>" placeholder="e.g., Meat, Vegetable, Spice">
+      </div>
+
+      <div class="form-group mb-3">
+        <label>Quantity <span class="text-danger">*</span></label>
+        <input type="number" name="quantity" class="form-control" value="<?= old('quantity') ?>" min="0" required>
+      </div>
+
+      <div class="form-group mb-3">
+        <label>Barcode</label>
+        <input type="text" name="barcode" class="form-control" value="<?= old('barcode') ?>" placeholder="Leave empty to auto-generate">
+        <small class="form-text text-muted">If left empty, a barcode will be auto-generated</small>
       </div>
 
       <div class="form-group mb-3">
         <label>Expiry Date</label>
-        <input type="date" name="expiry_date" class="form-control" required>
+        <input type="date" name="expiry_date" class="form-control" value="<?= old('expiry_date') ?>">
       </div>
 
-      <button type="submit" class="btn btn-primary">Add Stock</button>
+      <div class="form-group mb-3">
+        <label>Branch</label>
+        <select name="branch_id" class="form-control">
+          <option value="">Select Branch (Optional)</option>
+          <?php if (isset($branches) && !empty($branches)): ?>
+            <?php foreach ($branches as $branch): ?>
+              <option value="<?= esc($branch['id']) ?>" <?= old('branch_id') == $branch['id'] ? 'selected' : '' ?>>
+                <?= esc($branch['name']) ?>
+              </option>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </select>
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <a href="<?= site_url('inventory/stock-list') ?>" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Add Stock</button>
+      </div>
     </form>
   </div>
 </div>

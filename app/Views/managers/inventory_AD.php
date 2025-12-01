@@ -13,7 +13,7 @@
     <!-- Summary Statistics -->
     <?php if (isset($stats)): ?>
     <div class="row g-3 mb-4">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card shadow-sm">
                 <div class="card-body text-center">
                     <h6 class="text-muted mb-2">Total Items</h6>
@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card shadow-sm">
                 <div class="card-body text-center">
                     <h6 class="text-muted mb-2">Total Quantity</h6>
@@ -29,15 +29,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
-                    <h6 class="text-muted mb-2">Low Stock Items</h6>
-                    <h3 class="mb-0 text-warning"><?= esc($stats['lowStockItems'] ?? 0) ?></h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card shadow-sm">
                 <div class="card-body text-center">
                     <h6 class="text-muted mb-2">Available Items</h6>
@@ -51,58 +43,106 @@
     <!-- Inventory Table -->
     <div class="card">
         <div class="card-header">
-            <h5 class="mb-0">Central Branch Available Stock</h5>
+            <h5 class="mb-0">Inventory Items</h5>
         </div>
         <div class="card-body">
             <?php if (!empty($inventory)): ?>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover align-middle">
                         <thead class="table-dark">
                             <tr>
-                                <th>Item Name</th>
-                                <th>Type</th>
-                                <th>Total Quantity</th>
-                                <th>Last Updated</th>
-                                <th>Barcode</th>
-                                <th>Actions</th>
+                                <th class="text-center">Item ID</th>
+                                <th class="text-start">Item Name</th>
+                                <th class="text-start">Type</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Expiry Date</th>
+                                <th class="text-start">Branch</th>
+                                <th class="text-center">Barcode</th>
+                                <th class="text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($inventory as $item): ?>
+                            <?php 
+                            $branchModel = new \App\Models\BranchModel();
+                            foreach ($inventory as $item): 
+                                // Get branch name
+                                $branchName = 'N/A';
+                                if (!empty($item['branch_id'])) {
+                                    $branch = $branchModel->find($item['branch_id']);
+                                    $branchName = $branch ? esc($branch['name']) : 'N/A';
+                                }
+                                
+                                // Check if expired first
+                                $isExpired = false;
+                                $isExpiringSoon = false;
+                                if (!empty($item['expiry_date'])) {
+                                    $expiryDate = new \DateTime($item['expiry_date']);
+                                    $today = new \DateTime();
+                                    if ($expiryDate < $today) {
+                                        $isExpired = true;
+                                    } elseif ($expiryDate->diff($today)->days <= 7) {
+                                        $isExpiringSoon = true;
+                                    }
+                                }
+                                
+                                // Determine status badge color - prioritize expired status
+                                $statusClass = 'bg-secondary';
+                                $statusText = ucfirst(str_replace('_', ' ', $item['status'] ?? 'available'));
+                                
+                                if ($isExpired) {
+                                    $statusClass = 'bg-dark';
+                                    $statusText = 'Expired';
+                                } else {
+                                    switch($item['status'] ?? 'available') {
+                                        case 'available':
+                                            $statusClass = 'bg-success';
+                                            break;
+                                        case 'low_stock':
+                                            $statusClass = 'bg-warning text-dark';
+                                            break;
+                                        case 'out_of_stock':
+                                            $statusClass = 'bg-danger';
+                                            break;
+                                        case 'damaged':
+                                            $statusClass = 'bg-dark';
+                                            break;
+                                        case 'unavailable':
+                                            $statusClass = 'bg-secondary';
+                                            break;
+                                    }
+                                }
+                                
+                                // Add expiring soon badge if applicable
+                                $expiringSoonBadge = '';
+                                if ($isExpiringSoon && !$isExpired) {
+                                    $expiringSoonBadge = ' <span class="badge bg-warning text-dark">Expiring Soon</span>';
+                                }
+                            ?>
                                 <tr class="<?= ($item['quantity'] ?? 0) <= 5 ? 'table-warning' : '' ?>">
-                                    <td>
-                                        <strong><?= esc($item['item_name']) ?></strong>
-                                        <?php if (($item['quantity'] ?? 0) <= 5): ?>
-                                            <span class="badge bg-warning text-dark ms-2">Low Stock</span>
-                                        <?php endif; ?>
+                                    <td class="text-center"><?= esc($item['id']) ?></td>
+                                    <td class="text-start"><strong><?= esc($item['item_name']) ?></strong></td>
+                                    <td class="text-start"><?= esc($item['type'] ?? 'N/A') ?></td>
+                                    <td class="text-center"><span class="badge bg-primary"><?= esc($item['quantity'] ?? 0) ?></span></td>
+                                    <td class="text-center">
+                                        <span class="badge <?= $statusClass ?>"><?= $statusText ?></span>
+                                        <?= $expiringSoonBadge ?>
                                     </td>
-                                    <td><?= esc($item['type'] ?? 'N/A') ?></td>
-                                    <td>
-                                        <strong><?= esc($item['quantity'] ?? 0) ?></strong>
-                                        <?php if (!empty($item['unit'])): ?>
-                                            <span class="text-muted"><?= esc($item['unit']) ?></span>
-                                        <?php else: ?>
-                                            <span class="text-muted">units</span>
-                                        <?php endif; ?>
+                                    <td class="text-center">
+                                        <?= $item['expiry_date'] ? esc($item['expiry_date']) : 'N/A' ?>
                                     </td>
-                                    <td>
-                                        <?php if (!empty($item['updated_at'])): ?>
-                                            <?= date('M d, Y H:i', strtotime($item['updated_at'])) ?>
-                                        <?php else: ?>
-                                            <span class="text-muted">N/A</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
+                                    <td class="text-start"><?= $branchName ?></td>
+                                    <td class="text-center">
                                         <?php if (!empty($item['barcode'])): ?>
                                             <div class="barcode-container">
                                                 <svg id="barcode-<?= $item['id'] ?>" class="barcode-svg"></svg>
-                                                <small class="barcode-text"><?= esc($item['barcode']) ?></small>
+                                                <small class="text-muted"><?= esc($item['barcode']) ?></small>
                                             </div>
                                         <?php else: ?>
                                             <span class="text-muted">No barcode</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <a href="<?= base_url('Central_AD/editItem/'.$item['id']) ?>" class="btn btn-sm btn-primary">Edit</a>
                                         <a href="<?= base_url('Central_AD/deleteItem/'.$item['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
                                     </td>
@@ -146,25 +186,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <style>
 .barcode-container {
-    text-align: center;
-    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
 }
 
 .barcode-svg {
-    width: 120px;
+    width: 130px;
     height: 50px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-bottom: 2px;
-    background: white;
 }
 
-.barcode-text {
-    display: block;
-    font-family: monospace;
-    font-size: 10px;
-    color: #666;
-    margin-top: 2px;
+.table td, .table th {
+    vertical-align: middle;
 }
 </style>
 

@@ -37,6 +37,9 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     $routes->get('Central_AD/franchising', 'Central_AD::franchising');
     $routes->get('Central_AD/reports', 'Central_AD::reports');
     $routes->get('Central_AD/settings', 'Central_AD::settings');
+    $routes->post('Central_AD/updateProfile', 'Central_AD::updateProfile');
+    $routes->post('Central_AD/updatePassword', 'Central_AD::updatePassword');
+    $routes->post('Central_AD/updatePreferences', 'Central_AD::updatePreferences');
 
     // Purchase Request Approval Routes
     $routes->get('Central_AD/approvePurchaseRequest/(:num)', 'Central_AD::approvePurchaseRequest/$1'); // Approve PR

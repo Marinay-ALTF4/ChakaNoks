@@ -12,25 +12,25 @@
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="stat-title">Total Sales</div>
-                <div class="stat-value">₱ 120,500</div>
+                <div class="stat-value">₱ <?= number_format($totalSales ?? 0, 2) ?></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="stat-title">Orders</div>
-                <div class="stat-value">240</div>
+                <div class="stat-value"><?= $totalOrders ?? 0 ?></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="stat-title">New Customers</div>
-                <div class="stat-value">35</div>
+                <div class="stat-value"><?= $newCustomers ?? 0 ?></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="stat-title">Top Product</div>
-                <div class="stat-value">Milk Tea</div>
+                <div class="stat-value"><?= esc($topProduct ?? 'N/A') ?></div>
             </div>
         </div>
     </div>
@@ -51,7 +51,7 @@
     <div class="page-card">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mb-0">Recent Reports</h5>
-            <button class="btn btn-primary">📥 Download Report</button>
+            <button class="btn btn-primary" onclick="generateReport()">📥 Generate Report</button>
         </div>
 
         <table class="table table-bordered table-striped">
@@ -65,36 +65,34 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Monthly Sales Report</td>
-                    <td>Sept 15, 2025</td>
-                    <td>Admin</td>
-                    <td><span class="badge bg-success">Completed</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary">View</button>
-                        <button class="btn btn-sm btn-outline-secondary">Download</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Inventory Summary</td>
-                    <td>Sept 10, 2025</td>
-                    <td>Admin</td>
-                    <td><span class="badge bg-warning">Pending</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary">View</button>
-                        <button class="btn btn-sm btn-outline-secondary">Download</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Customer Feedback Analysis</td>
-                    <td>Sept 01, 2025</td>
-                    <td>Manager</td>
-                    <td><span class="badge bg-success">Completed</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary">View</button>
-                        <button class="btn btn-sm btn-outline-secondary">Download</button>
-                    </td>
-                </tr>
+                <?php if (!empty($recentReports)): ?>
+                    <?php foreach ($recentReports as $report): ?>
+                        <tr>
+                            <td>Order Report - <?= esc($report['item_name']) ?></td>
+                            <td><?= $report['order_date'] ? date('M d, Y', strtotime($report['order_date'])) : 'N/A' ?></td>
+                            <td><?= esc($report['generated_by'] ?? 'System') ?></td>
+                            <td>
+                                <span class="badge 
+                                    <?php 
+                                    $status = $report['status'];
+                                    if ($status === 'delivered') echo 'bg-success';
+                                    elseif ($status === 'confirmed') echo 'bg-info';
+                                    else echo 'bg-warning';
+                                    ?>">
+                                    <?= ucfirst(str_replace('_', ' ', $status)) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewReport(<?= $report['id'] ?>)">View</button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="downloadReport(<?= $report['id'] ?>)">Download</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No reports available yet.</td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
@@ -110,13 +108,17 @@
 <script>
     // Sales Trend Line Chart
     const salesCtx = document.getElementById('salesChart');
+    const salesData = <?= json_encode($salesTrend ?? []) ?>;
+    const salesLabels = salesData.map(item => item.day);
+    const salesValues = salesData.map(item => item.sales);
+    
     new Chart(salesCtx, {
         type: 'line',
         data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: salesLabels,
             datasets: [{
                 label: 'Sales (₱)',
-                data: [15000, 12000, 18000, 22000, 25000, 30000, 28000],
+                data: salesValues,
                 borderColor: '#007bff',
                 backgroundColor: 'rgba(0, 123, 255, 0.1)',
                 fill: true,
@@ -130,21 +132,33 @@
                 legend: { display: false }
             },
             scales: {
-                y: { beginAtZero: true }
+                y: { 
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '₱' + value.toLocaleString();
+                        }
+                    }
+                }
             }
         }
     });
 
     // Top Products Bar Chart
     const productsCtx = document.getElementById('topProductsChart');
+    const topProductsData = <?= json_encode($topProducts ?? []) ?>;
+    const productLabels = topProductsData.map(item => item.item_name);
+    const productQuantities = topProductsData.map(item => parseInt(item.total_quantity));
+    const colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1'];
+    
     new Chart(productsCtx, {
         type: 'bar',
         data: {
-            labels: ['Milk Tea', 'Fries', 'Burger', 'Pizza', 'Iced Coffee'],
+            labels: productLabels.length > 0 ? productLabels : ['No Data'],
             datasets: [{
                 label: 'Units Sold',
-                data: [120, 90, 75, 65, 55],
-                backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1']
+                data: productQuantities.length > 0 ? productQuantities : [0],
+                backgroundColor: productLabels.length > 0 ? colors.slice(0, productLabels.length) : colors[0]
             }]
         },
         options: {
@@ -190,5 +204,27 @@
         margin-top: 5px;
     }
 </style>
+
+<script>
+    function viewReport(reportId) {
+        // Implement view report functionality
+        alert('Viewing report #' + reportId);
+        // You can redirect to a detailed report page or show a modal
+    }
+
+    function downloadReport(reportId) {
+        // Implement download report functionality
+        alert('Downloading report #' + reportId);
+        // You can create a PDF or CSV export here
+    }
+
+    function generateReport() {
+        // Implement generate report functionality
+        if (confirm('Generate a new comprehensive report?')) {
+            // You can redirect to a report generation page or trigger an AJAX call
+            window.location.href = '<?= base_url("Central_AD/reports") ?>?generate=1';
+        }
+    }
+</script>
 
 <?= $this->endSection() ?>

@@ -573,24 +573,81 @@ class Central_AD extends Controller
     // Reports
     public function reports()
     {
-        $inventoryModel = new \App\Models\InventoryModel();
-        $supplierModel = new \App\Models\SupplierModel();
+        $db = \Config\Database::connect();
         $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+        $userModel = new \App\Models\UserModel();
+        $inventoryModel = new \App\Models\InventoryModel();
 
+        // Total Sales - Sum of total_price from all delivered/completed purchase orders
+        $totalSales = $db->table('purchase_orders')
+            ->selectSum('total_price', 'total')
+            ->whereIn('status', ['delivered', 'confirmed', 'ready_for_delivery'])
+            ->get()
+            ->getRowArray();
+        $data['totalSales'] = $totalSales['total'] ?? 0;
+
+        // Total Orders - Count of all purchase orders
+        $data['totalOrders'] = $purchaseOrderModel->countAllResults();
+
+        // New Customers - Users created in the last 30 days
+        $thirtyDaysAgo = date('Y-m-d H:i:s', strtotime('-30 days'));
+        $data['newCustomers'] = $userModel->where('created_at >=', $thirtyDaysAgo)->countAllResults();
+
+        // Top Product - Most ordered item
+        $topProduct = $db->table('purchase_orders')
+            ->select('item_name, SUM(quantity) as total_quantity')
+            ->groupBy('item_name')
+            ->orderBy('total_quantity', 'DESC')
+            ->limit(1)
+            ->get()
+            ->getRowArray();
+        $data['topProduct'] = $topProduct['item_name'] ?? 'N/A';
+
+        // Sales Trend - Last 7 days
+        $salesTrend = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = date('Y-m-d', strtotime("-$i days"));
+            $dayName = date('D', strtotime("-$i days"));
+            $nextDate = date('Y-m-d', strtotime("-$i days +1 day"));
+            $daySales = $db->table('purchase_orders')
+                ->selectSum('total_price', 'total')
+                ->where('order_date >=', $date . ' 00:00:00')
+                ->where('order_date <', $nextDate . ' 00:00:00')
+                ->whereIn('status', ['delivered', 'confirmed', 'ready_for_delivery'])
+                ->get()
+                ->getRowArray();
+            $salesTrend[] = [
+                'day' => $dayName,
+                'sales' => floatval($daySales['total'] ?? 0)
+            ];
+        }
+        $data['salesTrend'] = $salesTrend;
+
+        // Top 5 Products - Best selling items by quantity
+        $topProducts = $db->table('purchase_orders')
+            ->select('item_name, SUM(quantity) as total_quantity')
+            ->groupBy('item_name')
+            ->orderBy('total_quantity', 'DESC')
+            ->limit(5)
+            ->get()
+            ->getResultArray();
+        $data['topProducts'] = $topProducts;
+
+        // Recent Reports - Generated reports (using purchase orders as report data)
+        $recentReports = $db->table('purchase_orders')
+            ->select('purchase_orders.*, users.username as generated_by, branches.name as branch_name')
+            ->join('users', 'users.id = purchase_orders.approved_by', 'left')
+            ->join('branches', 'branches.id = purchase_orders.branch_id', 'left')
+            ->whereIn('purchase_orders.status', ['delivered', 'confirmed'])
+            ->orderBy('purchase_orders.order_date', 'DESC')
+            ->limit(10)
+            ->get()
+            ->getResultArray();
+        $data['recentReports'] = $recentReports;
+
+        // Additional data for context
         $data['totalInventory'] = $inventoryModel->countAll();
         $data['lowStockItems'] = $inventoryModel->getLowStockItems();
-        $data['expiredItems'] = $inventoryModel->getExpiredItems();
-        $data['supplierPerformance'] = [];
-
-        $suppliers = $supplierModel->findAll();
-        foreach ($suppliers as $supplier) {
-            $data['supplierPerformance'][] = array_merge(
-                ['supplier_name' => $supplier['supplier_name']],
-                $supplierModel->getSupplierPerformance($supplier['id'])
-            );
-        }
-
-        $data['purchaseOrders'] = $purchaseOrderModel->findAll();
 
         return view('managers/reports', $data);
     }
@@ -697,7 +754,6 @@ class Central_AD extends Controller
         return redirect()->to('/Central_AD/branches')->with('success', 'Branch deleted successfully.');
     }
 
-    public function settings() { return view('managers/settings'); }
 
     // Dashboard with consolidated reports
     public function dashboard()
@@ -906,5 +962,122 @@ class Central_AD extends Controller
             log_message('error', 'Purchase Request Rejection Error: ' . $e->getMessage());
             return redirect()->to('/dashboard')->with('error', 'Error: ' . $e->getMessage());
         }
+    }
+
+    // Settings
+    public function settings()
+    {
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/');
+        }
+
+        $userModel = new \App\Models\UserModel();
+        $userId = session()->get('user_id');
+        $user = $userModel->find($userId);
+
+        if (!$user) {
+            return redirect()->to('/dashboard')->with('error', 'User not found');
+        }
+
+        $data['user'] = $user;
+        $data['preferences'] = [
+            'theme' => session()->get('theme') ?? 'light',
+            'language' => session()->get('language') ?? 'english',
+            'notifications' => session()->get('notifications') ?? true
+        ];
+
+        return view('managers/settings', $data);
+    }
+
+    // Update Profile
+    public function updateProfile()
+    {
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/');
+        }
+
+        $userModel = new \App\Models\UserModel();
+        $userId = session()->get('user_id');
+
+        $rules = [
+            'username' => "required|min_length[3]|max_length[50]|is_unique[users.username,id,{$userId}]",
+            'email' => "required|valid_email|is_unique[users.email,id,{$userId}]"
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $data = [
+            'username' => $this->request->getPost('username'),
+            'email' => $this->request->getPost('email')
+        ];
+
+        if ($userModel->update($userId, $data)) {
+            // Update session username
+            session()->set('username', $data['username']);
+            return redirect()->to('Central_AD/settings')->with('success', 'Profile updated successfully.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Failed to update profile. Please try again.');
+        }
+    }
+
+    // Update Password
+    public function updatePassword()
+    {
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/');
+        }
+
+        $userModel = new \App\Models\UserModel();
+        $userId = session()->get('user_id');
+        $user = $userModel->find($userId);
+
+        $currentPassword = $this->request->getPost('current_password');
+        $newPassword = $this->request->getPost('new_password');
+        $confirmPassword = $this->request->getPost('confirm_password');
+
+        // Validate current password
+        if (!password_verify($currentPassword, $user['password'])) {
+            return redirect()->back()->with('error', 'Current password is incorrect.');
+        }
+
+        // Validate new password
+        if (strlen($newPassword) < 6) {
+            return redirect()->back()->with('error', 'New password must be at least 6 characters long.');
+        }
+
+        // Validate password confirmation
+        if ($newPassword !== $confirmPassword) {
+            return redirect()->back()->with('error', 'New password and confirmation do not match.');
+        }
+
+        // Update password
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        if ($userModel->update($userId, ['password' => $hashedPassword])) {
+            return redirect()->to('Central_AD/settings')->with('success', 'Password updated successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Failed to update password. Please try again.');
+        }
+    }
+
+    // Update Preferences
+    public function updatePreferences()
+    {
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/');
+        }
+
+        $theme = $this->request->getPost('theme') ?? 'light';
+        $language = $this->request->getPost('language') ?? 'english';
+        $notifications = $this->request->getPost('notifications') === 'on' ? true : false;
+
+        session()->set([
+            'theme' => $theme,
+            'language' => $language,
+            'notifications' => $notifications
+        ]);
+
+        return redirect()->to('Central_AD/settings')->with('success', 'Preferences updated successfully.');
     }
 }

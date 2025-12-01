@@ -132,6 +132,29 @@ class Dashboard extends BaseController
                 'lowStock' => $lowStockCount,
             ];
             $data['recentItems'] = $inventoryModel->orderBy('updated_at', 'DESC')->findAll(5);
+        } elseif ($role === 'system_administrator') {
+            $db = Database::connect();
+            $userModel = new \App\Models\UserModel();
+            $logModel = new \App\Models\LogModel();
+            
+            // System Administrator metrics
+            $data['metrics'] = [
+                'totalUsers' => $userModel->countAll(),
+                'activeUsers' => $db->table('users')->where('role !=', 'system_administrator')->countAllResults(),
+                'totalLogs' => $logModel->countAll(),
+                'recentLogs' => $logModel->getRecentLogs(10),
+                'systemHealth' => [
+                    'database' => 'healthy',
+                    'storage' => 'normal',
+                    'security' => 'secure'
+                ]
+            ];
+            
+            // Recent user activity
+            $data['recentUsers'] = $userModel->orderBy('updated_at', 'DESC')->limit(5)->findAll();
+            
+            // System logs
+            $data['systemLogs'] = $logModel->orderBy('timestamp', 'DESC')->limit(10)->findAll();
         }
 
         return view('dashboard/index', $data);

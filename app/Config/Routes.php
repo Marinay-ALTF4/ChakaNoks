@@ -190,4 +190,17 @@ $routes->get('/alerts/send-expiry', 'AlertController::sendExpiryAlerts');
 $routes->get('/alerts/get', 'AlertController::getAlerts');
 $routes->get('/api/alerts', 'AlertController::apiAlerts');
 
+// System Administrator routes
+$routes->group('system', ['filter' => 'auth'], function($routes) {
+    $routes->get('users', 'SystemAdministratorController::users');
+    $routes->get('users/create', 'SystemAdministratorController::createUser');
+    $routes->post('users/store', 'SystemAdministratorController::storeUser');
+    $routes->get('users/edit/(:num)', 'SystemAdministratorController::editUser/$1');
+    $routes->post('users/update/(:num)', 'SystemAdministratorController::updateUser/$1');
+    $routes->get('users/delete/(:num)', 'SystemAdministratorController::deleteUser/$1');
+    $routes->get('logs', 'SystemAdministratorController::logs');
+    $routes->get('backup', 'SystemAdministratorController::backup');
+    $routes->get('security', 'SystemAdministratorController::security');
+});
+
 

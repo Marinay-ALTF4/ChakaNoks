@@ -238,7 +238,7 @@ public function suppliers()
             'username' => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
             'email' => 'required|valid_email|is_unique[users.email]',
             'password' => 'required|min_length[6]',
-            'role' => 'required|in_list[admin,branch_manager,inventory,supplier,logistics_coordinator]',
+            'role' => 'required|in_list[admin,branch_manager,inventory,supplier,logistics_coordinator,franchise_manager,system_administrator]',
             'branch_id' => 'permit_empty|integer',
             'supplier_id' => 'permit_empty|integer'
         ];

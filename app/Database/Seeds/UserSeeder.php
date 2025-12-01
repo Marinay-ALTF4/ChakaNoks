@@ -41,6 +41,14 @@ class UserSeeder extends Seeder
                 'branch_id'  => null,
                 'created_at' => date('Y-m-d H:i:s'),
             ],
+            [
+                'username'   => 'sysadmin',
+                'email'      => 'it@chakanoks.com',
+                'password'   => password_hash('sysadmin123', PASSWORD_DEFAULT),
+                'role'       => 'system_administrator',
+                'branch_id'  => null,
+                'created_at' => date('Y-m-d H:i:s'),
+            ],
         ];
 
         // Insert users one by one, checking if they already exist

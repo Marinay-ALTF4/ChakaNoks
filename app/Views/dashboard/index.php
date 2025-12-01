@@ -12,6 +12,8 @@
             </span>
             <?php if ($role === 'admin'): ?>
                 <a href="<?= base_url('Central_AD/branches/add') ?>" class="btn btn-primary" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Add New Branch</a>
+            <?php elseif ($role === 'system_administrator'): ?>
+                <a href="<?= base_url('system/users') ?>" class="btn btn-primary" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Manage Users</a>
             <?php endif; ?>
         </div>
     </div>
@@ -335,6 +337,174 @@
                             <?php endif; ?>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+    <?php elseif ($role === 'system_administrator'): ?>
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people fs-1 text-primary mb-2"></i>
+                        <h6 class="text-muted fw-semibold">Total Users</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['totalUsers'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-person-check fs-1 text-success mb-2"></i>
+                        <h6 class="text-muted fw-semibold">Active Users</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['activeUsers'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-file-text fs-1 text-info mb-2"></i>
+                        <h6 class="text-muted fw-semibold">System Logs</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc($metrics['totalLogs'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-shield-check fs-1 text-warning mb-2"></i>
+                        <h6 class="text-muted fw-semibold">System Health</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= esc(ucfirst($metrics['systemHealth']['security'] ?? 'Unknown')) ?></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">Database</h6>
+                        <h3 class="mb-0 text-success"><?= esc(ucfirst($metrics['systemHealth']['database'] ?? 'Unknown')) ?></h3>
+                        <small class="text-muted">Status</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">Storage</h6>
+                        <h3 class="mb-0 text-info"><?= esc(ucfirst($metrics['systemHealth']['storage'] ?? 'Unknown')) ?></h3>
+                        <small class="text-muted">Status</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">Security</h6>
+                        <h3 class="mb-0 text-warning"><?= esc(ucfirst($metrics['systemHealth']['security'] ?? 'Unknown')) ?></h3>
+                        <small class="text-muted">Status</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-header bg-light border-0 fw-semibold">Recent Users</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="border-0 fw-semibold">Username</th>
+                                        <th class="border-0 fw-semibold">Email</th>
+                                        <th class="border-0 fw-semibold">Role</th>
+                                        <th class="border-0 fw-semibold">Updated</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($recentUsers)): foreach ($recentUsers as $user): ?>
+                                        <tr class="border-bottom">
+                                            <td class="border-0"><?= esc($user['username'] ?? '') ?></td>
+                                            <td class="border-0"><?= esc($user['email'] ?? '') ?></td>
+                                            <td class="border-0">
+                                                <span class="badge bg-secondary"><?= esc(ucfirst(str_replace('_', ' ', $user['role'] ?? ''))) ?></span>
+                                            </td>
+                                            <td class="border-0"><?= $user['updated_at'] ? date('M d, Y H:i', strtotime($user['updated_at'])) : 'N/A' ?></td>
+                                        </tr>
+                                    <?php endforeach; else: ?>
+                                        <tr><td colspan="4" class="text-center border-0">No data</td></tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm rounded-3 bg-white border-0">
+                    <div class="card-header bg-light border-0 fw-semibold">System Activity Log</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="border-0 fw-semibold">Action</th>
+                                        <th class="border-0 fw-semibold">Details</th>
+                                        <th class="border-0 fw-semibold">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($systemLogs)): foreach ($systemLogs as $log): ?>
+                                        <tr class="border-bottom">
+                                            <td class="border-0"><?= esc($log['action'] ?? '') ?></td>
+                                            <td class="border-0"><small><?= esc(substr($log['details'] ?? '', 0, 50)) ?><?= strlen($log['details'] ?? '') > 50 ? '...' : '' ?></small></td>
+                                            <td class="border-0"><small><?= $log['timestamp'] ? date('M d, H:i', strtotime($log['timestamp'])) : 'N/A' ?></small></td>
+                                        </tr>
+                                    <?php endforeach; else: ?>
+                                        <tr><td colspan="3" class="text-center border-0">No logs available</td></tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm rounded-3 bg-white border-0">
+            <div class="card-header bg-light border-0 fw-semibold">Quick Actions</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="<?= base_url('system/users') ?>" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-people"></i><br>
+                            <small>Manage Users</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="<?= base_url('system/logs') ?>" class="btn btn-outline-info w-100">
+                            <i class="bi bi-file-text"></i><br>
+                            <small>View Logs</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="<?= base_url('system/backup') ?>" class="btn btn-outline-success w-100">
+                            <i class="bi bi-download"></i><br>
+                            <small>Backup System</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="<?= base_url('system/security') ?>" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-shield-lock"></i><br>
+                            <small>Security Settings</small>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -47,11 +47,11 @@ class CreateFranchiseSupplyAllocationTable extends Migration
 
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('franchise_id', 'franchises', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->createTable('franchise_supply_allocations');
+        $this->forge->createTable('franchise_supply_allocation');
     }
 
     public function down()
     {
-        $this->forge->dropTable('franchise_supply_allocations');
+        $this->forge->dropTable('franchise_supply_allocation');
     }
 }

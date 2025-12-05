@@ -49,6 +49,15 @@ class UserSeeder extends Seeder
                 'branch_id'  => null,
                 'created_at' => date('Y-m-d H:i:s'),
             ],
+            [
+                'username'    => 'supplier_portal',
+                'email'       => 'supplier@chakanoks.com',
+                'password'    => password_hash('supplier123', PASSWORD_DEFAULT),
+                'role'        => 'supplier',
+                'branch_id'   => null,
+                'supplier_id' => 1,
+                'created_at'  => date('Y-m-d H:i:s'),
+            ],
         ];
 
         // Insert users one by one, checking if they already exist

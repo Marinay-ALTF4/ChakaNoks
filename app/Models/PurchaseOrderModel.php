@@ -6,6 +6,16 @@ use CodeIgniter\Model;
 
 class PurchaseOrderModel extends Model
 {
+    /**
+     * Legacy and current statuses that represent "awaiting supplier confirmation".
+     */
+    public const SUPPLIER_PENDING_STATUSES = [
+        'pending_supplier',
+        'pending',
+        'approved',
+        'ordered',
+    ];
+
     protected $table = 'purchase_orders';
     protected $primaryKey = 'id';
     protected $allowedFields = [
@@ -44,12 +54,12 @@ class PurchaseOrderModel extends Model
     // Methods
     public function getPendingOrders()
     {
-        return $this->where('status', 'pending_supplier')->findAll();
+        return $this->whereIn('status', self::SUPPLIER_PENDING_STATUSES)->findAll();
     }
 
     public function getSupplierPendingOrders()
     {
-        return $this->where('status', 'pending_supplier')->findAll();
+        return $this->whereIn('status', self::SUPPLIER_PENDING_STATUSES)->findAll();
     }
 
     public function getConfirmedOrders()

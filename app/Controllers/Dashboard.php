@@ -6,6 +6,11 @@ use App\Controllers\BaseController;
 use App\Models\InventoryModel;
 use App\Models\SupplierModel;
 use App\Models\BranchModel;
+use App\Models\DeliveryModel;
+use App\Models\VehicleModel;
+use App\Models\DriverModel;
+use App\Models\UserModel;
+use App\Models\PurchaseOrderModel;
 use Config\Database;
 
 class Dashboard extends BaseController
@@ -36,8 +41,8 @@ class Dashboard extends BaseController
             $branchModel = new BranchModel();
             $db = Database::connect();
 
-            $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
-            $deliveryModel = new \App\Models\DeliveryModel();
+            $purchaseOrderModel = new PurchaseOrderModel();
+            $deliveryModel = new DeliveryModel();
             
             // Count low stock items using the same logic as InventoryModel
             $lowStockItems = $inventoryModel->getLowStockItems(5);
@@ -49,7 +54,9 @@ class Dashboard extends BaseController
                 'suppliers' => $supplierModel->countAll(),
                 'totalBranches' => $branchModel->countAll(),
                 'pendingPurchaseRequests' => $db->table('purchase_requests')->where('status', 'pending')->countAllResults(),
-                'pendingSupplierOrders' => $purchaseOrderModel->where('status', 'pending_supplier')->countAllResults(),
+                'pendingSupplierOrders' => (clone $purchaseOrderModel)
+                    ->whereIn('status', PurchaseOrderModel::SUPPLIER_PENDING_STATUSES)
+                    ->countAllResults(),
                 'confirmedOrders' => $purchaseOrderModel->where('status', 'confirmed')->countAllResults(),
                 'preparingOrders' => $purchaseOrderModel->where('status', 'preparing')->countAllResults(),
                 'readyForDelivery' => $purchaseOrderModel->where('status', 'ready_for_delivery')->countAllResults(),
@@ -64,54 +71,178 @@ class Dashboard extends BaseController
                 ->limit(5)
                 ->get()->getResultArray();
         } elseif ($role === 'supplier') {
-            // Supplier dashboard - redirect to supplier controller
-            return redirect()->to('/supplier/dashboard');
-        } elseif ($role === 'logistics_coordinator') {
-            // Logistics dashboard - redirect to logistics controller
-            return redirect()->to('/logistics/dashboard');
-        } elseif ($role === 'branch_manager') {
-            $db = Database::connect();
-            $branchId = session()->get('branch_id');
+            $supplierId = session()->get('supplier_id');
+
+            if (empty($supplierId)) {
+                $userModel = new UserModel();
+                $userRow   = $userModel->select('supplier_id')->find($userId);
+                if (!empty($userRow['supplier_id'])) {
+                    $supplierId = (int) $userRow['supplier_id'];
+                    session()->set('supplier_id', $supplierId);
+                }
+            }
 
             $data['metrics'] = [
-                'branchInventoryCount' => $db->table('branch_inventory')->where('branch_id', $branchId)->countAllResults(),
-                'pendingTransfers' => $db->table('transfers')->where('to_branch', $branchId)->where('status', 'pending')->countAllResults(),
-                'purchaseRequests' => $db->table('purchase_requests')->where('branch_id', $branchId)->where('status', 'pending')->countAllResults(),
+                'pendingOrders'    => 0,
+                'confirmedOrders'  => 0,
+                'readyForDelivery' => 0,
+                'totalOrders'      => 0,
+                'activeDeliveries' => 0,
+                'submittedInvoices'=> 0,
             ];
-            $data['inventory'] = $db->table('branch_inventory')
-                ->where('branch_id', $branchId)
-                ->orderBy('updated_at', 'DESC')
-                ->limit(5)
-                ->get()->getResultArray();
+            $data['recentOrders']    = [];
+            $data['activeDeliveries'] = [];
+            $data['recentInvoices']   = [];
 
-            // Low Stock Alerts: items with quantity < 5
-            $data['lowStockAlerts'] = $db->table('branch_inventory')
-                ->select('item_name, quantity')
-                ->where('branch_id', $branchId)
-                ->where('quantity <', 5)
-                ->get()->getResultArray();
+            if (empty($supplierId)) {
+                $data['alerts']['warning'] = $data['alerts']['warning'] ?? 'Supplier account is not linked to a supplier profile yet. Please contact an administrator.';
+            } else {
+                $purchaseOrderModel = new PurchaseOrderModel();
+                $deliveryModel      = new DeliveryModel();
 
-            // Activity Log: recent transfers and purchase requests
-            $transfers = $db->table('transfers')
-                ->select("'Transfer' as type, CONCAT('Transfer of ', quantity, ' ', item_name, ' from branch ', from_branch) as description, created_at")
-                ->where('to_branch', $branchId)
-                ->orWhere('from_branch', $branchId)
-                ->orderBy('created_at', 'DESC')
-                ->limit(3)
-                ->get()->getResultArray();
+                $data['metrics']['pendingOrders'] = (clone $purchaseOrderModel)
+                    ->where('supplier_id', $supplierId)
+                    ->whereIn('status', PurchaseOrderModel::SUPPLIER_PENDING_STATUSES)
+                    ->countAllResults();
 
-            $requests = $db->table('purchase_requests')
-                ->select("'Purchase Request' as type, CONCAT('Requested ', quantity, ' ', item_name) as description, created_at")
-                ->where('branch_id', $branchId)
-                ->orderBy('created_at', 'DESC')
-                ->limit(2)
-                ->get()->getResultArray();
+                $data['metrics']['confirmedOrders'] = (clone $purchaseOrderModel)
+                    ->where('supplier_id', $supplierId)
+                    ->whereIn('status', ['confirmed', 'preparing'])
+                    ->countAllResults();
+
+                $data['metrics']['readyForDelivery'] = (clone $purchaseOrderModel)
+                    ->where('supplier_id', $supplierId)
+                    ->where('status', 'ready_for_delivery')
+                    ->countAllResults();
+
+                $data['metrics']['totalOrders'] = (clone $purchaseOrderModel)
+                    ->where('supplier_id', $supplierId)
+                    ->countAllResults();
+
+                $data['recentOrders'] = (new PurchaseOrderModel())
+                    ->select('purchase_orders.*, branches.name as branch_name')
+                    ->join('branches', 'branches.id = purchase_orders.branch_id', 'left')
+                    ->where('purchase_orders.supplier_id', $supplierId)
+                    ->orderBy('purchase_orders.order_date', 'DESC')
+                    ->limit(5)
+                    ->findAll();
+
+                $deliveries = $deliveryModel
+                    ->select('deliveries.*, purchase_orders.item_name, purchase_orders.quantity, purchase_orders.unit, branches.name as destination_branch, purchase_orders.status as order_status')
+                    ->join('purchase_orders', 'purchase_orders.id = deliveries.order_id', 'left')
+                    ->join('branches', 'branches.id = deliveries.destination_branch_id', 'left')
+                    ->where('purchase_orders.supplier_id', $supplierId)
+                    ->orderBy('deliveries.updated_at', 'DESC')
+                    ->limit(5)
+                    ->findAll();
+
+                foreach ($deliveries as &$delivery) {
+                    $delivery['timeline'] = $deliveryModel->getStatusTimeline((int) ($delivery['id'] ?? 0));
+                }
+                unset($delivery);
+
+                $data['activeDeliveries']            = $deliveries;
+                $data['metrics']['activeDeliveries'] = count($deliveries);
+
+                if (class_exists('App\\Models\\SupplierInvoiceModel')) {
+                    $invoiceModel = new \App\Models\SupplierInvoiceModel();
+
+                    $data['metrics']['submittedInvoices'] = $invoiceModel
+                        ->where('supplier_id', $supplierId)
+                        ->countAllResults();
+
+                    $data['recentInvoices'] = (new \App\Models\SupplierInvoiceModel())
+                        ->where('supplier_id', $supplierId)
+                        ->orderBy('submitted_at', 'DESC')
+                        ->limit(5)
+                        ->findAll();
+                }
+            }
+        } elseif ($role === 'logistics_coordinator') {
+            $deliveryModel = new DeliveryModel();
+            $vehicleModel  = new VehicleModel();
+            $driverModel   = new DriverModel();
+
+            $data['stats'] = [
+                'pending'      => (clone $deliveryModel)->where('status', DeliveryModel::STATUS_PENDING)->countAllResults(),
+                'dispatched'   => (clone $deliveryModel)->where('status', DeliveryModel::STATUS_DISPATCHED)->countAllResults(),
+                'inTransit'    => (clone $deliveryModel)->where('status', DeliveryModel::STATUS_IN_TRANSIT)->countAllResults(),
+                'delivered'    => (clone $deliveryModel)->where('status', DeliveryModel::STATUS_DELIVERED)->countAllResults(),
+                'acknowledged' => (clone $deliveryModel)->where('status', DeliveryModel::STATUS_ACKNOWLEDGED)->countAllResults(),
+            ];
+
+            $data['upcomingDeliveries'] = (clone $deliveryModel)
+                ->whereIn('status', [
+                    DeliveryModel::STATUS_PENDING,
+                    DeliveryModel::STATUS_DISPATCHED,
+                    DeliveryModel::STATUS_IN_TRANSIT,
+                ])
+                ->orderBy('scheduled_at', 'ASC')
+                ->findAll(20);
+
+            $data['vehicles'] = $vehicleModel->available();
+            $data['drivers']  = $driverModel->findAll();
+        } elseif ($role === 'branch_manager') {
+            $db = Database::connect();
+            $branchId = $this->resolveBranchContext($userId);
+
+            $data['metrics'] = [
+                'branchInventoryCount' => $branchId
+                    ? $db->table('branch_inventory')->where('branch_id', $branchId)->countAllResults()
+                    : 0,
+                'pendingTransfers' => $branchId
+                    ? $db->table('transfer_requests')->where('to_branch_id', $branchId)->where('status', 'pending')->countAllResults()
+                    : 0,
+                'purchaseRequests' => $branchId
+                    ? $db->table('purchase_requests')->where('branch_id', $branchId)->where('status', 'pending')->countAllResults()
+                    : 0,
+            ];
+
+            $data['inventory'] = $branchId
+                ? $db->table('branch_inventory')
+                    ->where('branch_id', $branchId)
+                    ->orderBy('updated_at', 'DESC')
+                    ->limit(5)
+                    ->get()
+                    ->getResultArray()
+                : [];
+
+            $data['lowStockAlerts'] = $branchId
+                ? $db->table('branch_inventory')
+                    ->select('item_name, quantity')
+                    ->where('branch_id', $branchId)
+                    ->where('quantity <', 5)
+                    ->get()
+                    ->getResultArray()
+                : [];
+
+            $transfers = $branchId
+                ? $db->table('transfer_requests')
+                    ->select("'Transfer' as type, CONCAT('Transfer request from branch ', from_branch_id, ' to ', to_branch_id) as description, created_at")
+                    ->groupStart()
+                        ->where('to_branch_id', $branchId)
+                        ->orWhere('from_branch_id', $branchId)
+                    ->groupEnd()
+                    ->orderBy('created_at', 'DESC')
+                    ->limit(3)
+                    ->get()
+                    ->getResultArray()
+                : [];
+
+            $requests = $branchId
+                ? $db->table('purchase_requests')
+                    ->select("'Purchase Request' as type, CONCAT('Requested ', quantity, ' ', COALESCE(unit, 'unit/s'), ' of ', item_name) as description, created_at")
+                    ->where('branch_id', $branchId)
+                    ->orderBy('created_at', 'DESC')
+                    ->limit(2)
+                    ->get()
+                    ->getResultArray()
+                : [];
 
             $data['activityLog'] = array_merge($transfers, $requests);
-            usort($data['activityLog'], fn($a, $b) => strtotime($b['created_at']) <=> strtotime($a['created_at']));
+            usort($data['activityLog'], static fn($a, $b) => strtotime($b['created_at']) <=> strtotime($a['created_at']));
             $data['activityLog'] = array_slice($data['activityLog'], 0, 5);
 
-            // Sales Trend: simulated monthly data
             $data['salesTrend'] = [
                 ['month' => 'Jan', 'sales' => 120],
                 ['month' => 'Feb', 'sales' => 150],
@@ -158,6 +289,37 @@ class Dashboard extends BaseController
         }
 
         return view('dashboard/index', $data);
+    }
+
+    private function resolveBranchContext(?int $userId): ?int
+    {
+        $branchId = session()->get('branch_id');
+        if (!empty($branchId)) {
+            return (int) $branchId;
+        }
+
+        if (empty($userId)) {
+            return null;
+        }
+
+        $userModel = new UserModel();
+        $user = $userModel->select('branch_id')->find($userId);
+        if (!empty($user['branch_id'])) {
+            $branchId = (int) $user['branch_id'];
+            session()->set('branch_id', $branchId);
+            return $branchId;
+        }
+
+        $branchModel = new BranchModel();
+        $managedBranch = $branchModel->where('manager_id', $userId)->orderBy('id', 'ASC')->first();
+        if (!empty($managedBranch['id'])) {
+            $branchId = (int) $managedBranch['id'];
+            session()->set('branch_id', $branchId);
+            $userModel->update($userId, ['branch_id' => $branchId]);
+            return $branchId;
+        }
+
+        return null;
     }
 }
 

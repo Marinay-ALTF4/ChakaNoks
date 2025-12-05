@@ -2,72 +2,84 @@
 
 <?= $this->section('content') ?>
 
-<div class="container-fluid">
-    <h2 class="mb-4">All Deliveries</h2>
+<div class="container-fluid py-3">
+    <h2 class="mb-4">Deliveries Overview</h2>
 
     <?php if (session()->getFlashdata('success')): ?>
-        <div class="alert alert-success">
-            <?= session()->getFlashdata('success') ?>
-        </div>
+        <div class="alert alert-success"><?= esc(session()->getFlashdata('success')) ?></div>
     <?php endif; ?>
 
     <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger">
-            <?= session()->getFlashdata('error') ?>
-        </div>
+        <div class="alert alert-danger"><?= esc(session()->getFlashdata('error')) ?></div>
     <?php endif; ?>
 
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Delivery History</h5>
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Recent Deliveries</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
                         <tr>
-                            <th>Tracking #</th>
-                            <th>Order ID</th>
-                            <th>Item</th>
-                            <th>Supplier</th>
-                            <th>Branch</th>
-                            <th>Scheduled Date</th>
-                            <th>Actual Date</th>
+                            <th>Code</th>
+                            <th>Route</th>
+                            <th>Schedule</th>
+                            <th>Vehicle/Driver</th>
                             <th>Status</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($deliveries)): ?>
+                        <?php if (! empty($deliveries)): ?>
                             <?php foreach ($deliveries as $delivery): ?>
                                 <tr>
-                                    <td><strong><?= esc($delivery['tracking_number'] ?? 'N/A') ?></strong></td>
-                                    <td>#<?= esc($delivery['order_id']) ?></td>
-                                    <td><?= esc($delivery['item_name'] ?? 'N/A') ?></td>
-                                    <td><?= esc($delivery['supplier_name'] ?? 'N/A') ?></td>
-                                    <td><?= esc($delivery['branch_name'] ?? 'N/A') ?></td>
-                                    <td><?= $delivery['scheduled_date'] ? date('M d, Y H:i', strtotime($delivery['scheduled_date'])) : 'N/A' ?></td>
-                                    <td><?= $delivery['actual_date'] ? date('M d, Y H:i', strtotime($delivery['actual_date'])) : 'N/A' ?></td>
+                                    <td class="fw-semibold"><?= esc($delivery['delivery_code']) ?></td>
                                     <td>
-                                        <?php
-                                        $status = $delivery['status'];
-                                        $badgeClass = 'bg-secondary';
-                                        if ($status === 'scheduled') $badgeClass = 'bg-primary';
-                                        elseif ($status === 'in_transit') $badgeClass = 'bg-info';
-                                        elseif ($status === 'delivered') $badgeClass = 'bg-success';
-                                        elseif ($status === 'delayed') $badgeClass = 'bg-warning';
-                                        elseif ($status === 'cancelled') $badgeClass = 'bg-danger';
-                                        ?>
-                                        <span class="badge <?= $badgeClass ?>"><?= ucfirst(str_replace('_', ' ', $status)) ?></span>
+                                        <div class="small text-muted">Route</div>
+                                        <div><?= esc($delivery['source_branch_name'] ?? $delivery['source_branch_id'] ?? '—') ?> → <?= esc($delivery['destination_branch_name'] ?? $delivery['destination_branch_id'] ?? '—') ?></div>
+                                        <?php if (! empty($delivery['items'])): ?>
+                                            <div class="small text-muted mt-1">
+                                                <?= count($delivery['items']) ?> item(s)
+                                            </div>
+                                        <?php endif; ?>
                                     </td>
                                     <td>
-                                        <a href="<?= base_url('logistics/update-delivery-status/'.$delivery['id']) ?>" class="btn btn-sm btn-warning">Update</a>
+                                        <div class="small text-muted">Scheduled</div>
+                                        <div><?= $delivery['scheduled_at'] ? date('M d, Y H:i', strtotime($delivery['scheduled_at'])) : '—' ?></div>
+                                        <?php if (! empty($delivery['delivered_at'])): ?>
+                                            <div class="small text-muted">Delivered <?= date('M d, Y H:i', strtotime($delivery['delivered_at'])) ?></div>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <div><?= esc($delivery['assigned_vehicle_id'] ?? 'Unassigned') ?></div>
+                                        <div class="small text-muted">Driver: <?= esc($delivery['assigned_driver_id'] ?? '–') ?></div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary text-uppercase"><?= esc(str_replace('_', ' ', $delivery['status'])) ?></span>
                                     </td>
                                 </tr>
+                                <?php if (! empty($delivery['items'])): ?>
+                                    <tr class="table-light">
+                                        <td colspan="5">
+                                            <strong>Items</strong>
+                                            <ul class="small mb-0 mt-2">
+                                                <?php foreach ($delivery['items'] as $item): ?>
+                                                    <li>
+                                                        Product <?= esc($item['product_id']) ?> ·
+                                                        Qty <?= esc($item['quantity']) ?> <?= esc($item['unit'] ?? '') ?>
+                                                        <?php if (! empty($item['expiry_date'])): ?>
+                                                            · Exp <?= date('M d, Y', strtotime($item['expiry_date'])) ?>
+                                                        <?php endif; ?>
+                                                    </li>
+                                                <?php endforeach; ?>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="9" class="text-center text-muted">No deliveries found.</td>
+                                <td colspan="5" class="text-center text-muted py-4">No deliveries recorded yet.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>

@@ -11,7 +11,7 @@ class SupplierSeeder extends Seeder
         $data = [
             [
                 'supplier_name' => 'Fresh Foods Inc.',
-                'contact'       => '+1-555-0101',
+                'contact'       => '+09123456789',
                 'email'         => 'contact@freshfoods.com',
                 'address'       => '123 Supplier Lane, Food City',
                 'branch_serve'  => 'All',
@@ -19,7 +19,7 @@ class SupplierSeeder extends Seeder
             ],
             [
                 'supplier_name' => 'Global Distributors',
-                'contact'       => '+1-555-0202',
+                'contact'       => '+0987456123',
                 'email'         => 'sales@globaldist.com',
                 'address'       => '456 Distribution Ave, Supply Town',
                 'branch_serve'  => 'All',
@@ -27,7 +27,7 @@ class SupplierSeeder extends Seeder
             ],
             [
                 'supplier_name' => 'Local Produce Co.',
-                'contact'       => '+1-555-0303',
+                'contact'       => '+09321456987',
                 'email'         => 'info@localproduce.com',
                 'address'       => '789 Farm Road, Rural Area',
                 'branch_serve'  => 'Branch 1 - Downtown',

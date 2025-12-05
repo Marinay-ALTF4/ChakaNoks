@@ -2,14 +2,24 @@
 
 namespace Tests;
 
-use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\Test\CIUnitTestCase;
+use CodeIgniter\Test\ControllerTestTrait;
 
 class AlertControllerTest extends CIUnitTestCase
 {
+    use ControllerTestTrait;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->setUpControllerTestTrait();
+    }
+
     public function testSendLowStockAlerts()
     {
-        $result = $this->withURI('http://localhost:8080/alerts/send-low-stock')
+        $result = $this->withUri('http://localhost:8080/alerts/send-low-stock')
                       ->controller(\App\Controllers\AlertController::class)
                       ->execute('sendLowStockAlerts');
 
@@ -22,9 +32,9 @@ class AlertControllerTest extends CIUnitTestCase
 
     public function testSendExpiryAlerts()
     {
-        $result = $this->withURI('http://localhost:8080/alerts/send-expiry')
-                      ->controller(\App\Controllers\AlertController::class)
-                      ->execute('sendExpiryAlerts');
+        $result = $this->withUri('http://localhost:8080/alerts/send-expiry')
+                  ->controller(\App\Controllers\AlertController::class)
+                  ->execute('sendExpiryAlerts');
 
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $responseData = json_decode($result->getBody(), true);
@@ -35,9 +45,9 @@ class AlertControllerTest extends CIUnitTestCase
 
     public function testGetAlerts()
     {
-        $result = $this->withURI('http://localhost:8080/alerts/get')
-                      ->controller(\App\Controllers\AlertController::class)
-                      ->execute('getAlerts');
+        $result = $this->withUri('http://localhost:8080/alerts/get')
+                  ->controller(\App\Controllers\AlertController::class)
+                  ->execute('getAlerts');
 
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $responseData = json_decode($result->getBody(), true);
@@ -46,9 +56,9 @@ class AlertControllerTest extends CIUnitTestCase
 
     public function testApiAlerts()
     {
-        $result = $this->withURI('http://localhost:8080/api/alerts')
-                      ->controller(\App\Controllers\AlertController::class)
-                      ->execute('apiAlerts');
+        $result = $this->withUri('http://localhost:8080/api/alerts')
+                  ->controller(\App\Controllers\AlertController::class)
+                  ->execute('apiAlerts');
 
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertEquals(200, $result->getStatusCode());

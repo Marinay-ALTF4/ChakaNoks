@@ -2,209 +2,348 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\Controller;
+use App\Models\BranchModel;
+use App\Models\DeliveryItemModel;
 use App\Models\DeliveryModel;
-use App\Models\PurchaseOrderModel;
-use App\Models\LogModel;
+use App\Models\DriverModel;
+use App\Models\RouteModel;
+use App\Models\TransferRequestModel;
+use App\Models\VehicleModel;
+use App\Services\DeliveryService;
+use App\Services\RouteOptimizerService;
+use CodeIgniter\HTTP\RedirectResponse;
+use CodeIgniter\HTTP\ResponseInterface;
 
-class LogisticsController extends Controller
+class LogisticsController extends BaseController
 {
-    protected $deliveryModel;
-    protected $purchaseOrderModel;
-    protected $logModel;
-
-    public function __construct()
-    {
-        $this->deliveryModel = new DeliveryModel();
-        $this->purchaseOrderModel = new PurchaseOrderModel();
-        $this->logModel = new LogModel();
+    public function __construct(
+        private readonly DeliveryModel $deliveryModel = new DeliveryModel(),
+        private readonly DeliveryItemModel $deliveryItemModel = new DeliveryItemModel(),
+        private readonly TransferRequestModel $transferRequestModel = new TransferRequestModel(),
+        private readonly VehicleModel $vehicleModel = new VehicleModel(),
+        private readonly DriverModel $driverModel = new DriverModel(),
+        private readonly RouteModel $routeModel = new RouteModel(),
+        private readonly DeliveryService $deliveryService = new DeliveryService(),
+        private readonly RouteOptimizerService $routeOptimizerService = new RouteOptimizerService(),
+        private readonly BranchModel $branchModel = new BranchModel(),
+    ) {
     }
 
-    // Dashboard
-    public function dashboard()
+    public function dashboard(): string|RedirectResponse
     {
-        // Only logistics_coordinator role can access
-        if (!session()->get('logged_in') || session()->get('role') !== 'logistics_coordinator') {
-            return redirect()->to('/')->with('error', 'Unauthorized access. Logistics coordinator access only.');
+        if ($redirect = $this->guardRoles(['logistics_coordinator', 'admin', 'central_admin'])) {
+            return $redirect;
         }
 
-        // Get orders ready for delivery
-        $data['readyOrders'] = $this->purchaseOrderModel
-            ->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
-            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
-            ->join('branches', 'branches.id = purchase_orders.branch_id')
-            ->where('purchase_orders.status', 'ready_for_delivery')
-            ->orderBy('purchase_orders.prepared_at', 'ASC')
-            ->findAll();
-
-        $data['readyOrdersCount'] = count($data['readyOrders']);
-
-        // Get scheduled deliveries with order details
-        $data['scheduledDeliveries'] = $this->deliveryModel
-            ->select('deliveries.*, purchase_orders.item_name, branches.name as branch_name')
-            ->join('purchase_orders', 'purchase_orders.id = deliveries.order_id')
-            ->join('branches', 'branches.id = purchase_orders.branch_id')
-            ->where('deliveries.status', 'scheduled')
-            ->orderBy('deliveries.scheduled_date', 'ASC')
-            ->findAll();
-
-        $data['scheduledCount'] = count($data['scheduledDeliveries']);
-        $data['totalDeliveries'] = $this->deliveryModel->countAll();
-        $data['completedToday'] = $this->deliveryModel
-            ->where('status', 'delivered')
-            ->where('DATE(actual_date)', date('Y-m-d'))
-            ->countAllResults();
-
-        return view('logistics/dashboard', $data);
+        // Consolidated dashboards now live under the shared dashboard route.
+        return redirect()->to('/dashboard');
     }
 
-    // Schedule Delivery
-    public function scheduleDelivery()
+    public function scheduleDelivery(): string|ResponseInterface|RedirectResponse
     {
-        // Only logistics_coordinator role can access
-        if (!session()->get('logged_in') || session()->get('role') !== 'logistics_coordinator') {
-            return redirect()->to('/')->with('error', 'Unauthorized access. Logistics coordinator access only.');
+        if ($redirect = $this->guardRoles(['logistics_coordinator', 'admin', 'central_admin'])) {
+            return $redirect;
         }
 
         if ($this->request->getMethod() === 'post') {
-            $orderId = $this->request->getPost('order_id');
-            $scheduledDate = $this->request->getPost('scheduled_date');
-            $route = $this->request->getPost('route');
+            $payload = $this->request->getPost();
+            $items   = $this->request->getPost('items') ?? [];
 
-            $trackingNumber = $this->deliveryModel->generateTrackingNumber();
-
-            $db = \Config\Database::connect();
-            $db->transStart();
-
-            try {
-                // Create delivery record
-                $this->deliveryModel->insert([
-                    'order_id' => $orderId,
-                    'status' => 'scheduled',
-                    'tracking_number' => $trackingNumber,
-                    'route' => $route,
-                    'scheduled_date' => $scheduledDate,
-                    'logistics_coordinator_id' => session()->get('user_id')
-                ]);
-
-                // Update purchase order status to delivered (or keep as ready_for_delivery until actually delivered)
-                // The order status will change to 'delivered' when delivery is completed
-
-                $db->transComplete();
-
-                if ($db->transStatus() === false) {
-                    throw new \Exception('Transaction failed');
+            $parsedItems = [];
+            foreach ($items as $item) {
+                if (empty($item['product_id']) || empty($item['quantity'])) {
+                    continue;
                 }
 
-                // Log the action
-                $this->logModel->logAction(session()->get('user_id'), 'scheduled_delivery', "Delivery scheduled for order #$orderId");
+                $parsedItems[] = $item;
+            }
 
-                return redirect()->to('/logistics/deliveries')->with('success', 'Delivery scheduled successfully');
-            } catch (\Exception $e) {
-                $db->transRollback();
-                return redirect()->back()->withInput()->with('error', 'Error: ' . $e->getMessage());
+            try {
+                $this->deliveryService->createDelivery($payload, $parsedItems, $payload['route']['stops'] ?? [], session()->get('user_id'));
+                return redirect()->to('/logistics/deliveries')->with('success', 'Delivery scheduled successfully.');
+            } catch (\Throwable $e) {
+                return redirect()->back()->withInput()->with('error', $e->getMessage());
             }
         }
 
-        // Get orders that are ready for delivery (prepared by supplier)
-        $data['readyOrders'] = $this->purchaseOrderModel
-            ->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
-            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
-            ->join('branches', 'branches.id = purchase_orders.branch_id')
-            ->where('purchase_orders.status', 'ready_for_delivery')
-            ->findAll();
-        return view('logistics/schedule_delivery', $data);
-    }
+        $recentDeliveries = $this->deliveryModel->orderBy('created_at', 'DESC')->findAll(20);
 
-    // Update Delivery Status
-    public function updateDeliveryStatus($deliveryId)
-    {
-        // Only logistics_coordinator role can access
-        if (!session()->get('logged_in') || session()->get('role') !== 'logistics_coordinator') {
-            return redirect()->to('/')->with('error', 'Unauthorized access. Logistics coordinator access only.');
+        $branchIds = [];
+        foreach ($recentDeliveries as $delivery) {
+            if (! empty($delivery['source_branch_id'])) {
+                $branchIds[] = (int) $delivery['source_branch_id'];
+            }
+            if (! empty($delivery['destination_branch_id'])) {
+                $branchIds[] = (int) $delivery['destination_branch_id'];
+            }
         }
 
-        if ($this->request->getMethod() === 'post') {
-            $status = $this->request->getPost('status');
-            $actualDate = ($status === 'delivered') ? date('Y-m-d H:i:s') : null;
+        $branchLookup = [];
+        if (! empty($branchIds)) {
+            $branches = $this->branchModel->whereIn('id', array_unique($branchIds))->findAll();
+            foreach ($branches as $branch) {
+                $branchLookup[(int) $branch['id']] = $branch['name'] ?? ('Branch ' . $branch['id']);
+            }
+        }
 
-            $db = \Config\Database::connect();
-            $db->transStart();
+        $statusFlow = DeliveryModel::getStatusFlow();
 
-            try {
-                // Update delivery status
-                $this->deliveryModel->updateStatus($deliveryId, $status, $actualDate);
+        foreach ($recentDeliveries as &$delivery) {
+            $delivery['source_branch_name'] = $branchLookup[(int) ($delivery['source_branch_id'] ?? 0)] ?? ($delivery['source_branch_id'] ?? '—');
+            $delivery['destination_branch_name'] = $branchLookup[(int) ($delivery['destination_branch_id'] ?? 0)] ?? ($delivery['destination_branch_id'] ?? '—');
 
-                // If delivered, update purchase order status
-                if ($status === 'delivered') {
-                    $delivery = $this->deliveryModel->find($deliveryId);
-                    if ($delivery && $delivery['order_id']) {
-                        $this->purchaseOrderModel->update($delivery['order_id'], [
-                            'status' => 'delivered',
-                            'delivery_date' => $actualDate
-                        ]);
+            $currentStatus = (string) ($delivery['status'] ?? DeliveryModel::STATUS_PENDING);
+            $nextStatus = null;
+            $currentIndex = array_search($currentStatus, $statusFlow, true);
+
+            if ($currentIndex !== false) {
+                for ($i = $currentIndex + 1, $max = count($statusFlow); $i < $max; $i++) {
+                    $candidate = $statusFlow[$i];
+                    if ($candidate === DeliveryModel::STATUS_CANCELLED) {
+                        continue;
                     }
+                    $nextStatus = $candidate;
+                    break;
                 }
+            }
 
-                $db->transComplete();
+            $delivery['next_status'] = $nextStatus;
+        }
+        unset($delivery);
 
-                if ($db->transStatus() === false) {
-                    throw new \Exception('Transaction failed');
-                }
+        return view('logistics/schedule_delivery', [
+            'vehicles'         => $this->vehicleModel->available(),
+            'drivers'          => $this->driverModel->findAll(),
+            'recentDeliveries' => $recentDeliveries,
+            'statusOptions'    => array_values(array_filter($statusFlow, static fn ($status) => $status !== DeliveryModel::STATUS_CANCELLED)),
+        ]);
+    }
 
-                // Log the action
-                $this->logModel->logAction(session()->get('user_id'), 'updated_delivery_status', "Updated delivery #$deliveryId to $status");
+    public function updateDeliveryStatus(int $deliveryId): string|RedirectResponse
+    {
+        if ($redirect = $this->guardRoles(['logistics_coordinator', 'admin', 'central_admin', 'branch_manager'])) {
+            return $redirect;
+        }
 
-                return redirect()->to('/logistics/deliveries')->with('success', 'Delivery status updated');
-            } catch (\Exception $e) {
-                $db->transRollback();
-                return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        if ($this->request->getMethod() === 'post') {
+            $status = trim((string) $this->request->getPost('status'));
+
+            if ($status === '') {
+                return redirect()->back()->with('error', 'Select a status to continue.');
+            }
+
+            try {
+                $this->deliveryService->updateStatus($deliveryId, $status, session()->get('user_id'));
+                return redirect()->back()->with('success', 'Status updated.');
+            } catch (\Throwable $e) {
+                return redirect()->back()->with('error', $e->getMessage());
             }
         }
 
-        $data['delivery'] = $this->deliveryModel->find($deliveryId);
-        return view('logistics/update_delivery_status', $data);
+        return redirect()->to('/logistics/supplier-deliveries');
     }
 
-    // View All Deliveries
-    public function deliveries()
+    public function deliveries(): string|RedirectResponse
     {
-        // Only logistics_coordinator role can access
-        if (!session()->get('logged_in') || session()->get('role') !== 'logistics_coordinator') {
-            return redirect()->to('/')->with('error', 'Unauthorized access. Logistics coordinator access only.');
+        if ($redirect = $this->guardRoles(['logistics_coordinator', 'admin', 'central_admin'])) {
+            return $redirect;
         }
 
-        $data['deliveries'] = $this->deliveryModel
-            ->select('deliveries.*, purchase_orders.item_name, branches.name as branch_name, suppliers.supplier_name')
-            ->join('purchase_orders', 'purchase_orders.id = deliveries.order_id')
-            ->join('branches', 'branches.id = purchase_orders.branch_id')
-            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
-            ->orderBy('deliveries.created_at', 'DESC')
-            ->findAll();
-        return view('logistics/deliveries', $data);
-    }
+        $deliveries = $this->deliveryModel->orderBy('created_at', 'DESC')->findAll(50);
 
-    // Optimize Routes
-    public function optimizeRoutes()
-    {
-        $pendingDeliveries = $this->deliveryModel->getPendingDeliveries();
-        $optimizedDeliveries = $this->deliveryModel->optimizeRoute($pendingDeliveries);
-
-        $data['optimizedDeliveries'] = $optimizedDeliveries;
-        return view('logistics/optimized_routes', $data);
-    }
-
-    // Track Delivery
-    public function trackDelivery($trackingNumber)
-    {
-        $delivery = $this->deliveryModel->where('tracking_number', $trackingNumber)->first();
-
-        if (!$delivery) {
-            return redirect()->back()->with('error', 'Tracking number not found');
+        $branchIds = [];
+        foreach ($deliveries as $delivery) {
+            if (! empty($delivery['source_branch_id'])) {
+                $branchIds[] = (int) $delivery['source_branch_id'];
+            }
+            if (! empty($delivery['destination_branch_id'])) {
+                $branchIds[] = (int) $delivery['destination_branch_id'];
+            }
         }
 
-        $data['delivery'] = $delivery;
-        $data['order'] = $this->purchaseOrderModel->find($delivery['order_id']);
-        return view('logistics/track_delivery', $data);
+        $branchLookup = [];
+        if (! empty($branchIds)) {
+            $branches = $this->branchModel->whereIn('id', array_unique($branchIds))->findAll();
+            foreach ($branches as $branch) {
+                $branchLookup[(int) $branch['id']] = $branch['name'] ?? ('Branch ' . $branch['id']);
+            }
+        }
+
+        $statusFlow = DeliveryModel::getStatusFlow();
+
+        foreach ($deliveries as &$delivery) {
+            $delivery['items']   = $this->deliveryItemModel->forDelivery((int) $delivery['id']);
+            $delivery['timeline'] = $this->deliveryModel->getStatusTimeline((int) $delivery['id']);
+            $delivery['source_branch_name'] = $branchLookup[(int) ($delivery['source_branch_id'] ?? 0)] ?? ($delivery['source_branch_id'] ?? '—');
+            $delivery['destination_branch_name'] = $branchLookup[(int) ($delivery['destination_branch_id'] ?? 0)] ?? ($delivery['destination_branch_id'] ?? '—');
+
+            $currentStatus = (string) ($delivery['status'] ?? DeliveryModel::STATUS_PENDING);
+            $nextStatus = null;
+            $currentIndex = array_search($currentStatus, $statusFlow, true);
+
+            if ($currentIndex !== false) {
+                for ($i = $currentIndex + 1, $max = count($statusFlow); $i < $max; $i++) {
+                    $candidate = $statusFlow[$i];
+                    if ($candidate === DeliveryModel::STATUS_CANCELLED) {
+                        continue;
+                    }
+                    $nextStatus = $candidate;
+                    break;
+                }
+            }
+
+            $delivery['next_status'] = $nextStatus;
+        }
+        unset($delivery);
+
+        return view('logistics/deliveries', [
+            'deliveries' => $deliveries,
+        ]);
+    }
+
+    public function supplierDeliveries(): string|RedirectResponse
+    {
+        if ($redirect = $this->guardRoles(['logistics_coordinator', 'admin', 'central_admin'])) {
+            return $redirect;
+        }
+
+        $deliveries = $this->deliveryModel
+            ->select('deliveries.*, purchase_orders.status AS purchase_order_status, purchase_orders.item_name, purchase_orders.quantity, purchase_orders.unit, branches.name AS destination_branch, suppliers.supplier_name AS supplier_name')
+            ->join('purchase_orders', 'purchase_orders.id = deliveries.order_id', 'left')
+            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id', 'left')
+            ->join('branches', 'branches.id = deliveries.destination_branch_id', 'left')
+            ->where('deliveries.order_id IS NOT NULL', null, false)
+            ->orderBy('deliveries.updated_at', 'DESC')
+            ->findAll(100);
+
+        foreach ($deliveries as &$delivery) {
+            $delivery['timeline'] = $this->deliveryModel->getStatusTimeline((int) ($delivery['id'] ?? 0));
+        }
+        unset($delivery);
+
+        $statusOptions = [
+            DeliveryModel::STATUS_DISPATCHED,
+            DeliveryModel::STATUS_IN_TRANSIT,
+            DeliveryModel::STATUS_DELIVERED,
+            DeliveryModel::STATUS_ACKNOWLEDGED,
+        ];
+
+        return view('logistics/supplier_deliveries', [
+            'deliveries'    => $deliveries,
+            'statusOptions' => $statusOptions,
+        ]);
+    }
+
+    public function optimizeRoutes(): ResponseInterface
+    {
+        if ($redirect = $this->guardRoles(['logistics_coordinator', 'admin', 'central_admin'])) {
+            return $redirect;
+        }
+
+        $payload = $this->request->getJSON(true) ?? [];
+        $stops = $payload['stops'] ?? [];
+        $ordered = $this->routeOptimizerService->optimize($stops, $payload['options'] ?? []);
+
+        return $this->response->setJSON([
+            'data' => $ordered,
+        ]);
+    }
+
+    public function trackDelivery(string $deliveryCode): string|RedirectResponse
+    {
+        $delivery = $this->deliveryModel->where('delivery_code', $deliveryCode)->first();
+        if (! $delivery) {
+            return redirect()->back()->with('error', 'Delivery not found.');
+        }
+
+        return view('logistics/track_delivery', [
+            'delivery' => $delivery,
+            'items'    => $this->deliveryItemModel->forDelivery((int) $delivery['id']),
+            'route'    => $this->routeModel->latestForDelivery((int) $delivery['id']),
+            'timeline' => $this->deliveryModel->getStatusTimeline((int) $delivery['id']),
+        ]);
+    }
+
+    public function branch(): string|RedirectResponse
+    {
+        if ($redirect = $this->guardRoles(['branch_manager'])) {
+            return $redirect;
+        }
+
+        $branchId = session()->get('branch_id');
+
+        return view('logistics/branch', [
+            'incomingDeliveries' => $this->deliveryModel
+                ->where('destination_branch_id', $branchId)
+                ->whereIn('status', [DeliveryModel::STATUS_PENDING, DeliveryModel::STATUS_DISPATCHED, DeliveryModel::STATUS_IN_TRANSIT, DeliveryModel::STATUS_DELIVERED])
+                ->orderBy('scheduled_at', 'ASC')
+                ->findAll(),
+            'transferRequests' => $this->transferRequestModel
+                ->where('from_branch_id', $branchId)
+                ->orderBy('created_at', 'DESC')
+                ->findAll(20),
+        ]);
+    }
+
+    public function central(): string|RedirectResponse
+    {
+        if ($redirect = $this->guardRoles(['admin', 'central_admin'])) {
+            return $redirect;
+        }
+
+        $pendingRequests = $this->transferRequestModel
+            ->where('status', TransferRequestModel::STATUS_PENDING)
+            ->orderBy('created_at', 'ASC')
+            ->findAll(20);
+
+        $metrics = [
+            'completedDeliveries' => $this->deliveryModel->where('status', DeliveryModel::STATUS_ACKNOWLEDGED)->countAllResults(),
+            'averageLeadTime'     => $this->calculateAverageLeadTime(),
+            'inTransit'           => $this->deliveryModel->where('status', DeliveryModel::STATUS_IN_TRANSIT)->countAllResults(),
+        ];
+
+        return view('logistics/central', [
+            'pendingRequests' => $pendingRequests,
+            'metrics'         => $metrics,
+        ]);
+    }
+
+    protected function guardRoles(array $roles): ?RedirectResponse
+    {
+        if (! session()->get('logged_in') || ! in_array(session()->get('role'), $roles, true)) {
+            return redirect()->to('/')->with('error', 'Unauthorized access.');
+        }
+
+        return null;
+    }
+
+    protected function buildCoordinatorStats(): array
+    {
+        return [
+            'pending'      => $this->deliveryModel->where('status', DeliveryModel::STATUS_PENDING)->countAllResults(),
+            'dispatched'   => $this->deliveryModel->where('status', DeliveryModel::STATUS_DISPATCHED)->countAllResults(),
+            'inTransit'    => $this->deliveryModel->where('status', DeliveryModel::STATUS_IN_TRANSIT)->countAllResults(),
+            'delivered'    => $this->deliveryModel->where('status', DeliveryModel::STATUS_DELIVERED)->countAllResults(),
+            'acknowledged' => $this->deliveryModel->where('status', DeliveryModel::STATUS_ACKNOWLEDGED)->countAllResults(),
+        ];
+    }
+
+    protected function calculateAverageLeadTime(): ?float
+    {
+        $deliveries = $this->deliveryModel
+            ->where('scheduled_at IS NOT NULL', null, false)
+            ->where('acknowledged_at IS NOT NULL', null, false)
+            ->findAll(100);
+
+        if (empty($deliveries)) {
+            return null;
+        }
+
+        $total = 0;
+        foreach ($deliveries as $delivery) {
+            $total += strtotime($delivery['acknowledged_at']) - strtotime($delivery['scheduled_at']);
+        }
+
+        return round($total / count($deliveries) / 3600, 2); // hours
     }
 }

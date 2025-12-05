@@ -2,62 +2,184 @@
 
 namespace App\Models;
 
+use CodeIgniter\I18n\Time;
 use CodeIgniter\Model;
 
 class DeliveryModel extends Model
 {
-    protected $table = 'deliveries';
-    protected $primaryKey = 'id';
+    public const STATUS_PENDING      = 'pending';
+    public const STATUS_DISPATCHED   = 'dispatched';
+    public const STATUS_IN_TRANSIT   = 'in_transit';
+    public const STATUS_DELIVERED    = 'delivered';
+    public const STATUS_ACKNOWLEDGED = 'acknowledged';
+    public const STATUS_CANCELLED    = 'cancelled';
+
+    protected $table            = 'deliveries';
+    protected $primaryKey       = 'id';
+    protected $returnType       = 'array';
+    protected $useSoftDeletes   = false;
+    protected $useTimestamps    = true;
+    protected $createdField     = 'created_at';
+    protected $updatedField     = 'updated_at';
+
     protected $allowedFields = [
-        'order_id', 'status', 'tracking_number', 'route', 'scheduled_date',
-        'actual_date', 'logistics_coordinator_id'
+        'delivery_code',
+        'order_id',
+        'source_branch_id',
+        'destination_branch_id',
+        'assigned_vehicle_id',
+        'assigned_driver_id',
+        'status',
+        'scheduled_at',
+        'dispatched_at',
+        'in_transit_at',
+        'delivered_at',
+        'acknowledged_at',
+        'total_cost',
+        'notes',
+        'created_by',
+        'updated_by',
     ];
-    protected $useTimestamps = true;
-    protected $createdField = 'created_at';
-    protected $updatedField = 'updated_at';
 
-    // Relations
-    public function purchaseOrder()
+    /**
+     * Returns the ordered list of statuses supported by the module.
+     */
+    public static function getStatusFlow(): array
     {
-        return $this->belongsTo('App\Models\PurchaseOrderModel', 'order_id');
+        return [
+            self::STATUS_PENDING,
+            self::STATUS_DISPATCHED,
+            self::STATUS_IN_TRANSIT,
+            self::STATUS_DELIVERED,
+            self::STATUS_ACKNOWLEDGED,
+            self::STATUS_CANCELLED,
+        ];
     }
 
-    public function coordinator()
+    /**
+     * Generates a unique delivery code with date prefix.
+     */
+    public function generateDeliveryCode(): string
     {
-        return $this->belongsTo('App\Models\UserModel', 'logistics_coordinator_id');
+        $todayPrefix = date('Ymd');
+        do {
+            $code = sprintf('DLV-%s-%04d', $todayPrefix, random_int(0, 9999));
+        } while ($this->where('delivery_code', $code)->countAllResults() > 0);
+
+        return $code;
     }
 
-    // Methods
-    public function getPendingDeliveries()
+    /**
+     * Maintains backward compatibility with legacy code pathways.
+     */
+    public function generateTrackingNumber(): string
     {
-        return $this->where('status', 'pending')->findAll();
+        return $this->generateDeliveryCode();
     }
 
-    public function updateStatus($deliveryId, $status, $actualDate = null)
+    /**
+     * Updates delivery status and automatically stamps relevant datetime fields.
+     */
+    public function transitionStatus(int $deliveryId, string $status): bool
     {
-        $data = ['status' => $status];
-        if ($actualDate) {
-            $data['actual_date'] = $actualDate;
+        $status = strtolower($status);
+        if (! in_array($status, self::getStatusFlow(), true)) {
+            throw new \InvalidArgumentException('Unsupported delivery status: ' . $status);
         }
-        return $this->update($deliveryId, $data);
+
+        $fields = ['status' => $status];
+        $time   = Time::now('Asia/Manila')->toDateTimeString();
+        $record = $this->find($deliveryId) ?? [];
+
+        switch ($status) {
+            case self::STATUS_PENDING:
+                $fields['scheduled_at'] = $record['scheduled_at'] ?? $time;
+                break;
+            case self::STATUS_DISPATCHED:
+                $fields['dispatched_at'] = $time;
+                break;
+            case self::STATUS_IN_TRANSIT:
+                $fields['in_transit_at'] = $time;
+                if (! ($record['dispatched_at'] ?? null)) {
+                    $fields['dispatched_at'] = $time;
+                }
+                break;
+            case self::STATUS_DELIVERED:
+                $fields['delivered_at'] = $time;
+                break;
+            case self::STATUS_ACKNOWLEDGED:
+                $fields['acknowledged_at'] = $time;
+                if (! ($record['delivered_at'] ?? null)) {
+                    $fields['delivered_at'] = $time;
+                }
+                break;
+            case self::STATUS_CANCELLED:
+                break;
+        }
+
+        return (bool) $this->update($deliveryId, $fields);
     }
 
-    public function generateTrackingNumber()
+    /**
+     * Retrieves timeline friendly data for UI rendering.
+     */
+    public function getStatusTimeline(int $deliveryId): array
     {
-        return 'TRK' . date('Ymd') . rand(1000, 9999);
+        $record = $this->find($deliveryId);
+        if (! $record) {
+            return [];
+        }
+
+        return [
+            self::STATUS_PENDING      => $record['scheduled_at'] ?? null,
+            self::STATUS_DISPATCHED   => $record['dispatched_at'] ?? null,
+            self::STATUS_IN_TRANSIT   => $record['in_transit_at'] ?? null,
+            self::STATUS_DELIVERED    => $record['delivered_at'] ?? null,
+            self::STATUS_ACKNOWLEDGED => $record['acknowledged_at'] ?? null,
+            self::STATUS_CANCELLED    => null,
+        ];
     }
 
-    public function getDeliveriesByRoute($route)
+    /**
+     * Convenience helpers for related records.
+     */
+    public function getSourceBranch(int $deliveryId): ?array
     {
-        return $this->where('route', $route)->findAll();
+        $record = $this->find($deliveryId);
+        if (! $record || empty($record['source_branch_id'])) {
+            return null;
+        }
+
+        return (new BranchModel())->find($record['source_branch_id']);
     }
 
-    public function optimizeRoute($deliveries)
+    public function getDestinationBranch(int $deliveryId): ?array
     {
-        // Simple route optimization logic (can be enhanced)
-        usort($deliveries, function($a, $b) {
-            return strtotime($a['scheduled_date']) - strtotime($b['scheduled_date']);
-        });
-        return $deliveries;
+        $record = $this->find($deliveryId);
+        if (! $record || empty($record['destination_branch_id'])) {
+            return null;
+        }
+
+        return (new BranchModel())->find($record['destination_branch_id']);
+    }
+
+    public function getAssignedVehicle(int $deliveryId): ?array
+    {
+        $record = $this->find($deliveryId);
+        if (! $record || empty($record['assigned_vehicle_id'])) {
+            return null;
+        }
+
+        return (new VehicleModel())->find($record['assigned_vehicle_id']);
+    }
+
+    public function getAssignedDriver(int $deliveryId): ?array
+    {
+        $record = $this->find($deliveryId);
+        if (! $record || empty($record['assigned_driver_id'])) {
+            return null;
+        }
+
+        return (new DriverModel())->find($record['assigned_driver_id']);
     }
 }

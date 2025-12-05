@@ -6,6 +6,7 @@ use CodeIgniter\Controller;
 use App\Models\SupplierModel;
 use App\Models\InventoryModel;
 use App\Models\FranchiseModel;
+use App\Models\PurchaseOrderModel;
 
 class Central_AD extends Controller
 {
@@ -337,32 +338,7 @@ class Central_AD extends Controller
     // Supplier Order Management - View pending orders for supplier
     public function supplierOrders()
     {
-        $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
-        $data['pendingOrders'] = $purchaseOrderModel
-            ->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
-            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
-            ->join('branches', 'branches.id = purchase_orders.branch_id')
-            ->where('purchase_orders.status', 'pending_supplier')
-            ->orderBy('purchase_orders.order_date', 'ASC')
-            ->findAll();
-        
-        $data['confirmedOrders'] = $purchaseOrderModel
-            ->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
-            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
-            ->join('branches', 'branches.id = purchase_orders.branch_id')
-            ->where('purchase_orders.status', 'confirmed')
-            ->orderBy('purchase_orders.supplier_confirmed_at', 'DESC')
-            ->findAll();
-        
-        $data['preparingOrders'] = $purchaseOrderModel
-            ->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
-            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
-            ->join('branches', 'branches.id = purchase_orders.branch_id')
-            ->where('purchase_orders.status', 'preparing')
-            ->orderBy('purchase_orders.prepared_at', 'DESC')
-            ->findAll();
-        
-        return view('managers/supplier_orders', $data);
+        return redirect()->to('/supplier/dashboard')->with('info', 'Supplier order management is handled within the supplier portal.');
     }
 
     // Supplier confirms order
@@ -373,7 +349,7 @@ class Central_AD extends Controller
 
         if ($purchaseOrderModel->confirmBySupplier($orderId)) {
             $logModel->logAction(session()->get('user_id'), 'supplier_confirmed_order', "Supplier confirmed order #$orderId");
-            return redirect()->to('/Central_AD/supplier-orders')->with('success', 'Order confirmed successfully');
+            return redirect()->to('/supplier/dashboard')->with('success', 'Order confirmed successfully');
         }
         
         return redirect()->back()->with('error', 'Failed to confirm order');
@@ -387,7 +363,7 @@ class Central_AD extends Controller
 
         if ($purchaseOrderModel->markAsPreparing($orderId)) {
             $logModel->logAction(session()->get('user_id'), 'order_preparing', "Order #$orderId marked as preparing");
-            return redirect()->to('/Central_AD/supplier-orders')->with('success', 'Order marked as preparing');
+            return redirect()->to('/supplier/dashboard')->with('success', 'Order marked as preparing');
         }
         
         return redirect()->back()->with('error', 'Failed to update order status');
@@ -401,7 +377,7 @@ class Central_AD extends Controller
 
         if ($purchaseOrderModel->markAsReadyForDelivery($orderId)) {
             $logModel->logAction(session()->get('user_id'), 'order_ready_delivery', "Order #$orderId marked as ready for delivery");
-            return redirect()->to('/Central_AD/supplier-orders')->with('success', 'Order marked as ready for delivery');
+            return redirect()->to('/supplier/dashboard')->with('success', 'Order marked as ready for delivery');
         }
         
         return redirect()->back()->with('error', 'Failed to update order status');
@@ -768,7 +744,9 @@ class Central_AD extends Controller
         $data['lowStockAlerts'] = count($inventoryModel->getLowStockItems());
         $data['expiredItems'] = count($inventoryModel->getExpiredItems());
         $data['totalSuppliers'] = $supplierModel->countAll();
-        $data['pendingSupplierOrders'] = $purchaseOrderModel->where('status', 'pending_supplier')->countAllResults();
+        $data['pendingSupplierOrders'] = $purchaseOrderModel
+            ->whereIn('status', PurchaseOrderModel::SUPPLIER_PENDING_STATUSES)
+            ->countAllResults();
         $data['confirmedOrders'] = $purchaseOrderModel->where('status', 'confirmed')->countAllResults();
         $data['preparingOrders'] = $purchaseOrderModel->where('status', 'preparing')->countAllResults();
         $data['readyForDelivery'] = $purchaseOrderModel->where('status', 'ready_for_delivery')->countAllResults();
@@ -783,7 +761,7 @@ class Central_AD extends Controller
             ->select('purchase_orders.*, suppliers.supplier_name, branches.name as branch_name')
             ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id')
             ->join('branches', 'branches.id = purchase_orders.branch_id')
-            ->where('purchase_orders.status', 'pending_supplier')
+            ->whereIn('purchase_orders.status', PurchaseOrderModel::SUPPLIER_PENDING_STATUSES)
             ->orderBy('purchase_orders.order_date', 'ASC')
             ->findAll();
         

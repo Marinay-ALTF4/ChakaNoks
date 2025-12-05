@@ -131,12 +131,6 @@ $routes->get('/Central_AD/deleteItem/(:num)', 'Central_AD::deleteItem/$1');
 $routes->get('/Central_AD/createOrder', 'Central_AD::createOrder');
 $routes->post('/Central_AD/storeOrder', 'Central_AD::storeOrder');
 
-// Supplier Order Management
-$routes->get('/Central_AD/supplier-orders', 'Central_AD::supplierOrders');
-$routes->get('/Central_AD/confirm-supplier-order/(:num)', 'Central_AD::confirmSupplierOrder/$1');
-$routes->get('/Central_AD/mark-preparing/(:num)', 'Central_AD::markOrderPreparing/$1');
-$routes->get('/Central_AD/mark-ready-delivery/(:num)', 'Central_AD::markOrderReadyForDelivery/$1');
-
 // Central Admin Franchising Management
 $routes->get('/Central_AD/addFranchise', 'Central_AD::addFranchise');
 $routes->post('/Central_AD/storeFranchise', 'Central_AD::storeFranchise');
@@ -150,6 +144,10 @@ $routes->get('/supplier/orders', 'SupplierController::orders');
 $routes->get('/supplier/confirm-order/(:num)', 'SupplierController::confirmOrder/$1');
 $routes->get('/supplier/mark-preparing/(:num)', 'SupplierController::markPreparing/$1');
 $routes->get('/supplier/mark-ready/(:num)', 'SupplierController::markReadyForDelivery/$1');
+$routes->get('/supplier/deliveries', 'SupplierController::deliveries');
+$routes->post('/supplier/deliveries/(:num)/status', 'SupplierController::updateDeliveryStatus/$1');
+$routes->get('/supplier/invoices', 'SupplierController::invoices');
+$routes->post('/supplier/invoices', 'SupplierController::submitInvoice');
 
 // API Routes for Real-time Updates
 $routes->group('api', ['filter' => 'auth'], function($routes) {
@@ -160,17 +158,33 @@ $routes->group('api', ['filter' => 'auth'], function($routes) {
     $routes->get('workflow-stats', 'ApiController::getWorkflowStats');
     $routes->get('order-status/(:num)', 'ApiController::getOrderStatus/$1');
     $routes->get('delivery-status/(:num)', 'ApiController::getDeliveryStatus/$1');
+
+    $routes->group('logistics', function($routes) {
+        $routes->post('deliveries', 'Api\Logistics\DeliveriesController::create', ['filter' => 'role:logistics_coordinator,admin,central_admin']);
+        $routes->get('deliveries', 'Api\Logistics\DeliveriesController::index', ['filter' => 'role:logistics_coordinator,admin,central_admin,branch_manager']);
+        $routes->get('deliveries/(:num)', 'Api\Logistics\DeliveriesController::show/$1', ['filter' => 'role:logistics_coordinator,admin,central_admin,branch_manager']);
+        $routes->patch('deliveries/(:num)/status', 'Api\Logistics\DeliveriesController::updateStatus/$1', ['filter' => 'role:logistics_coordinator,admin,central_admin,branch_manager']);
+
+        $routes->post('transfer-requests', 'Api\Logistics\TransferRequestsController::create', ['filter' => 'role:branch_manager']);
+        $routes->patch('transfer-requests/(:num)/approve', 'Api\Logistics\TransferRequestsController::approve/$1', ['filter' => 'role:admin,central_admin,logistics_coordinator']);
+
+        $routes->get('routes', 'Api\Logistics\RoutesController::index', ['filter' => 'role:logistics_coordinator,admin,central_admin']);
+        $routes->post('routes/optimize', 'Api\Logistics\RoutesController::optimize', ['filter' => 'role:logistics_coordinator,admin,central_admin']);
+    });
 });
 
 // Logistics routes
 $routes->get('/logistics/dashboard', 'LogisticsController::dashboard');
 $routes->get('/logistics/schedule-delivery', 'LogisticsController::scheduleDelivery');
 $routes->post('/logistics/schedule-delivery', 'LogisticsController::scheduleDelivery');
+$routes->get('/logistics/supplier-deliveries', 'LogisticsController::supplierDeliveries');
 $routes->get('/logistics/update-delivery-status/(:num)', 'LogisticsController::updateDeliveryStatus/$1');
 $routes->post('/logistics/update-delivery-status/(:num)', 'LogisticsController::updateDeliveryStatus/$1');
 $routes->get('/logistics/deliveries', 'LogisticsController::deliveries');
-$routes->get('/logistics/optimize-routes', 'LogisticsController::optimizeRoutes');
+$routes->match(['get', 'post'], '/logistics/optimize-routes', 'LogisticsController::optimizeRoutes');
 $routes->get('/logistics/track-delivery/(:any)', 'LogisticsController::trackDelivery/$1');
+$routes->get('/logistics/branch', 'LogisticsController::branch');
+$routes->get('/logistics/central', 'LogisticsController::central');
 
 // Franchise routes
 $routes->get('/franchise/dashboard', 'FranchiseController::dashboard');

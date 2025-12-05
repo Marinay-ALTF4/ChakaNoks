@@ -5,6 +5,49 @@
 <div class="container-fluid">
     <h2 class="mb-4">New Purchase Request</h2>
 
+    <?php if (empty($selectedBranchId)): ?>
+        <div class="alert alert-warning">
+            Branch context is not set for your account yet. Please pick a branch before submitting requests.
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($selectedBranchId)): ?>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small mb-2">Total Requests</h6>
+                        <h3 class="mb-0"><?= esc($requestSummary['total'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small mb-2">Pending</h6>
+                        <h3 class="mb-0 text-warning"><?= esc($requestSummary['pending'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small mb-2">Approved</h6>
+                        <h3 class="mb-0 text-success"><?= esc($requestSummary['approved'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small mb-2">Rejected</h6>
+                        <h3 class="mb-0 text-danger"><?= esc($requestSummary['rejected'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">Create Purchase Request</h5>
@@ -34,6 +77,29 @@
 
             <form id="purchaseRequestForm" action="<?= base_url('branch/purchase-request') ?>" method="post">
                 <?= csrf_field() ?>
+                <?php
+                    $branches = $branches ?? [];
+                    $branchMap = $branchMap ?? [];
+                    $preferredBranchId = $selectedBranchId ?? null;
+                    $activeBranchId = old('branch_id', $preferredBranchId);
+                    $activeBranchId = ($activeBranchId !== null && $activeBranchId !== '') ? (int) $activeBranchId : null;
+                ?>
+
+                <div class="mb-3">
+                    <label class="form-label">Branch</label>
+                    <select class="form-select" name="branch_id" required>
+                        <option value="">Select Branch</option>
+                        <?php foreach ($branches as $branch): ?>
+                            <?php $branchId = $branch['id'] ?? null; ?>
+                            <option value="<?= esc($branchId) ?>" <?= (string) $branchId === (string) $activeBranchId ? 'selected' : '' ?>>
+                                <?= esc($branch['name'] ?? ('Branch ' . $branchId)) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php if (! empty($preferredBranchId)): ?>
+                        <small class="text-muted">Defaulting to your assigned branch; adjust if needed.</small>
+                    <?php endif; ?>
+                </div>
 
                 <div id="itemsContainer">
                     <!-- Item Row Template -->
@@ -53,9 +119,8 @@
 
                             <div class="col-md-3">
                                 <label class="form-label">Item Name</label>
-                                <select class="form-select item-select" name="items[0][item_name]" required disabled>
-                                    <option value="">Select supplier first</option>
-                                </select>
+                                <input type="text" class="form-control item-input" name="items[0][item_name]" data-datalist-id="supplier-items-0" list="supplier-items-0" placeholder="Select or type item" required disabled>
+                                <datalist id="supplier-items-0"></datalist>
                             </div>
 
                             <div class="col-md-2">
@@ -101,7 +166,7 @@
                     </button>
 
                     <div>
-                        <a href="<?= base_url('branch/dashboard') ?>" class="btn btn-secondary me-2">
+                        <a href="<?= base_url('dashboard') ?>" class="btn btn-secondary me-2">
                             <i class="fas fa-arrow-left"></i> Back to Dashboard
                         </a>
                         <button type="submit" class="btn btn-primary">
@@ -110,6 +175,56 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Recent Requests</h5>
+            <span class="badge bg-light text-dark">Last <?= esc(count($recentRequests ?? [])) ?> record(s)</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Item</th>
+                            <th>Supplier</th>
+                            <th>Quantity</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($recentRequests)): ?>
+                            <?php foreach ($recentRequests as $request): ?>
+                                <?php
+                                    $status = $request['status'] ?? 'pending';
+                                    $badgeClass = match ($status) {
+                                        'approved' => 'bg-success',
+                                        'rejected' => 'bg-danger',
+                                        default => 'bg-warning text-dark',
+                                    };
+                                ?>
+                                <tr>
+                                    <td>#PR-<?= esc(str_pad((string) $request['id'], 4, '0', STR_PAD_LEFT)) ?></td>
+                                    <td><?= esc($request['item_name']) ?></td>
+                                    <td><?= esc($request['supplier_name'] ?? 'N/A') ?></td>
+                                    <td><?= esc($request['quantity']) ?> <?= esc($request['unit'] ?? 'unit/s') ?></td>
+                                    <?php $statusLabel = ucwords(str_replace('_', ' ', $status)); ?>
+                                    <td><span class="badge <?= $badgeClass ?>"><?= esc($statusLabel) ?></span></td>
+                                    <td><?= $request['created_at'] ? date('M d, Y H:i', strtotime($request['created_at'])) : 'N/A' ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">No purchase requests found for this branch yet.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -130,6 +245,7 @@ document.getElementById('addItemBtn').addEventListener('click', function() {
 function createItemRow(index) {
     const row = document.createElement('div');
     row.className = 'item-row border rounded p-3 mb-3';
+    const datalistId = `supplier-items-${index}`;
     row.innerHTML = `
         <div class="row g-3">
             <div class="col-md-3">
@@ -146,9 +262,8 @@ function createItemRow(index) {
 
             <div class="col-md-3">
                 <label class="form-label">Item Name</label>
-                <select class="form-select item-select" name="items[${index}][item_name]" required disabled>
-                    <option value="">Select supplier first</option>
-                </select>
+                <input type="text" class="form-control item-input" name="items[${index}][item_name]" data-datalist-id="${datalistId}" list="${datalistId}" placeholder="Select or type item" required disabled>
+                <datalist id="${datalistId}"></datalist>
             </div>
 
             <div class="col-md-2">
@@ -189,11 +304,11 @@ function createItemRow(index) {
 
     // Add event listeners
     const supplierSelect = row.querySelector('.supplier-select');
-    const itemSelect = row.querySelector('.item-select');
+    const itemInput = row.querySelector('.item-input');
     const removeBtn = row.querySelector('.remove-item-btn');
 
     supplierSelect.addEventListener('change', function() {
-        loadItemsForSupplier(this.value, itemSelect);
+        loadItemsForSupplier(this.value, itemInput);
     });
 
     removeBtn.addEventListener('click', function() {
@@ -216,32 +331,53 @@ function updateRemoveButtons() {
 }
 
 // Load items for selected supplier
-function loadItemsForSupplier(supplierId, itemSelect) {
+function loadItemsForSupplier(supplierId, itemInput) {
+    if (!itemInput) {
+        return;
+    }
+
+    const datalistId = itemInput.dataset.datalistId;
+    const datalist = datalistId ? document.getElementById(datalistId) : null;
+
+    if (datalist) {
+        datalist.innerHTML = '';
+    }
+
+    itemInput.value = '';
+
     if (!supplierId) {
-        itemSelect.innerHTML = '<option value="">Select supplier first</option>';
-        itemSelect.disabled = true;
+        itemInput.value = '';
+        itemInput.disabled = true;
+        itemInput.placeholder = 'Select supplier first';
         return;
     }
 
     fetch(`<?= base_url('branch/get-supplier-items') ?>/${supplierId}`)
         .then(response => response.json())
         .then(data => {
-            itemSelect.innerHTML = '<option value="">Select Item</option>';
-            if (data.items && data.items.length > 0) {
-                data.items.forEach(item => {
+            if (datalist) {
+                (data.items || []).forEach(item => {
+                    if (!item.item_name) {
+                        return;
+                    }
                     const option = document.createElement('option');
                     option.value = item.item_name;
-                    option.textContent = item.item_name;
-                    itemSelect.appendChild(option);
+                    datalist.appendChild(option);
                 });
-            } else {
-                itemSelect.innerHTML = '<option value="">No items available</option>';
             }
-            itemSelect.disabled = false;
+
+            itemInput.disabled = false;
+            itemInput.placeholder = (data.items && data.items.length > 0)
+                ? 'Select or type item'
+                : 'Type item name';
         })
         .catch(error => {
             console.error('Error loading items:', error);
-            itemSelect.innerHTML = '<option value="">Error loading items</option>';
+            if (datalist) {
+                datalist.innerHTML = '';
+            }
+            itemInput.disabled = false;
+            itemInput.placeholder = 'Type item name';
         });
 }
 
@@ -249,9 +385,15 @@ function loadItemsForSupplier(supplierId, itemSelect) {
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.supplier-select').forEach(select => {
         select.addEventListener('change', function() {
-            const itemSelect = this.closest('.item-row').querySelector('.item-select');
-            loadItemsForSupplier(this.value, itemSelect);
+            const itemInput = this.closest('.item-row').querySelector('.item-input');
+            loadItemsForSupplier(this.value, itemInput);
         });
+    });
+
+    document.querySelectorAll('.item-input').forEach(input => {
+        if (input.disabled) {
+            input.placeholder = 'Select supplier first';
+        }
     });
 
     updateRemoveButtons();

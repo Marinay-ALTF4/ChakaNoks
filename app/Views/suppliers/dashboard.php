@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 
 <div class="container-fluid">
-    <h2 class="mb-4">Supplier Dashboard</h2>
+    <h2 class="mb-4">Supplier Order Dashboard</h2>
 
     <?php if (session()->getFlashdata('success')): ?>
         <div class="alert alert-success">
@@ -17,46 +17,16 @@
         </div>
     <?php endif; ?>
 
-    <!-- Statistics Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-body text-center">
-                    <h6 class="text-muted mb-2">Pending Confirmation</h6>
-                    <h3 class="mb-0 text-warning"><?= esc($stats['pending']) ?></h3>
-                </div>
-            </div>
+    <?php if (session()->getFlashdata('info')): ?>
+        <div class="alert alert-info">
+            <?= session()->getFlashdata('info') ?>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-body text-center">
-                    <h6 class="text-muted mb-2">Confirmed</h6>
-                    <h3 class="mb-0 text-info"><?= esc($stats['confirmed']) ?></h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-body text-center">
-                    <h6 class="text-muted mb-2">Preparing</h6>
-                    <h3 class="mb-0 text-primary"><?= esc($stats['preparing']) ?></h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-body text-center">
-                    <h6 class="text-muted mb-2">Total Orders</h6>
-                    <h3 class="mb-0 text-dark"><?= esc($stats['total']) ?></h3>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php endif; ?>
 
     <!-- Pending Supplier Confirmation -->
     <div class="card mb-4" id="supplier-orders-container">
         <div class="card-header bg-warning text-dark">
-            <h5 class="mb-0">Pending Confirmation</h5>
+            <h5 class="mb-0">Pending Supplier Confirmation</h5>
         </div>
         <div class="card-body">
             <?php if (!empty($pendingOrders)): ?>
@@ -85,7 +55,7 @@
                                     <td><?= esc($order['branch_name']) ?></td>
                                     <td><?= date('M d, Y H:i', strtotime($order['order_date'])) ?></td>
                                     <td>
-                                        <a href="<?= base_url('supplier/confirm-order/'.$order['id']) ?>" class="btn btn-sm btn-success">Confirm</a>
+                                        <a href="<?= base_url('supplier/confirm-order/' . $order['id']) ?>" class="btn btn-sm btn-success">Confirm</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -93,7 +63,7 @@
                     </table>
                 </div>
             <?php else: ?>
-                <p class="text-muted">No pending orders for confirmation.</p>
+                <p class="text-muted mb-0">No pending orders for supplier confirmation.</p>
             <?php endif; ?>
         </div>
     </div>
@@ -126,7 +96,7 @@
                                     <td><?= esc($order['branch_name']) ?></td>
                                     <td><?= date('M d, Y H:i', strtotime($order['supplier_confirmed_at'])) ?></td>
                                     <td>
-                                        <a href="<?= base_url('supplier/mark-preparing/'.$order['id']) ?>" class="btn btn-sm btn-primary">Mark as Preparing</a>
+                                        <a href="<?= base_url('supplier/mark-preparing/' . $order['id']) ?>" class="btn btn-sm btn-primary">Mark as Preparing</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -134,7 +104,7 @@
                     </table>
                 </div>
             <?php else: ?>
-                <p class="text-muted">No confirmed orders.</p>
+                <p class="text-muted mb-0">No confirmed orders.</p>
             <?php endif; ?>
         </div>
     </div>
@@ -167,7 +137,7 @@
                                     <td><?= esc($order['branch_name']) ?></td>
                                     <td><?= date('M d, Y H:i', strtotime($order['prepared_at'])) ?></td>
                                     <td>
-                                        <a href="<?= base_url('supplier/mark-ready/'.$order['id']) ?>" class="btn btn-sm btn-success">Mark Ready for Delivery</a>
+                                        <a href="<?= base_url('supplier/mark-ready/' . $order['id']) ?>" class="btn btn-sm btn-success">Mark Ready for Delivery</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -175,14 +145,13 @@
                     </table>
                 </div>
             <?php else: ?>
-                <p class="text-muted">No orders currently being prepared.</p>
+                <p class="text-muted mb-0">No orders currently being prepared.</p>
             <?php endif; ?>
         </div>
     </div>
 </div>
 
 <script>
-// Real-time updates for supplier dashboard
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('supplier-orders-container')) {
         realTime.startSupplierOrders('supplier-orders-container');
@@ -191,4 +160,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <?= $this->endSection() ?>
-

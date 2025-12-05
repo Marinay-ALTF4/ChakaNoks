@@ -1,3 +1,5 @@
+<?php use App\Models\PurchaseOrderModel; ?>
+
 <?= $this->extend('layout') ?>
 
 <?= $this->section('title') ?>Orders<?= $this->endSection() ?>
@@ -56,7 +58,7 @@
                                 <span class="badge 
                                     <?php 
                                     $status = $order['status'];
-                                    if ($status === 'pending_supplier') echo 'bg-warning';
+                                    if (in_array($status, PurchaseOrderModel::SUPPLIER_PENDING_STATUSES, true)) echo 'bg-warning';
                                     elseif ($status === 'confirmed') echo 'bg-info';
                                     elseif ($status === 'preparing') echo 'bg-primary';
                                     elseif ($status === 'ready_for_delivery') echo 'bg-success';
@@ -68,7 +70,7 @@
                             </td>
                             <td><?= date('Y-m-d', strtotime($order['order_date'])) ?></td>
                             <td>
-                                <a href="<?= base_url('Central_AD/supplier-orders') ?>" class="btn btn-sm btn-primary">View Details</a>
+                                <span class="text-muted small">Managed by suppliers</span>
                             </td>
                         </tr>
                     <?php endforeach; ?>

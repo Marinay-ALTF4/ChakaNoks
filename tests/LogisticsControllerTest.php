@@ -2,58 +2,92 @@
 
 namespace Tests;
 
+use App\Models\DeliveryModel;
+use CodeIgniter\I18n\Time;
 use CodeIgniter\Test\CIUnitTestCase;
-use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\Test\FeatureTestTrait;
 
 class LogisticsControllerTest extends CIUnitTestCase
 {
-    public function testDashboard()
-    {
-        $result = $this->withURI('http://localhost:8080/logistics/dashboard')
-                      ->controller(\App\Controllers\LogisticsController::class)
-                      ->execute('dashboard');
+    use FeatureTestTrait;
 
-        $this->assertInstanceOf(ResponseInterface::class, $result);
-        $this->assertEquals(200, $result->getStatusCode());
+    private DeliveryModel $deliveryModel;
+    private array $delivery;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->deliveryModel = new DeliveryModel();
+        $code                = 'TEST-DEL-' . uniqid();
+
+        $id = $this->deliveryModel->insert([
+            'delivery_code'         => $code,
+            'source_branch_id'      => 1,
+            'destination_branch_id' => 2,
+            'status'                => DeliveryModel::STATUS_PENDING,
+            'scheduled_at'          => Time::now('Asia/Manila')->toDateTimeString(),
+        ], true);
+
+        $this->delivery = $this->deliveryModel->find($id);
     }
 
-    public function testDeliveries()
+    public function testDashboard(): void
     {
-        $result = $this->withURI('http://localhost:8080/logistics/deliveries')
-                      ->controller(\App\Controllers\LogisticsController::class)
-                      ->execute('deliveries');
+        $response = $this->withSession([
+                'logged_in' => true,
+                'role'      => 'logistics_coordinator',
+            ])
+            ->get('/logistics/dashboard');
 
-        $this->assertInstanceOf(ResponseInterface::class, $result);
-        $this->assertEquals(200, $result->getStatusCode());
+        $response->assertStatus(302);
+        $response->assertRedirectTo(site_url('dashboard'));
     }
 
-    public function testOptimizeRoutes()
+    public function testDeliveries(): void
     {
-        $result = $this->withURI('http://localhost:8080/logistics/optimize-routes')
-                      ->controller(\App\Controllers\LogisticsController::class)
-                      ->execute('optimizeRoutes');
+        $response = $this->withSession([
+                'logged_in' => true,
+                'role'      => 'logistics_coordinator',
+            ])
+            ->get('/logistics/deliveries');
 
-        $this->assertInstanceOf(ResponseInterface::class, $result);
-        $this->assertEquals(200, $result->getStatusCode());
+        $response->assertStatus(200);
     }
 
-    public function testScheduleDelivery()
+    public function testOptimizeRoutes(): void
     {
-        $result = $this->withURI('http://localhost:8080/logistics/schedule-delivery')
-                      ->controller(\App\Controllers\LogisticsController::class)
-                      ->execute('scheduleDelivery');
+        $response = $this->withSession([
+                'logged_in' => true,
+                'role'      => 'logistics_coordinator',
+            ])
+            ->withHeaders(['Content-Type' => 'application/json'])
+            ->withBody(json_encode(['stops' => [['lat' => 14.6, 'lng' => 121.0]]]))
+            ->post('/logistics/optimize-routes');
 
-        $this->assertInstanceOf(ResponseInterface::class, $result);
-        $this->assertEquals(200, $result->getStatusCode());
+        $response->assertStatus(200);
+        $this->assertNotEmpty($response->getJSON());
     }
 
-    public function testTrackDelivery()
+    public function testScheduleDeliveryView(): void
     {
-        $result = $this->withURI('http://localhost:8080/logistics/track-delivery/TRK123456')
-                      ->controller(\App\Controllers\LogisticsController::class)
-                      ->execute('trackDelivery', 'TRK123456');
+        $response = $this->withSession([
+                'logged_in' => true,
+                'role'      => 'logistics_coordinator',
+            ])
+            ->get('/logistics/schedule-delivery');
 
-        $this->assertInstanceOf(ResponseInterface::class, $result);
-        $this->assertEquals(200, $result->getStatusCode());
+        $response->assertStatus(200);
+    }
+
+    public function testTrackDelivery(): void
+    {
+        $code = $this->delivery['delivery_code'];
+        $response = $this->withSession([
+                'logged_in' => true,
+                'role'      => 'logistics_coordinator',
+            ])
+            ->get('/logistics/track-delivery/' . $code);
+
+        $response->assertStatus(200);
     }
 }

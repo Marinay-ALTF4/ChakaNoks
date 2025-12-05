@@ -1,3 +1,5 @@
+<?php use App\Models\PurchaseOrderModel; ?>
+
 <?= $this->extend('Layout') ?>
 
 <?= $this->section('content') ?>
@@ -12,6 +14,8 @@
             </span>
             <?php if ($role === 'admin'): ?>
                 <a href="<?= base_url('Central_AD/branches/add') ?>" class="btn btn-primary" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Add New Branch</a>
+            <?php elseif ($role === 'logistics_coordinator'): ?>
+                <a href="<?= base_url('logistics/schedule-delivery') ?>" class="btn btn-primary" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Schedule Delivery</a>
             <?php elseif ($role === 'system_administrator'): ?>
                 <a href="<?= base_url('system/users') ?>" class="btn btn-primary" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Manage Users</a>
             <?php endif; ?>
@@ -150,7 +154,11 @@
                             <strong class="text-success"><?= esc($metrics['readyForDelivery'] ?? 0) ?></strong>
                         </div>
                         <div class="mt-3">
-                            <a href="<?= base_url('Central_AD/supplier-orders') ?>" class="btn btn-sm btn-outline-primary">Manage Supplier Orders</a>
+                            <?php if (($role ?? '') === 'supplier'): ?>
+                                <a href="<?= base_url('supplier/dashboard') ?>" class="btn btn-sm btn-outline-primary">Manage Supplier Orders</a>
+                            <?php else: ?>
+                                <span class="text-muted small">Supplier order workflow is now managed directly by supplier accounts.</span>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -203,6 +211,179 @@
                             <?php endif; ?>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+    <?php elseif ($role === 'logistics_coordinator'): ?>
+        <p class="text-muted mb-4">Schedule deliveries, monitor routes, and keep branches informed.</p>
+
+        <?php if (session()->getFlashdata('success')): ?>
+            <div class="alert alert-success"><?= esc(session()->getFlashdata('success')) ?></div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')): ?>
+            <div class="alert alert-danger"><?= esc(session()->getFlashdata('error')) ?></div>
+        <?php endif; ?>
+
+        <?php
+            $statusLabels = [
+                'pending'      => ['Pending', 'text-warning'],
+                'dispatched'   => ['Dispatched', 'text-info'],
+                'inTransit'    => ['In Transit', 'text-primary'],
+                'delivered'    => ['Delivered', 'text-success'],
+                'acknowledged' => ['Acknowledged', 'text-secondary'],
+            ];
+        ?>
+
+        <div class="row g-3 mb-4">
+            <?php foreach ($statusLabels as $key => [$label, $class]): ?>
+                <div class="col-sm-6 col-xl-2">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-body text-center">
+                            <p class="text-muted mb-1 small"><?= esc($label) ?></p>
+                            <h3 class="fw-bold <?= esc($class) ?>">
+                                <?= esc($stats[$key] ?? 0) ?>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Active Deliveries</h5>
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#routeOptimizerModal">Optimize Routes</button>
+                    </div>
+                    <div class="card-body p-0">
+                        <?php if (!empty($upcomingDeliveries)): ?>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Delivery Code</th>
+                                            <th>Branches</th>
+                                            <th>Schedule</th>
+                                            <th>Status</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php foreach ($upcomingDeliveries as $delivery): ?>
+                                        <tr>
+                                            <td class="fw-semibold"><?= esc($delivery['delivery_code'] ?? 'N/A') ?></td>
+                                            <td>
+                                                <div class="small text-muted">From</div>
+                                                <div><?= esc($delivery['source_branch_id'] ?? '—') ?> → <?= esc($delivery['destination_branch_id'] ?? '—') ?></div>
+                                            </td>
+                                            <td>
+                                                <div class="small text-muted">Scheduled</div>
+                                                <div><?= !empty($delivery['scheduled_at']) ? esc(date('M d, Y H:i', strtotime($delivery['scheduled_at']))) : '—' ?></div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary text-uppercase"><?= esc(str_replace('_', ' ', $delivery['status'] ?? 'pending')) ?></span>
+                                            </td>
+                                            <td class="text-end">
+                                                <?php if (!empty($delivery['delivery_code'])): ?>
+                                                    <a href="<?= base_url('logistics/track-delivery/' . $delivery['delivery_code']) ?>" class="btn btn-sm btn-outline-secondary">View</a>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php else: ?>
+                            <div class="p-4 text-center text-muted">No active deliveries queued.</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Quick Schedule</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="<?= base_url('logistics/schedule-delivery') ?>" method="post" class="needs-validation" novalidate>
+                            <?= csrf_field() ?>
+                            <div class="mb-3">
+                                <label class="form-label">Source Branch ID</label>
+                                <input type="number" name="source_branch_id" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Destination Branch ID</label>
+                                <input type="number" name="destination_branch_id" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Scheduled Date</label>
+                                <input type="datetime-local" name="scheduled_at" class="form-control" required>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <label class="form-label">Vehicle</label>
+                                    <select name="assigned_vehicle_id" class="form-select">
+                                        <option value="">Select</option>
+                                        <?php foreach ($vehicles ?? [] as $vehicle): ?>
+                                            <option value="<?= esc($vehicle['id']) ?>"><?= esc($vehicle['plate_no']) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Driver</label>
+                                    <select name="assigned_driver_id" class="form-select">
+                                        <option value="">Select</option>
+                                        <?php foreach ($drivers ?? [] as $driver): ?>
+                                            <option value="<?= esc($driver['id']) ?>"><?= esc($driver['name']) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-success w-100" type="submit">Create Delivery</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small">Tips</h6>
+                        <p class="mb-2 small">Use the optimization modal to generate the best stop order before dispatching. Make sure vehicles are set to “Available”.</p>
+                        <p class="mb-0 small">Statuses move automatically when updated from the mobile or branch portals.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Route Optimization Modal -->
+        <div class="modal fade" id="routeOptimizerModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Route Optimization</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="routeOptimizerForm" class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Stops (lat,lng per line)</label>
+                                <textarea class="form-control" name="stops" rows="5" placeholder="14.5995,120.9842
+14.6760,121.0437" required></textarea>
+                            </div>
+                            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-primary">Optimize</button>
+                            </div>
+                        </form>
+                        <div class="mt-3" id="optimizedRouteResult" style="display:none;">
+                            <h6>Suggested Order</h6>
+                            <ol class="small" id="optimizedRouteList"></ol>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -337,6 +518,245 @@
                             <?php endif; ?>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+    <?php elseif ($role === 'supplier'): ?>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">Pending Orders</h6>
+                        <h3 class="mb-0 text-warning"><?= esc($metrics['pendingOrders'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">Confirmed / Preparing</h6>
+                        <h3 class="mb-0 text-info"><?= esc($metrics['confirmedOrders'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">Ready for Delivery</h6>
+                        <h3 class="mb-0 text-success"><?= esc($metrics['readyForDelivery'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">Active Deliveries</h6>
+                        <h3 class="mb-0 text-primary"><?= esc($metrics['activeDeliveries'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-light border-0 fw-semibold">Recent Purchase Orders</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="border-0 fw-semibold">PO #</th>
+                                        <th class="border-0 fw-semibold">Item</th>
+                                        <th class="border-0 fw-semibold">Branch</th>
+                                        <th class="border-0 fw-semibold">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($recentOrders)): foreach ($recentOrders as $order): ?>
+                                        <?php
+                                        $status = $order['status'] ?? 'pending_supplier';
+                                        $statusClass = 'bg-secondary';
+
+                                        if (in_array($status, PurchaseOrderModel::SUPPLIER_PENDING_STATUSES, true)) {
+                                            $statusClass = 'bg-warning text-dark';
+                                        } else {
+                                            switch ($status) {
+                                                case 'confirmed':
+                                                    $statusClass = 'bg-info';
+                                                    break;
+                                                case 'preparing':
+                                                    $statusClass = 'bg-primary';
+                                                    break;
+                                                case 'ready_for_delivery':
+                                                    $statusClass = 'bg-success';
+                                                    break;
+                                                case 'delivered':
+                                                    $statusClass = 'bg-secondary';
+                                                    break;
+                                                default:
+                                                    $statusClass = 'bg-dark';
+                                            }
+                                        }
+                                        ?>
+                                        <tr class="border-bottom">
+                                            <td class="border-0">#<?= esc($order['id']) ?></td>
+                                            <td class="border-0"><?= esc($order['item_name']) ?></td>
+                                            <td class="border-0"><?= esc($order['branch_name'] ?? 'N/A') ?></td>
+                                            <td class="border-0">
+                                                <span class="badge <?= $statusClass ?>"><?= esc(ucwords(str_replace('_', ' ', $status))) ?></span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; else: ?>
+                                        <tr><td colspan="4" class="text-center border-0 text-muted">No recent purchase orders</td></tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-light border-0 fw-semibold">Logistics Deliveries</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="border-0 fw-semibold">Delivery</th>
+                                        <th class="border-0 fw-semibold">Item</th>
+                                        <th class="border-0 fw-semibold">Branch</th>
+                                        <th class="border-0 fw-semibold">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($activeDeliveries)): foreach ($activeDeliveries as $delivery): ?>
+                                        <?php
+                                        $deliveryStatus = $delivery['status'] ?? 'pending';
+                                        $deliveryClass = 'bg-secondary';
+                                        switch ($deliveryStatus) {
+                                            case 'pending':
+                                                $deliveryClass = 'bg-warning text-dark';
+                                                break;
+                                            case 'dispatched':
+                                                $deliveryClass = 'bg-info';
+                                                break;
+                                            case 'in_transit':
+                                                $deliveryClass = 'bg-primary';
+                                                break;
+                                            case 'delivered':
+                                                $deliveryClass = 'bg-success';
+                                                break;
+                                            case 'acknowledged':
+                                                $deliveryClass = 'bg-secondary';
+                                                break;
+                                            case 'cancelled':
+                                                $deliveryClass = 'bg-danger';
+                                                break;
+                                        }
+                                        ?>
+                                        <tr class="border-bottom">
+                                            <td class="border-0"><?= esc($delivery['delivery_code'] ?? 'N/A') ?></td>
+                                            <td class="border-0"><?= esc($delivery['item_name'] ?? 'N/A') ?></td>
+                                            <td class="border-0"><?= esc($delivery['destination_branch'] ?? 'N/A') ?></td>
+                                            <td class="border-0">
+                                                <span class="badge <?= $deliveryClass ?>"><?= esc(ucwords(str_replace('_', ' ', $deliveryStatus))) ?></span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; else: ?>
+                                        <tr><td colspan="4" class="text-center border-0 text-muted">No deliveries yet</td></tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-light border-0 fw-semibold">Recent Invoices</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="border-0 fw-semibold">Reference #</th>
+                                        <th class="border-0 fw-semibold">PO #</th>
+                                        <th class="border-0 fw-semibold">Amount</th>
+                                        <th class="border-0 fw-semibold">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($recentInvoices)): foreach ($recentInvoices as $invoice): ?>
+                                        <?php
+                                        $invoiceStatus = $invoice['status'] ?? 'submitted';
+                                        $invoiceClass = 'bg-secondary';
+                                        switch ($invoiceStatus) {
+                                            case 'submitted':
+                                                $invoiceClass = 'bg-info';
+                                                break;
+                                            case 'reviewing':
+                                                $invoiceClass = 'bg-warning text-dark';
+                                                break;
+                                            case 'approved':
+                                                $invoiceClass = 'bg-success';
+                                                break;
+                                            case 'paid':
+                                                $invoiceClass = 'bg-primary';
+                                                break;
+                                            case 'rejected':
+                                                $invoiceClass = 'bg-danger';
+                                                break;
+                                        }
+                                        ?>
+                                        <tr class="border-bottom">
+                                            <td class="border-0"><?= esc($invoice['reference_no'] ?? 'N/A') ?></td>
+                                            <td class="border-0">#<?= esc($invoice['purchase_order_id'] ?? '—') ?></td>
+                                            <td class="border-0">₱<?= number_format((float) ($invoice['amount'] ?? 0), 2) ?></td>
+                                            <td class="border-0"><span class="badge <?= $invoiceClass ?>"><?= esc(ucwords(str_replace('_', ' ', $invoiceStatus))) ?></span></td>
+                                        </tr>
+                                    <?php endforeach; else: ?>
+                                        <tr><td colspan="4" class="text-center border-0 text-muted">No invoices submitted</td></tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-light border-0 fw-semibold">Supplier Quick Actions</div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <a href="<?= base_url('supplier/orders') ?>" class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-receipt"></i><br>
+                                    <small>View Orders</small>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="<?= base_url('supplier/orders') ?>" class="btn btn-outline-success w-100" title="Delivery status updates are coordinated through Logistics.">
+                                    <i class="bi bi-truck"></i><br>
+                                    <small>Delivery Status</small>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="<?= base_url('supplier/invoices') ?>" class="btn btn-outline-info w-100">
+                                    <i class="bi bi-file-earmark-text"></i><br>
+                                    <small>Submit Invoice</small>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="text-muted small mt-3 mb-0">
+                            Total Orders: <?= esc($metrics['totalOrders'] ?? 0) ?> &bull; Invoices Submitted: <?= esc($metrics['submittedInvoices'] ?? 0) ?>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -560,6 +980,62 @@ document.addEventListener('DOMContentLoaded', function() {
         realTime.startPurchaseRequests('purchase-requests-container');
     }
 });
+
+<?php if ($role === 'logistics_coordinator'): ?>
+const routeForm = document.getElementById('routeOptimizerForm');
+if (routeForm) {
+    routeForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const rawStops = routeForm.elements['stops'].value.trim();
+        if (!rawStops) {
+            alert('Please provide at least two stops.');
+            return;
+        }
+
+        const parsedStops = rawStops.split('\n')
+            .map(line => line.split(',').map(value => parseFloat(value.trim())))
+            .filter(coords => coords.length === 2 && coords.every(coord => !Number.isNaN(coord)));
+
+        if (parsedStops.length < 2) {
+            alert('Enter at least two valid latitude,longitude pairs.');
+            return;
+        }
+
+        const orderedStops = [parsedStops[0]];
+        const remainingStops = parsedStops.slice(1);
+
+        // Simple nearest-neighbor heuristic to give coordinators a quick suggested order.
+        while (remainingStops.length > 0) {
+            const lastStop = orderedStops[orderedStops.length - 1];
+            let nearestIndex = 0;
+            let nearestDistance = Number.POSITIVE_INFINITY;
+
+            remainingStops.forEach((candidate, index) => {
+                const distance = Math.hypot(candidate[0] - lastStop[0], candidate[1] - lastStop[1]);
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    nearestIndex = index;
+                }
+            });
+
+            orderedStops.push(remainingStops.splice(nearestIndex, 1)[0]);
+        }
+
+        const listElement = document.getElementById('optimizedRouteList');
+        const resultContainer = document.getElementById('optimizedRouteResult');
+
+        listElement.innerHTML = '';
+        orderedStops.forEach(coords => {
+            const item = document.createElement('li');
+            item.textContent = `${coords[0].toFixed(4)}, ${coords[1].toFixed(4)}`;
+            listElement.appendChild(item);
+        });
+
+        resultContainer.style.display = 'block';
+    });
+}
+<?php endif; ?>
 </script>
 
 

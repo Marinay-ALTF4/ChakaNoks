@@ -1,3 +1,5 @@
+<?php use App\Models\PurchaseOrderModel; ?>
+
 <?= $this->extend('Layout') ?>
 
 <?= $this->section('content') ?>
@@ -33,7 +35,7 @@
                                         <span class="badge 
                                             <?php 
                                             $status = $order['status'];
-                                            if ($status === 'pending_supplier') echo 'bg-warning';
+                                            if (in_array($status, PurchaseOrderModel::SUPPLIER_PENDING_STATUSES, true)) echo 'bg-warning';
                                             elseif ($status === 'confirmed') echo 'bg-info';
                                             elseif ($status === 'preparing') echo 'bg-primary';
                                             elseif ($status === 'ready_for_delivery') echo 'bg-success';

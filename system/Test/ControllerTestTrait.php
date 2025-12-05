@@ -107,7 +107,9 @@ trait ControllerTestTrait
         if (! $this->request instanceof IncomingRequest) {
             // Do some acrobatics, so we can use the Request service with our own URI
             $tempUri = service('uri');
-            Services::injectMock('uri', $this->uri);
+            /** @var URI $uriInstance */
+            $uriInstance = $this->uri;
+            Services::injectMock('uri', $uriInstance);
 
             $this->withRequest(service('incomingrequest', $this->appConfig, false));
 
@@ -282,7 +284,9 @@ trait ControllerTestTrait
     {
         $factory   = service('siteurifactory');
         $this->uri = $factory->createFromString($uri);
-        Services::injectMock('uri', $this->uri);
+        /** @var URI $uriInstance */
+        $uriInstance = $this->uri;
+        Services::injectMock('uri', $uriInstance);
 
         // Update the Request instance, because Request has the SiteURI instance.
         $this->request = service('incomingrequest', null, false);

@@ -58,3 +58,27 @@ Additionally, make sure that the following extensions are enabled in your PHP:
 - json (enabled by default - don't turn it off)
 - [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
 - [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+
+## Logistics & Distribution Module
+
+- Run `php spark migrate --all` then `php spark db:seed LogisticsSeeder` to provision logistics tables, demo vehicles, and sample deliveries.
+- Core REST endpoints:
+	- `POST /api/logistics/deliveries` create delivery payload with branch IDs, items, scheduled_at.
+	- `PATCH /api/logistics/deliveries/{id}/status` transition workflow (pending → dispatched → in_transit → delivered → acknowledged).
+	- `POST /api/logistics/transfer-requests` create inter-branch request (branch manager role).
+	- `PATCH /api/logistics/transfer-requests/{id}/approve` approve/reject and optionally auto-create delivery (admin/coordinator role).
+	- `POST /api/logistics/routes/optimize` stub nearest-neighbor route optimizer with OSRM/Google hook.
+- Sample cURL:
+	```bash
+	curl -X POST "https://your-host/api/logistics/deliveries" \
+			 -H "Content-Type: application/json" \
+			 -b "ci_session=..." \
+			 -d '{
+						"source_branch_id": 1,
+						"destination_branch_id": 3,
+						"scheduled_at": "2025-12-10T08:00:00+08:00",
+						"items": [{"product_id": 5, "quantity": 20}],
+						"notes": "Fragile goods"
+				}'
+	```
+- Acceptance highlights: delivery creation returns `delivery_code`, notifications/log activity emit on status changes, transfer requests flow from branch manager to central admin, and audit entries stored in `logistics_activity_logs`.

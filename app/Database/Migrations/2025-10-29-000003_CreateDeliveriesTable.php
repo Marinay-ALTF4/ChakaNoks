@@ -63,6 +63,7 @@ class CreateDeliveriesTable extends Migration
 
     public function down()
     {
-        $this->forge->dropTable('deliveries');
+        // Use IF EXISTS to allow rollback even if a later migration already dropped/rebuilt this table
+        $this->forge->dropTable('deliveries', true);
     }
 }

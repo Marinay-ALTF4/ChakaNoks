@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 
 <h2>🍗 Approve Transfers</h2>
-
+<!-- D -->
 <div class="tips-box">
   <h3>📘 Tips</h3>
   <ul>

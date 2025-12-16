@@ -5,14 +5,6 @@
 <div class="container-fluid py-3">
     <h2 class="mb-4">Deliveries Overview</h2>
 
-    <?php if (session()->getFlashdata('success')): ?>
-        <div class="alert alert-success"><?= esc(session()->getFlashdata('success')) ?></div>
-    <?php endif; ?>
-
-    <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger"><?= esc(session()->getFlashdata('error')) ?></div>
-    <?php endif; ?>
-
     <div class="card shadow-sm border-0">
         <div class="card-header bg-white">
             <h5 class="mb-0">Recent Deliveries</h5>

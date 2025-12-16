@@ -1,4 +1,4 @@
-<?php use App\Models\DeliveryModel; ?>
+﻿<?php use App\Models\DeliveryModel; ?>
 
 <?= $this->extend('Layout') ?>
 
@@ -6,14 +6,6 @@
 
 <div class="container-fluid py-3">
     <h2 class="mb-4">Supplier Deliveries</h2>
-
-    <?php if (session()->getFlashdata('success')): ?>
-        <div class="alert alert-success"><?= esc(session()->getFlashdata('success')) ?></div>
-    <?php endif; ?>
-
-    <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger"><?= esc(session()->getFlashdata('error')) ?></div>
-    <?php endif; ?>
 
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
@@ -123,3 +115,16 @@
 </div>
 
 <?= $this->endSection() ?>
+     font-size: .85rem;
+    }
+
+    .delivery-card .timeline li .time {
+        display: block;
+    }
+
+    @media (max-width: 991.98px) {
+        .delivery-card .action-panel {
+            width: 100%;
+        }
+    }
+    </style>

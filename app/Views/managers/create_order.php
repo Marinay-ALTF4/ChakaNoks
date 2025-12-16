@@ -10,20 +10,6 @@
         <p class="text-muted mb-0">Create a purchase order for inventory items</p>
     </div>
 
-    <?php if (session()->getFlashdata('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show text-center shadow-sm" role="alert">
-            <i class="bi bi-check-circle-fill me-1"></i> <?= session()->getFlashdata('success') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
-
-    <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show text-center shadow-sm" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-1"></i> <?= session()->getFlashdata('error') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
-
     <div class="row justify-content-center g-4">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm p-4 rounded-4">

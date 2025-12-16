@@ -18,12 +18,6 @@
     <h2 class="mb-2">New Stock Entry</h2>
     <p class="text-muted mb-4">Fill in the details below to add stock to the inventory.</p>
 
-    <?php if (session()->getFlashdata('error')): ?>
-      <div class="alert alert-danger">
-        <?= session()->getFlashdata('error') ?>
-      </div>
-    <?php endif; ?>
-
     <?php if (session()->getFlashdata('errors')): ?>
       <div class="alert alert-danger">
         <ul class="mb-0">

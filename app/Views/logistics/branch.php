@@ -11,14 +11,6 @@
         <a href="<?= base_url('dashboard') ?>" class="btn btn-outline-secondary btn-sm">Back to Dashboard</a>
     </div>
 
-    <?php if (session()->getFlashdata('success')): ?>
-        <div class="alert alert-success"><?= esc(session()->getFlashdata('success')) ?></div>
-    <?php endif; ?>
-
-    <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger"><?= esc(session()->getFlashdata('error')) ?></div>
-    <?php endif; ?>
-
     <div class="row g-4">
         <div class="col-lg-5">
             <div class="card shadow-sm border-0 h-100">

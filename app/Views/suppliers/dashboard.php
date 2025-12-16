@@ -5,24 +5,6 @@
 <div class="container-fluid">
     <h2 class="mb-4">Supplier Order Dashboard</h2>
 
-    <?php if (session()->getFlashdata('success')): ?>
-        <div class="alert alert-success">
-            <?= session()->getFlashdata('success') ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger">
-            <?= session()->getFlashdata('error') ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (session()->getFlashdata('info')): ?>
-        <div class="alert alert-info">
-            <?= session()->getFlashdata('info') ?>
-        </div>
-    <?php endif; ?>
-
     <!-- Pending Supplier Confirmation -->
     <div class="card mb-4" id="supplier-orders-container">
         <div class="card-header bg-warning text-dark">

@@ -7,12 +7,6 @@
         <h2>Add Supplier</h2>
     </div>
 
-    <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger">
-            <?= session()->getFlashdata('error') ?>
-        </div>
-    <?php endif; ?>
-
     <?php if (session()->getFlashdata('errors')): ?>
         <div class="alert alert-danger">
             <ul class="mb-0">

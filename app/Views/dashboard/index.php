@@ -218,14 +218,6 @@
     <?php elseif ($role === 'logistics_coordinator'): ?>
         <p class="text-muted mb-4">Schedule deliveries, monitor routes, and keep branches informed.</p>
 
-        <?php if (session()->getFlashdata('success')): ?>
-            <div class="alert alert-success"><?= esc(session()->getFlashdata('success')) ?></div>
-        <?php endif; ?>
-
-        <?php if (session()->getFlashdata('error')): ?>
-            <div class="alert alert-danger"><?= esc(session()->getFlashdata('error')) ?></div>
-        <?php endif; ?>
-
         <?php
             $statusLabels = [
                 'pending'      => ['Pending', 'text-warning'],

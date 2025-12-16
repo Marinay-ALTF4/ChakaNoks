@@ -5,14 +5,6 @@
 <div class="container-fluid">
     <h2 class="mb-4">Supplier Invoices</h2>
 
-    <?php if (session()->getFlashdata('success')): ?>
-        <div class="alert alert-success"><?= esc(session()->getFlashdata('success')) ?></div>
-    <?php endif; ?>
-
-    <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger"><?= esc(session()->getFlashdata('error')) ?></div>
-    <?php endif; ?>
-
     <?php if ($errors = session()->getFlashdata('errors')): ?>
         <div class="alert alert-warning">
             <ul class="mb-0">

@@ -9,17 +9,13 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <?php if (session()->getFlashdata('error')): ?>
+                    <?php if (session()->getFlashdata('errors')): ?>
                         <div class="alert alert-danger">
-                            <?php if (is_array(session()->getFlashdata('error'))): ?>
-                                <ul class="mb-0">
-                                    <?php foreach (session()->getFlashdata('error') as $error): ?>
-                                        <li><?= esc($error) ?></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            <?php else: ?>
-                                <?= session()->getFlashdata('error') ?>
-                            <?php endif; ?>
+                            <ul class="mb-0">
+                                <?php foreach (session()->getFlashdata('errors') as $error): ?>
+                                    <li><?= esc($error) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
                         </div>
                     <?php endif; ?>
 

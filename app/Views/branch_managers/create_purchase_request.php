@@ -63,18 +63,6 @@
                 </div>
             <?php endif; ?>
 
-            <?php if (session()->getFlashdata('error')): ?>
-                <div class="alert alert-danger">
-                    <strong>Error:</strong> <?= session()->getFlashdata('error') ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if (session()->getFlashdata('success')): ?>
-                <div class="alert alert-success">
-                    <?= session()->getFlashdata('success') ?>
-                </div>
-            <?php endif; ?>
-
             <form id="purchaseRequestForm" action="<?= base_url('branch/purchase-request') ?>" method="post">
                 <?= csrf_field() ?>
                 <?php

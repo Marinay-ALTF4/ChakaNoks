@@ -47,12 +47,13 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
 
     
     // User Management Routes
-    $routes->get('admin/users', 'Admin::users'); // List users
-    $routes->get('admin/users/create', 'Admin::createUser'); // Create user form
-    $routes->post('admin/users/store', 'Admin::storeUser'); // Store new user
-    $routes->get('admin/users/edit/(:num)', 'Admin::editUser/$1'); // Edit user form
-    $routes->post('admin/users/update/(:num)', 'Admin::updateUser/$1'); // Update user
-    $routes->get('admin/users/delete/(:num)', 'Admin::deleteUser/$1'); // Delete user
+    $routes->get('admin/users', 'AdminController::users'); // List users
+    $routes->get('admin/users/create', 'AdminController::createUser'); // Create user form
+    $routes->post('admin/users/store', 'AdminController::storeUser'); // Store new user
+    $routes->get('admin/users/edit/(:num)', 'AdminController::editUser/$1'); // Edit user form
+    $routes->post('admin/users/update/(:num)', 'AdminController::updateUser/$1'); // Update user
+    $routes->get('admin/users/delete/(:num)', 'AdminController::deleteUser/$1'); // Soft delete user (set status to inactive)
+    $routes->get('admin/users/restore/(:num)', 'AdminController::restoreUser/$1'); // Restore user (set status to active)
 });
 
 // 🔹 Branch Manager Dashboard & Features

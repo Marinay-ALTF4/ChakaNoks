@@ -68,7 +68,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to top, #d6aa57ff, #c48329ff);
+    background: linear-gradient(to top, #f1c980ff, #fcd092ff);
     font-family: Arial, sans-serif;
 }
 
@@ -92,7 +92,7 @@ body {
 
 .card-left {
     flex: 1;
-    background: linear-gradient(to bottom right, #8d7346ff, #eaa638ff);
+    background: linear-gradient(to bottom right, #fadfb1ff, #f7b64fff);
     padding: 35px;
     color: white;
     position: relative;

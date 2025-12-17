@@ -34,7 +34,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background:linear-gradient(to bottom, #BF6B04, #A63F03);
+    background:linear-gradient(to bottom, #ffe6b7ff, #faca88ff);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -42,7 +42,7 @@ body {
 }
 
 .login-container {
-    background:linear-gradient(to bottom, #f2a61aff, #d6a03aff);
+    background:linear-gradient(to bottom, #fcda99ff, #f0c16aff);
     padding: 40px;
     border-radius: 20px;
     width: 350px;
@@ -78,7 +78,7 @@ body {
     border-radius: 20px;
     font-weight: bold;
     cursor: pointer;
-    background-color: #715f05ff;
+    background-color: #454029ff;
     color: white;
 }
 
